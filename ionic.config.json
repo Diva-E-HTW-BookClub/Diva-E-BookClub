@@ -1,0 +1,7 @@
+{
+  "name": "BookClubDivaE",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
