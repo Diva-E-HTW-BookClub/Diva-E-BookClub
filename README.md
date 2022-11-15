@@ -36,7 +36,7 @@ If there is a problem with running this command on Windows try [this](https://te
 **Note**: Development of Ionic Apps is not recommended in Android Studio! It should only be used to build and run for the native Android platform.
 
 1. Download Android Studio [here](https://developer.android.com/studio/) and install it.
-2. In a terminal `cd` into the project folder and run `ionic build`. This creates a new deployable build. You only need to run the command if you have changed the project.
+2. In a terminal `cd` into the project folder and run `ionic build`. This creates a new deployable build.
 3. Now run the command `npx cap open android` which automatically starts Android Studio.
 
 #### Start

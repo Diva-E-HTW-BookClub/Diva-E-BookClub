@@ -66,6 +66,11 @@ const ClubsTab: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <IonHeader collapse="condense">
+          <IonToolbar>
+            <IonTitle size="large">Clubs</IonTitle>
+          </IonToolbar>
+        </IonHeader>
         <IonSearchbar></IonSearchbar>
 
         <IonSegment value="trending">
