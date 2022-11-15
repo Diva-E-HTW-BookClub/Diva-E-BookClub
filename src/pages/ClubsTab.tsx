@@ -12,15 +12,6 @@ import {
   IonItem,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardSubtitle,
-  IonCardContent,
-  IonImg,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonFab,
   IonFabButton,
   IonIcon,
@@ -29,6 +20,7 @@ import {
 import { add } from 'ionicons/icons';
 import './ClubsTab.css';
 import { useState } from 'react';
+import {ClubCard} from "../components/ClubCard";
 
 const ClubsTab: React.FC = () => {
   const [data, setData] = useState<string[]>([]);
@@ -89,27 +81,7 @@ const ClubsTab: React.FC = () => {
           {data.map((item, index) => {
             return (
               <IonItem key={index}>
-                <IonCard>
-                  <IonGrid>
-                    <IonRow>
-                      <IonCol size="4">
-                        <IonImg alt="Clean Code" src="https://m.media-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg" />
-                      </IonCol>
-                      <IonCol size="8">
-                        <IonCardHeader>
-                          <IonCardTitle>Diva-e's Reading Club</IonCardTitle>
-                          <IonCardSubtitle>{item} people</IonCardSubtitle>
-                        </IonCardHeader>
-                        <IonCardContent>
-                          Next discussion<br />
-                          14:00 - 18:00<br />
-                          31.10.2022<br />
-                          Raum Gute Stube
-                        </IonCardContent>
-                      </IonCol>
-                    </IonRow>
-                  </IonGrid>
-                </IonCard>
+                <ClubCard name={"Diva-E's BookClub"} member={3} date={"20.10.2022"} time={"13:00 - 14:00"} location={"Raum Gute Stube"} />
               </IonItem>
             )
           })}
