@@ -14,6 +14,7 @@ import { homeSharp, chatbubblesSharp, personSharp } from 'ionicons/icons';
 import HomeTab from './pages/HomeTab';
 import ClubsTab from './pages/ClubsTab';
 import ProfileTab from './pages/ProfileTab';
+import CreateClubPage from './pages/CreateClubPage';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -46,6 +47,9 @@ const App: React.FC = () => (
           </Route>
           <Route exact path="/clubs">
             <ClubsTab />
+          </Route>
+          <Route exact path="/clubs/create">
+            <CreateClubPage />
           </Route>
           <Route path="/profile">
             <ProfileTab />

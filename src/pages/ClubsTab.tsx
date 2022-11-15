@@ -20,7 +20,7 @@ import {
 import { add } from 'ionicons/icons';
 import './ClubsTab.css';
 import { useState } from 'react';
-import {ClubCard} from "../components/ClubCard";
+import { ClubCard } from "../components/ClubCard";
 
 const ClubsTab: React.FC = () => {
   const [data, setData] = useState<string[]>([]);
@@ -93,7 +93,7 @@ const ClubsTab: React.FC = () => {
         </IonInfiniteScroll>
 
         <IonFab slot="fixed" vertical="bottom" horizontal="end">
-          <IonFabButton>
+          <IonFabButton href="/clubs/create">
             <IonIcon icon={add}></IonIcon>
           </IonFabButton>
         </IonFab>

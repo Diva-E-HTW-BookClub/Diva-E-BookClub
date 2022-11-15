@@ -18,8 +18,9 @@ interface ClubCardProps {
     location: string
 }
 
-export const ClubCard: React.FC<ClubCardProps> = ({name, member,date, time, location}: ClubCardProps) => {
-    return (<IonCard>
+export const ClubCard: React.FC<ClubCardProps> = ({ name, member, date, time, location }: ClubCardProps) => {
+    return (
+        <IonCard>
             <IonGrid>
                 <IonRow>
                     <IonCol size="4">
