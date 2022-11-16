@@ -15,6 +15,7 @@ import HomeTab from './pages/HomeTab';
 import ClubsTab from './pages/ClubsTab';
 import ProfileTab from './pages/ProfileTab';
 import CreateClubPage from './pages/CreateClubPage';
+import AddDiscussion from './pages/AddDiscussion';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -35,6 +36,7 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
+
 setupIonicReact();
 
 const App: React.FC = () => (
@@ -50,6 +52,9 @@ const App: React.FC = () => (
           </Route>
           <Route exact path="/clubs/create">
             <CreateClubPage />
+          </Route>
+          <Route exact path="/AddDiscussion">
+            <AddDiscussion />
           </Route>
           <Route path="/profile">
             <ProfileTab />
