@@ -15,6 +15,7 @@ import HomeTab from './pages/HomeTab';
 import ClubsTab from './pages/ClubsTab';
 import ProfileTab from './pages/ProfileTab';
 import CreateClubPage from './pages/CreateClubPage';
+import Agenda from './pages/Agenda';
 import ClubPage from './pages/ClubPage';
 import AddDiscussion from './pages/AddDiscussion';
 
@@ -62,6 +63,9 @@ const App: React.FC = () => (
           </Route>
           <Route path="/profile">
             <ProfileTab />
+          </Route>
+          <Route path="/agenda">
+            <Agenda />
           </Route>
           <Route exact path="/">
             <Redirect to="/home" />
