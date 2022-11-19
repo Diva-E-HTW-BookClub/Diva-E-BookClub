@@ -31,6 +31,10 @@ The complete installation including the following requirements is explained unde
 
 If there is a problem with running this command on Windows try [this](https://techoverflow.net/2020/06/11/was-tun-bei-angular-ng-die-datei-cusers-appdataroamingnpmng-ps1-kann-nicht-geladen-werden-da-die-ausfuehrung-von-skripts-auf-diesem-system-deaktiviert-ist/?lang=de).
 
+If yor get the message "waiting for scripts" run the command `npm run start` instead of `ionic serve`.
+
+
+
 ### Install for Android Studio
 
 **Note**: Development of Ionic Apps is not recommended in Android Studio! It should only be used to build and run for the native Android platform.
