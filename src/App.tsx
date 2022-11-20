@@ -15,6 +15,7 @@ import HomeTab from './pages/HomeTab';
 import ClubsTab from './pages/ClubsTab';
 import ProfileTab from './pages/ProfileTab';
 import CreateClubPage from './pages/CreateClubPage';
+import ClubPage from './pages/ClubPage';
 import AddDiscussion from './pages/AddDiscussion';
 
 /* Core CSS required for Ionic components to work properly */
@@ -52,6 +53,9 @@ const App: React.FC = () => (
           </Route>
           <Route exact path="/clubs/create">
             <CreateClubPage />
+          </Route>
+          <Route exact path="/clubs/clubId">
+            <ClubPage />
           </Route>
           <Route exact path="/AddDiscussion">
             <AddDiscussion />

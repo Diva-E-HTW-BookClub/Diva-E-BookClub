@@ -54,7 +54,7 @@ const CreateClubPage: React.FC = () => {
                 <IonToolbar>
                     <IonTitle>New Club</IonTitle>
                     <IonButtons slot="end">
-                        <IonButton href="/clubs" color="primary" >Create</IonButton>
+                        <IonButton href="/clubs/clubId" color="primary" >Create</IonButton>
                     </IonButtons>
                 </IonToolbar>
             </IonHeader>
