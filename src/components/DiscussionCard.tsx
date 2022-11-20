@@ -1,44 +1,52 @@
 import {
     IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardSubtitle,
-    IonCardTitle,
+    IonIcon,
     IonCol,
     IonGrid,
-    IonImg,
-    IonRow
+    IonRow,
+    IonButton
+
 } from "@ionic/react";
+import { peopleCircle } from "ionicons/icons";
 
 interface DiscussionCardProps {
-    name: string,
+    chapter: string,
     member: number,
     date: string,
     time: string,
-    location: string,
-    chapter : string
+    location: string
 }
 
-export const DiscussionCard: React.FC<DiscussionCardProps> = ({ name, member, date, time, location, chapter }: DiscussionCardProps) => {
+export const DiscussionCard: React.FC<DiscussionCardProps> = ({ chapter, member, date, time, location }: DiscussionCardProps) => {
     return (
         <IonCard>
             <IonGrid>
                 <IonRow>
                     <IonCol size="4">
-                        <IonImg alt="Clean Code" src="https://m.media-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg" />
+                        {chapter}<br></br>
+                        {date}
                     </IonCol>
-                    <IonCol size="8">
-                        <IonCardHeader>
-                            <IonCardTitle>{name}</IonCardTitle>
-                            <IonCardSubtitle>{member} people</IonCardSubtitle>
-                        </IonCardHeader>
-                        <IonCardContent>
-                            Next discussion<br />
-                            {chapter}<br />
-                            {time}<br />
-                            {date}<br />
-                            {location}
-                        </IonCardContent>
+
+                    <IonCol size="4">
+                        <IonIcon icon={peopleCircle}></IonIcon>
+                        {member}
+                    </IonCol>
+
+                    <IonCol size="4">
+                        {time} <br></br>
+                        {location}
+                    </IonCol>
+                </IonRow>
+
+                <IonRow>
+                    <IonCol size="4">
+                        <IonButton>Outline</IonButton>
+                    </IonCol>
+                    <IonCol size="4">
+                        <IonButton>Comments</IonButton>
+                    </IonCol>
+                    <IonCol size="4">
+                        <IonButton>Edit</IonButton>
                     </IonCol>
                 </IonRow>
             </IonGrid>

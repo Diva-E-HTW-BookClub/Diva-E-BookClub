@@ -25,6 +25,7 @@ import './ClubPage.css';
 import { calendar, documents } from 'ionicons/icons';
 import { useState } from 'react';
 import { DiscussionCard } from "../components/DiscussionCard";
+import { ResourceCard } from "../components/ResourceCard";
 
 const ClubPage: React.FC = () => {
     let clubName = "Diva-e's Reading Club";
@@ -82,7 +83,7 @@ const ClubPage: React.FC = () => {
                             <IonCol size="4">
                                 <IonImg alt={bookTitle} src={bookCoverImg} />
                             </IonCol>
-                            <IonCol size="8">
+                            <IonCol size="6">
                                 <IonCardHeader>
                                     <IonCardTitle>{bookTitle}</IonCardTitle>
                                     <IonCardSubtitle>{bookAuthor}</IonCardSubtitle>
@@ -90,10 +91,10 @@ const ClubPage: React.FC = () => {
                                 <IonCardContent>
                                     <h3>{bookCurrentChapter}</h3>
                                     <h3>{clubParticipants}/{clubParticipantsMax}</h3>
+                                    <IonButton>Edit</IonButton>
                                 </IonCardContent>
                             </IonCol>
                         </IonRow>
-                        <IonButton>Edit</IonButton>
                     </IonGrid>
 
                 </IonCard>
@@ -112,8 +113,8 @@ const ClubPage: React.FC = () => {
                         return (
                             <IonItem key={index}>
                                 { selectedSegment === "calendar"
-                                    ? <DiscussionCard name={"Diva-E's BookClub"} member={3} date={"20.10.2022"} time={"13:00 - 14:00"} location={"Raum Gute Stube"} chapter={"Chapter 1"} />
-                                    : <DiscussionCard name={"Diva-E's Resource"} member={3} date={"20.10.2022"} time={"13:00 - 14:00"} location={"Raum Gute Stube"} chapter={"Chapter 1"} />
+                                    ? <DiscussionCard chapter={"Diva-E's BookClub"} member={3} date={"20.10.2022"} time={"13:00 - 14:00"} location={"Raum Gute Stube"}/>
+                                    : <ResourceCard title={"Diva-E's Resource"} date={"12.12.2022"} type={"Link"} />
                                 }
                             </IonItem>
                         )
