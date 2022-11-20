@@ -6,6 +6,8 @@ import {
     IonInput,
     IonButton,
 } from '@ionic/react';
+import { createUserWithEmailAndPassword, getAuth,  } from 'firebase/auth';
+import { registerUser } from '../firebaseFunctions'
 import { useState } from 'react';
 
 const RegisterPage: React.FC = () => {
@@ -13,8 +15,9 @@ const RegisterPage: React.FC = () => {
     const [password, setPassword] = useState('')
     const [confirmedPassword, setConfirmedPassword] = useState('')
 
-    function registerUser() {
-        console.log(email, password, confirmedPassword)
+    async function register() {
+        const res = await registerUser(email, password)
+        console.log(res)
     }
     return (
         <IonPage>
@@ -36,7 +39,7 @@ const RegisterPage: React.FC = () => {
                         placeholder='confirm password' 
                         onIonChange={(e: any) => setConfirmedPassword(e.target.value)}>        
                 </IonInput>
-                <IonButton onClick={registerUser}>Register</IonButton>
+                <IonButton onClick={register}>Register</IonButton>
 
                 <p> Already have an account? <IonButton routerLink="/login">Login</IonButton> </p>
             </IonContent>

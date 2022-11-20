@@ -12,13 +12,7 @@ const firebaseConfig = {
   measurementId: "G-XMMQYQLYFT"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
 
-// Functions
-
-async function registerUser(email:string, password: string) {
-
-
-}
- 
+export { firebaseApp }
