@@ -1,4 +1,4 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton } from '@ionic/react';
 import './ProfileTab.css';
 
 const ProfileTab: React.FC = () => {
@@ -10,11 +10,14 @@ const ProfileTab: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle size="large">Profile</IonTitle>
           </IonToolbar>
         </IonHeader>
+        <IonButton routerLink="/login">Login</IonButton>
+        <IonButton routerLink="/register" color="secondary">Register</IonButton>
       </IonContent>
     </IonPage>
   );

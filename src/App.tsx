@@ -15,6 +15,8 @@ import HomeTab from './pages/HomeTab';
 import ClubsTab from './pages/ClubsTab';
 import ProfileTab from './pages/ProfileTab';
 import CreateClubPage from './pages/CreateClubPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import AddDiscussion from './pages/AddDiscussion';
 
 /* Core CSS required for Ionic components to work properly */
@@ -44,6 +46,12 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
+          <Route exact path="/login" >
+            <LoginPage/>
+          </Route>
+          <Route exact path="/register" >
+            <RegisterPage/>
+          </Route>
           <Route exact path="/home">
             <HomeTab />
           </Route>
