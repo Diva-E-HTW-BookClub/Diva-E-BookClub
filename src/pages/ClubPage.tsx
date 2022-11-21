@@ -99,7 +99,7 @@ const ClubPage: React.FC = () => {
 
                 </IonCard>
 
-                <IonSegment value="calendar">
+                <IonSegment value={selectedSegment}>
                     <IonSegmentButton value="calendar" onClick={() => setSelectedSegment("calendar")}>
                         <IonIcon icon={calendar}></IonIcon>
                     </IonSegmentButton>
