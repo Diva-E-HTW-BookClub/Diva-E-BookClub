@@ -17,6 +17,8 @@ import ProfileTab from './pages/ProfileTab';
 import CreateClubPage from './pages/CreateClubPage';
 import ClubPage from './pages/ClubPage';
 import AddDiscussion from './pages/AddDiscussion';
+import SignUp from './pages/SignUp'
+
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -62,6 +64,9 @@ const App: React.FC = () => (
           </Route>
           <Route path="/profile">
             <ProfileTab />
+          </Route>
+          <Route path="/SignUp">
+            <SignUp />
           </Route>
           <Route exact path="/">
             <Redirect to="/home" />
