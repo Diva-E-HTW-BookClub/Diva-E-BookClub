@@ -7,7 +7,7 @@ import {
     IonButton
 
 } from "@ionic/react";
-import { peopleCircle } from "ionicons/icons";
+import {peopleCircle} from "ionicons/icons";
 
 interface DiscussionCardProps {
     chapter: string,
@@ -17,7 +17,13 @@ interface DiscussionCardProps {
     location: string
 }
 
-export const DiscussionCard: React.FC<DiscussionCardProps> = ({ chapter, member, date, time, location }: DiscussionCardProps) => {
+export const DiscussionCard: React.FC<DiscussionCardProps> = ({
+                                                                  chapter,
+                                                                  member,
+                                                                  date,
+                                                                  time,
+                                                                  location
+                                                              }: DiscussionCardProps) => {
     return (
         <IonCard>
             <IonGrid>
@@ -40,7 +46,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({ chapter, member,
 
                 <IonRow>
                     <IonCol size="4">
-                        <IonButton>Outline</IonButton>
+                        <IonButton routerLink="/agenda">Outline</IonButton>
                     </IonCol>
                     <IonCol size="4">
                         <IonButton>Comments</IonButton>

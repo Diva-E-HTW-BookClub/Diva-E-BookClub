@@ -1,16 +1,16 @@
-import { Redirect, Route } from 'react-router-dom';
+import {Redirect, Route} from 'react-router-dom';
 import {
-  IonApp,
-  IonIcon,
-  IonLabel,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
-  setupIonicReact
+    IonApp,
+    IonIcon,
+    IonLabel,
+    IonRouterOutlet,
+    IonTabBar,
+    IonTabButton,
+    IonTabs,
+    setupIonicReact
 } from '@ionic/react';
-import { IonReactRouter } from '@ionic/react-router';
-import { homeSharp, chatbubblesSharp, personSharp } from 'ionicons/icons';
+import {IonReactRouter} from '@ionic/react-router';
+import {homeSharp, chatbubblesSharp, personSharp} from 'ionicons/icons';
 import HomeTab from './pages/HomeTab';
 import ClubsTab from './pages/ClubsTab';
 import ProfileTab from './pages/ProfileTab';
@@ -41,52 +41,52 @@ import './theme/variables.css';
 setupIonicReact();
 
 const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path="/home">
-            <HomeTab />
-          </Route>
-          <Route exact path="/clubs">
-            <ClubsTab />
-          </Route>
-          <Route exact path="/clubs/create">
-            <CreateClubPage />
-          </Route>
-          <Route exact path="/clubs/clubId">
-            <ClubPage />
-          </Route>
-          <Route exact path="/AddDiscussion">
-            <AddDiscussion />
-          </Route>
-          <Route path="/profile">
-            <ProfileTab />
-          </Route>
-          <Route path="/agenda">
-            <Agenda />
-          </Route>
-          <Route exact path="/">
-            <Redirect to="/home" />
-          </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="home" href="/home">
-            <IonIcon icon={homeSharp} />
-            <IonLabel>Home</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="clubs" href="/clubs">
-            <IonIcon icon={chatbubblesSharp} />
-            <IonLabel>Clubs</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="profile" href="/profile">
-            <IonIcon icon={personSharp} />
-            <IonLabel>Profile</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
+    <IonApp>
+        <IonReactRouter>
+            <IonTabs>
+                <IonRouterOutlet>
+                    <Route exact path="/home">
+                        <HomeTab/>
+                    </Route>
+                    <Route exact path="/clubs">
+                        <ClubsTab/>
+                    </Route>
+                    <Route exact path="/clubs/create">
+                        <CreateClubPage/>
+                    </Route>
+                    <Route exact path="/clubs/clubId">
+                        <ClubPage/>
+                    </Route>
+                    <Route exact path="/AddDiscussion">
+                        <AddDiscussion/>
+                    </Route>
+                    <Route path="/profile">
+                        <ProfileTab/>
+                    </Route>
+                    <Route path="/agenda">
+                        <Agenda/>
+                    </Route>
+                    <Route exact path="/">
+                        <Redirect to="/home"/>
+                    </Route>
+                </IonRouterOutlet>
+                <IonTabBar slot="bottom">
+                    <IonTabButton tab="home" href="/home">
+                        <IonIcon icon={homeSharp}/>
+                        <IonLabel>Home</IonLabel>
+                    </IonTabButton>
+                    <IonTabButton tab="clubs" href="/clubs">
+                        <IonIcon icon={chatbubblesSharp}/>
+                        <IonLabel>Clubs</IonLabel>
+                    </IonTabButton>
+                    <IonTabButton tab="profile" href="/profile">
+                        <IonIcon icon={personSharp}/>
+                        <IonLabel>Profile</IonLabel>
+                    </IonTabButton>
+                </IonTabBar>
+            </IonTabs>
+        </IonReactRouter>
+    </IonApp>
 );
 
 export default App;
