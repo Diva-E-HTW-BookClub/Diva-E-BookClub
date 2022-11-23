@@ -1,11 +1,30 @@
 import { IonToast } from '@ionic/core/components';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { NONAME } from 'dns';
+import { onAuthStateChanged, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, User } from 'firebase/auth';
+import { useState } from 'react';
 import { firebaseApp } from './firebaseConfig';
+
+const auth = getAuth()
+
+export var currentUser: string = ""
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/firebase.User
+    const uid = user.uid;
+    // ...
+    console.log("signed in")
+  } else {
+    // User is signed out
+    // ...
+    console.log("not signed in")
+  }
+});
 
 
 async function registerUser(email: string, password: string) {
     const auth = getAuth(firebaseApp);
-  
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in 
@@ -25,13 +44,10 @@ async function registerUser(email: string, password: string) {
 
 async function loginUser(email:string, password: string) {
     const auth = getAuth(firebaseApp);
-
     signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
-    
-        
     })
     .catch((error) => {
         console.log(error.message)
@@ -42,4 +58,14 @@ async function loginUser(email:string, password: string) {
     });
 
 }
-export { registerUser, loginUser }
+
+async function logoutUser() {
+  const auth = getAuth(firebaseApp);
+  signOut(auth).then(() => {
+    //Success
+  }).catch((error) => {
+    //Failed with error
+  });
+}
+
+export { registerUser, loginUser, logoutUser }
