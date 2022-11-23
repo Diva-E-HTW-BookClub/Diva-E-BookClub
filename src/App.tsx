@@ -2,7 +2,7 @@ import {Redirect, Route} from 'react-router-dom';
 import {
     IonApp,
     IonIcon,
-    IonLabel,
+    IonLabel, IonNav,
     IonRouterOutlet,
     IonTabBar,
     IonTabButton,
