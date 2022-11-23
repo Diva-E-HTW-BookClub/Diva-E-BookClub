@@ -20,32 +20,34 @@ import { useState } from 'react';
 import { BookCard } from "../components/BookCard";
 
 const CreateClubPage: React.FC = () => {
-    const [data, setData] = useState<string[]>([]);
+    const [data, setData] = useState<any[]>([]);
     const [selectedBookIndex, setSelectedBookIndex] = useState<number>();
 
-    const pushData = () => {
-        const max = data.length + 20;
-        const min = max - 20;
-        const newData = [];
-        for (let i = min; i < max; i++) {
-            newData.push('' + i);
-        }
-
-        setData([
-            ...data,
-            ...newData
-        ]);
-    }
-
-    const loadData = (ev: any) => {
+    const loadData = (event: any) => {
         setTimeout(() => {
-            pushData();
-            ev.target.complete();
+            fetch("https://openlibrary.org/search.json?q=Clean Code&fields=title,author_name,cover_i&limit=20&offset=" + data.length)
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        setData([
+                            ...data,
+                            ...result.docs
+                        ]);
+                        if (event != null) {
+                            // needed to make the infinite scroll work
+                            event.target.complete()
+                        }
+                    },
+                    (error) => {
+
+                    }
+                )
         }, 500);
     }
 
     useIonViewWillEnter(() => {
-        pushData();
+        // load data without calling event.target.complete()
+        loadData(null);
     });
 
     return (
@@ -82,7 +84,7 @@ const CreateClubPage: React.FC = () => {
                     {data.map((item, index) => {
                         return (
                             <IonItem key={index} onClick={() => setSelectedBookIndex(index)}>
-                                <BookCard image={"https://m.media-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg"} title={"Clean code"} author={"Robert C. Martin"} selected={selectedBookIndex === index} />
+                                <BookCard image={"https://covers.openlibrary.org/b/id/" + String(item.cover_i) + "-M.jpg"} title={item.title} author={item.author_name ? item.author_name[0] : ""} selected={selectedBookIndex === index} />
                             </IonItem>
                         )
                     })}
@@ -92,7 +94,6 @@ const CreateClubPage: React.FC = () => {
                     <IonInfiniteScrollContent loadingSpinner="bubbles">
                     </IonInfiniteScrollContent>
                 </IonInfiniteScroll>
-
             </IonContent>
         </IonPage>
     );
