@@ -20,6 +20,7 @@ import ClubPage from './pages/ClubPage';
 import AddDiscussion from './pages/AddDiscussion';
 import AddResource from './pages/AddResource';
 import EditResource from './pages/EditResource';
+import Start from "./pages/Start";
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -40,7 +41,6 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import './theme/general.css';
-import Start from "./pages/Start";
 
 setupIonicReact();
 
@@ -62,10 +62,10 @@ const App: React.FC = () => (
                         <ClubPage/>
                     </Route>
                     <Route exact path="/resource/add/">
-                        <AddResource />
+                        <AddResource/>
                     </Route>
                     <Route exact path="/resource/edit/">
-                        <EditResource />
+                        <EditResource/>
                     </Route>
                     <Route exact path="/AddDiscussion">
                         <AddDiscussion/>
