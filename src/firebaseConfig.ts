@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore/lite'
+import { getFirestore } from "firebase/firestore";
 
 // TODO: Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
@@ -12,7 +12,10 @@ const firebaseConfig = {
   measurementId: "G-XMMQYQLYFT"
 };
 
+// Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
-const db = getFirestore(firebaseApp);
 
-export { firebaseApp }
+// Initialize Cloud Firestore and get a reference to the service
+const firebaseDB = getFirestore(firebaseApp);
+
+export { firebaseApp, firebaseDB}
