@@ -2,7 +2,7 @@ import {Redirect, Route} from 'react-router-dom';
 import {
     IonApp,
     IonIcon,
-    IonLabel,
+    IonLabel, IonNav,
     IonRouterOutlet,
     IonTabBar,
     IonTabButton,
@@ -22,6 +22,7 @@ import ClubPage from './pages/ClubPage';
 import AddDiscussion from './pages/AddDiscussion';
 import AddResource from './pages/AddResource';
 import EditResource from './pages/EditResource';
+import Start from "./pages/Start";
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -69,10 +70,10 @@ const App: React.FC = () => (
                         <ClubPage/>
                     </Route>
                     <Route exact path="/resource/add/">
-                        <AddResource />
+                        <AddResource/>
                     </Route>
                     <Route exact path="/resource/edit/">
-                        <EditResource />
+                        <EditResource/>
                     </Route>
                     <Route exact path="/AddDiscussion">
                         <AddDiscussion/>
@@ -82,6 +83,9 @@ const App: React.FC = () => (
                     </Route>
                     <Route path="/agenda">
                         <Agenda/>
+                    </Route>
+                    <Route path="/start">
+                        <IonNav root={() => <Start/>}></IonNav>;
                     </Route>
                     <Route exact path="/">
                         <Redirect to="/home"/>
