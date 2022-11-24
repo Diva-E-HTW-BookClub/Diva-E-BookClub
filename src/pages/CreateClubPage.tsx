@@ -18,6 +18,8 @@ import {
 import './CreateClubPage.css';
 import { useState } from 'react';
 import { BookCard } from "../components/BookCard";
+import { createBookClubDocument } from '../firebaseBookClub';
+import { createDiscussionDocument } from '../firebaseDiscussions';
 
 const CreateClubPage: React.FC = () => {
     const [data, setData] = useState<string[]>([]);
@@ -48,6 +50,25 @@ const CreateClubPage: React.FC = () => {
         pushData();
     });
 
+    async function test() {
+        var data = {
+            Book : 'Clean Code',
+            description : 'Test Description',
+            discussionIds : [],
+            location : 'Raum Gute Stube!',
+            memberCount : 0,
+            time : Date(),
+            title : 'Divaes Book Club',
+        }
+        createBookClubDocument(data)
+
+        var data2 = {
+            location : 'Zoom',
+            time : Date()
+        }
+        createDiscussionDocument("VBHmuPXQaCW1A5bDAAIK", data2)
+    }
+
     return (
         <IonPage>
             <IonHeader>
@@ -59,6 +80,7 @@ const CreateClubPage: React.FC = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent fullscreen>
+                <IonButton onClick={test}>create test club</IonButton>
                 <IonHeader collapse="condense">
                     <IonToolbar>
                         <IonTitle size="large">New Club</IonTitle>

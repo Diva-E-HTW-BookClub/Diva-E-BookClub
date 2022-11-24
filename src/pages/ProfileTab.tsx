@@ -1,5 +1,6 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton } from '@ionic/react';
-import { logoutUser } from '../firebaseFunctions';
+import { logoutUser } from '../firebaseAuth';
+import { getBookClubDiscussions } from '../firebaseBookClub';
 import './ProfileTab.css';
 
 
@@ -7,8 +8,8 @@ const ProfileTab: React.FC = () => {
 
   async function login() {
     const res = logoutUser()
-}
-
+  }
+  
   return (
     <IonPage>
       <IonHeader>
