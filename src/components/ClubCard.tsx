@@ -18,13 +18,14 @@ interface ClubCardProps {
     location: string
 }
 
-export const ClubCard: React.FC<ClubCardProps> = ({ name, member, date, time, location }: ClubCardProps) => {
+export const ClubCard: React.FC<ClubCardProps> = ({name, member, date, time, location}: ClubCardProps) => {
     return (
-        <IonCard href="/clubs/clubId">
+        <IonCard routerLink="/clubs/clubId">
             <IonGrid>
                 <IonRow>
                     <IonCol size="4">
-                        <IonImg alt="Clean Code" src="https://m.media-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg" />
+                        <IonImg alt="Clean Code"
+                                src="https://m.media-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg"/>
                     </IonCol>
                     <IonCol size="8">
                         <IonCardHeader>
@@ -32,9 +33,9 @@ export const ClubCard: React.FC<ClubCardProps> = ({ name, member, date, time, lo
                             <IonCardSubtitle>{member} people</IonCardSubtitle>
                         </IonCardHeader>
                         <IonCardContent>
-                            Next discussion<br />
-                            {time}<br />
-                            {date}<br />
+                            Next discussion<br/>
+                            {time}<br/>
+                            {date}<br/>
                             {location}
                         </IonCardContent>
                     </IonCol>
