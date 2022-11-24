@@ -4,26 +4,30 @@ import { updateBookClubDocument } from "./firebaseBookClub";
 import { firebaseDB } from "./firebaseConfig";
 
 
-
+// Creates a discussion object with data. The discussion object
 async function createDiscussionDocument(bookClubId: string, data: any) {
-    
+
+    data.bookClubId = bookClubId
     var res = await addDoc(collection(firebaseDB, 'discussions'), data)
+   
     if (res){
-        var updateData = {
-            discussionIds: arrayUnion(bookClubId)
-        }
-        updateBookClubDocument(bookClubId, updateData)
-    }
+        const discussionDocument = doc(firebaseDB, 'bookClubs', String(bookClubId))
+        updateBookClubDocument(discussionDocument.id, {
+            discussionIds: arrayUnion(res.id)
+        })
+           
+    };
+    
 }
   
-async function updateDiscussionDocument(id: string, data:any ) {
-    const discussionDocument = doc(firebaseDB, 'discussions', String(id))
+async function updateDiscussionDocument(discussionId: string, data:any ) {
+    const discussionDocument = doc(firebaseDB, 'discussions', String(discussionId))
   
     updateDoc(discussionDocument, data)
 }
   
-async function deleteDiscussionDocument(id: string) {
-    const discussionDocument = doc(firebaseDB, 'discussions', String(id))
+async function deleteDiscussionDocument(discussionId: string) {
+    const discussionDocument = doc(firebaseDB, 'discussions', String(discussionId))
   
     deleteDoc(discussionDocument)
 }

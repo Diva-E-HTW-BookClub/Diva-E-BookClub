@@ -18,9 +18,7 @@ import {
 import './CreateClubPage.css';
 import { useState } from 'react';
 import { BookCard } from "../components/BookCard";
-import { createBookClubDocument } from '../firebase/firebaseBookClub';
-import { createDiscussionDocument } from '../firebase/firebaseDiscussions';
-
+import { incrementBookClubMemberCount } from '../firebase/firebaseBookClub';
 
 const CreateClubPage: React.FC = () => {
     const [data, setData] = useState<string[]>([]);
@@ -52,22 +50,7 @@ const CreateClubPage: React.FC = () => {
     });
 
     async function test() {
-        var data = {
-            Book : 'Clean Code',
-            description : 'Test Description',
-            discussionIds : [],
-            location : 'Raum Gute Stube!',
-            memberCount : 0,
-            time : Date(),
-            title : 'Divaes Book Club',
-        }
-        createBookClubDocument(data)
-
-        var data2 = {
-            location : 'Zoom',
-            time : Date()
-        }
-        createDiscussionDocument("65fwSUznCXUUlrNXxNZ9", data2)
+        incrementBookClubMemberCount("HhIpIHAI7xUrRoU1EZUI", 5)
     }
 
     return (

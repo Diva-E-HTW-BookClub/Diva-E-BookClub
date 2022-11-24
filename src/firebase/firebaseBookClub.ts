@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, increment, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { firebaseDB } from "./firebaseConfig";
 
 
@@ -18,16 +18,28 @@ async function createBookClubDocument(data: any) {
     addDoc(collection(firebaseDB, 'bookClubs'), data)
 }
 
-async function updateBookClubDocument(id: string, data: any) {
-    const bookClubDocument = doc(firebaseDB, 'bookClubs', String(id))
+async function updateBookClubDocument(bookClubId: string, data: any) {
+    const bookClubDocument = doc(firebaseDB, 'bookClubs', String(bookClubId))
 
     updateDoc(bookClubDocument, data);
 }
   
-async function deleteBookClubDocument(id: string) {
-    const bookClubDocument = doc(firebaseDB, 'bookClubs', String(id))
+async function deleteBookClubDocument(bookClubId: string) {
+    const bookClubDocument = doc(firebaseDB, 'bookClubs', String(bookClubId))
 
     deleteDoc(bookClubDocument)
+}
+
+//Increments a given BookClub's memberCount by incrementBy
+//Supports negative numbers -> decrease count
+async function incrementBookClubMemberCount(bookClubId: string, incrementBy: number){
+
+    console.log("starting")
+    const bookClubDocument = doc(firebaseDB, 'bookClubs', String(bookClubId))
+
+    await updateDoc(bookClubDocument, {
+        memberCount: increment(incrementBy)
+    });
 }
 
 async function getBookClubDiscussions(id: string) {
@@ -42,4 +54,4 @@ async function getBookClubDiscussions(id: string) {
 
 
 
-export { createBookClubDocument, updateBookClubDocument, deleteBookClubDocument, getBookClubDiscussions }
+export { createBookClubDocument, updateBookClubDocument, deleteBookClubDocument, incrementBookClubMemberCount, getBookClubDiscussions }
