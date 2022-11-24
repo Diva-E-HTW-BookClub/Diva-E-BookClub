@@ -1,6 +1,5 @@
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton } from '@ionic/react';
-import { logoutUser } from '../firebaseAuth';
-import { getBookClubDiscussions } from '../firebaseBookClub';
+import { logoutUser } from '../firebase/firebaseAuth';
 import './ProfileTab.css';
 
 

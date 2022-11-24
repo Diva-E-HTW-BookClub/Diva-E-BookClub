@@ -8,7 +8,7 @@ import {
     useIonToast
 } from '@ionic/react';
 import { useState } from 'react';
-import { loginUser } from '../firebaseAuth';
+import { loginUser } from '../firebase/firebaseAuth';
 
 
 const LoginPage: React.FC = () => {

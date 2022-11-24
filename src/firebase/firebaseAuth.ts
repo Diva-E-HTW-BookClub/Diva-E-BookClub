@@ -4,7 +4,7 @@ import { onAuthStateChanged, createUserWithEmailAndPassword, getAuth, signInWith
 import { addDoc, deleteDoc, doc, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { firebaseApp, firebaseDB } from './firebaseConfig';
-import AddDiscussion from './pages/AddDiscussion';
+import AddDiscussion from '../pages/AddDiscussion';
 
 const auth = getAuth()
 
@@ -16,6 +16,7 @@ onAuthStateChanged(auth, (user) => {
     // https://firebase.google.com/docs/reference/js/firebase.User
     const uid = user.uid;
     // ...
+    //Redux - Statemanager for react
     console.log("signed in")
   } else {
     // User is signed out

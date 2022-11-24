@@ -13,7 +13,7 @@ import { firebaseDB } from "./firebaseConfig";
 //   time : Date
 //   title : String
 // }
-async function createBookClubDocument(data: any) {
+async function createBookClubDocument(data: any) {   
     
     addDoc(collection(firebaseDB, 'bookClubs'), data)
 }

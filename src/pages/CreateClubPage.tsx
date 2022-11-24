@@ -18,8 +18,9 @@ import {
 import './CreateClubPage.css';
 import { useState } from 'react';
 import { BookCard } from "../components/BookCard";
-import { createBookClubDocument } from '../firebaseBookClub';
-import { createDiscussionDocument } from '../firebaseDiscussions';
+import { createBookClubDocument } from '../firebase/firebaseBookClub';
+import { createDiscussionDocument } from '../firebase/firebaseDiscussions';
+
 
 const CreateClubPage: React.FC = () => {
     const [data, setData] = useState<string[]>([]);
@@ -66,7 +67,7 @@ const CreateClubPage: React.FC = () => {
             location : 'Zoom',
             time : Date()
         }
-        createDiscussionDocument("VBHmuPXQaCW1A5bDAAIK", data2)
+        createDiscussionDocument("65fwSUznCXUUlrNXxNZ9", data2)
     }
 
     return (
