@@ -38,6 +38,7 @@ const CreateClubPage: React.FC = () => {
                             event.target.complete()
                         }
                     },
+                    // catch errors for both fetch and res.json()
                     (error) => {
 
                     }

@@ -7,23 +7,25 @@ import {
     IonButton
 
 } from "@ionic/react";
-import {peopleCircle} from "ionicons/icons";
+import { peopleCircle } from "ionicons/icons";
 
 interface DiscussionCardProps {
     chapter: string,
     member: number,
     date: string,
     time: string,
-    location: string
+    location: string,
+    isModerator: boolean
 }
 
 export const DiscussionCard: React.FC<DiscussionCardProps> = ({
-                                                                  chapter,
-                                                                  member,
-                                                                  date,
-                                                                  time,
-                                                                  location
-                                                              }: DiscussionCardProps) => {
+    chapter,
+    member,
+    date,
+    time,
+    location,
+    isModerator
+}: DiscussionCardProps) => {
     return (
         <IonCard>
             <IonGrid>
@@ -52,7 +54,10 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
                         <IonButton>Comments</IonButton>
                     </IonCol>
                     <IonCol size="4">
-                        <IonButton>Edit</IonButton>
+                        {isModerator
+                            ? <IonButton>Edit</IonButton>
+                            : <IonButton>Join</IonButton>
+                        }
                     </IonCol>
                 </IonRow>
             </IonGrid>
