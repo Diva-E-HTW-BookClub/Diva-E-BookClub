@@ -43,6 +43,8 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 import './theme/general.css';
+import Comments from "./pages/Comments";
+import AddComment from "./pages/AddComment";
 
 setupIonicReact();
 
@@ -78,11 +80,17 @@ const App: React.FC = () => (
                     <Route exact path="/AddDiscussion">
                         <AddDiscussion/>
                     </Route>
-                    <Route path="/profile">
+                    <Route exact path="/profile">
                         <ProfileTab/>
                     </Route>
-                    <Route path="/agenda">
+                    <Route exact path="/agenda">
                         <Agenda/>
+                    </Route>
+                    <Route exact path="/comments">
+                        <Comments/>
+                    </Route>
+                    <Route exact path="/comments/addComment">
+                        <AddComment/>
                     </Route>
                     <Route path="/start">
                         <IonNav root={() => <Start/>}></IonNav>;
