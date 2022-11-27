@@ -93,7 +93,7 @@ const ClubsTab: React.FC = () => {
         </IonInfiniteScroll>
 
         <IonFab slot="fixed" vertical="bottom" horizontal="end">
-          <IonFabButton href="/clubs/create">
+          <IonFabButton routerLink="/clubs/create">
             <IonIcon icon={add}></IonIcon>
           </IonFabButton>
         </IonFab>

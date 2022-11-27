@@ -19,11 +19,11 @@ import {
     IonIcon,
     IonList,
     IonItem,
-    useIonViewWillEnter
+    useIonViewWillEnter, IonBackButton, IonButtons
 } from '@ionic/react';
 import './ClubPage.css';
 import { calendar, documents } from 'ionicons/icons';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { DiscussionCard } from "../components/DiscussionCard";
 import { ResourceCard } from "../components/ResourceCard";
 
@@ -68,6 +68,9 @@ const ClubPage: React.FC = () => {
         <IonPage>
             <IonHeader>
                 <IonToolbar>
+                    <IonButtons slot="start">
+                        <IonBackButton defaultHref="/clubs"/>
+                    </IonButtons>
                     <IonTitle>{clubName}</IonTitle>
                 </IonToolbar>
             </IonHeader>

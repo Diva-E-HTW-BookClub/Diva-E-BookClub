@@ -13,10 +13,10 @@ import {
     IonInfiniteScroll,
     IonInfiniteScrollContent,
     IonButtons,
-    useIonViewWillEnter
+    useIonViewWillEnter, IonBackButton
 } from '@ionic/react';
 import './CreateClubPage.css';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { BookCard } from "../components/BookCard";
 
 const CreateClubPage: React.FC = () => {
@@ -54,9 +54,12 @@ const CreateClubPage: React.FC = () => {
         <IonPage>
             <IonHeader>
                 <IonToolbar>
+                    <IonButtons slot="start">
+                        <IonBackButton defaultHref="/clubs"/>
+                    </IonButtons>
                     <IonTitle>New Club</IonTitle>
                     <IonButtons slot="end">
-                        <IonButton href="/clubs/clubId" color="primary" >Create</IonButton>
+                        <IonButton routerLink="/clubs/clubId" color="primary" >Create</IonButton>
                     </IonButtons>
                 </IonToolbar>
             </IonHeader>
