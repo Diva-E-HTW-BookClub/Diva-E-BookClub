@@ -18,8 +18,8 @@ import {
     IonButton,
     IonIcon,
     IonList,
-    IonItem, 
-    IonBackButton, 
+    IonItem,
+    IonBackButton,
     IonButtons,
     IonFab,
     IonFabButton,
@@ -43,7 +43,7 @@ const ClubPage: React.FC = () => {
     const [data, setData] = useState<string[]>([]);
     const [selectedSegment, setSelectedSegment] = useState<string>("calendar");
     //replace isModerator by an API call for a users roll
-    const [isModerator, setIsModerator] = useState<boolean>(false);
+    const [isModerator, setIsModerator] = useState<boolean>(true);
 
     const pushData = () => {
         const max = data.length + 20;
@@ -133,11 +133,13 @@ const ClubPage: React.FC = () => {
                     })}
                 </IonList>
 
-                <IonFab slot="fixed" vertical="bottom" horizontal="end">
-                    <IonFabButton routerLink={selectedSegment === "calendar" ? "/discussions/add" : "/resources/add"}>
-                        <IonIcon icon={add}></IonIcon>
-                    </IonFabButton>
-                </IonFab>
+                {isModerator &&
+                    <IonFab slot="fixed" vertical="bottom" horizontal="end">
+                        <IonFabButton routerLink={selectedSegment === "calendar" ? "/discussions/add" : "/resources/add"}>
+                            <IonIcon icon={add}></IonIcon>
+                        </IonFabButton>
+                    </IonFab>}
+
             </IonContent>
         </IonPage>
     );
