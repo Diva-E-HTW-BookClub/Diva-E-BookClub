@@ -69,13 +69,13 @@ const App: React.FC = () => (
                     <Route exact path="/clubs/clubId">
                         <ClubPage/>
                     </Route>
-                    <Route exact path="/resource/add/">
+                    <Route exact path="/resources/add">
                         <AddResource/>
                     </Route>
-                    <Route exact path="/resource/edit/">
+                    <Route exact path="/resources/edit">
                         <EditResource/>
                     </Route>
-                    <Route exact path="/AddDiscussion">
+                    <Route exact path="/discussions/add">
                         <AddDiscussion/>
                     </Route>
                     <Route path="/profile">

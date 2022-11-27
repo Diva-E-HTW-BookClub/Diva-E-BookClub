@@ -19,10 +19,14 @@ import {
     IonIcon,
     IonList,
     IonItem,
-    useIonViewWillEnter, IonBackButton, IonButtons
+    IonBackButton,
+    IonButtons,
+    IonFab,
+    IonFabButton,
+    useIonViewWillEnter
 } from '@ionic/react';
 import './ClubPage.css';
-import { calendar, documents } from 'ionicons/icons';
+import { calendar, documents, add } from 'ionicons/icons';
 import React, { useState } from 'react';
 import { DiscussionCard } from "../components/DiscussionCard";
 import { ResourceCard } from "../components/ResourceCard";
@@ -38,6 +42,8 @@ const ClubPage: React.FC = () => {
 
     const [data, setData] = useState<string[]>([]);
     const [selectedSegment, setSelectedSegment] = useState<string>("calendar");
+    //replace isModerator by an API call for a users roll
+    const [isModerator, setIsModerator] = useState<boolean>(true);
 
     const pushData = () => {
         const max = data.length + 20;
@@ -69,7 +75,7 @@ const ClubPage: React.FC = () => {
             <IonHeader>
                 <IonToolbar>
                     <IonButtons slot="start">
-                        <IonBackButton defaultHref="/clubs"/>
+                        <IonBackButton defaultHref="/clubs" />
                     </IonButtons>
                     <IonTitle>{clubName}</IonTitle>
                 </IonToolbar>
@@ -94,7 +100,10 @@ const ClubPage: React.FC = () => {
                                 <IonCardContent>
                                     <h3>{bookCurrentChapter}</h3>
                                     <h3>{clubParticipants}/{clubParticipantsMax}</h3>
-                                    <IonButton>Edit</IonButton>
+                                    {isModerator
+                                        ? <IonButton>Edit</IonButton>
+                                        : <IonButton>Join</IonButton>
+                                    }
                                 </IonCardContent>
                             </IonCol>
                         </IonRow>
@@ -115,8 +124,8 @@ const ClubPage: React.FC = () => {
                     {data.map((item, index) => {
                         return (
                             <IonItem key={index}>
-                                { selectedSegment === "calendar"
-                                    ? <DiscussionCard chapter={"Diva-E's BookClub"} member={3} date={"20.10.2022"} time={"13:00 - 14:00"} location={"Raum Gute Stube"}/>
+                                {selectedSegment === "calendar"
+                                    ? <DiscussionCard chapter={"Diva-E's BookClub"} member={3} date={"20.10.2022"} time={"13:00 - 14:00"} location={"Raum Gute Stube"} isModerator={isModerator} />
                                     : <ResourceCard title={"Diva-E's Resource"} date={"12.12.2022"} type={"Link"} />
                                 }
                             </IonItem>
@@ -124,6 +133,12 @@ const ClubPage: React.FC = () => {
                     })}
                 </IonList>
 
+                {isModerator &&
+                    <IonFab slot="fixed" vertical="bottom" horizontal="end">
+                        <IonFabButton routerLink={selectedSegment === "calendar" ? "/discussions/add" : "/resources/add"}>
+                            <IonIcon icon={add}></IonIcon>
+                        </IonFabButton>
+                    </IonFab>}
 
             </IonContent>
         </IonPage>

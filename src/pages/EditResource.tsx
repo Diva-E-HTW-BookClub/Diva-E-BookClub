@@ -49,7 +49,7 @@ const AddDiscussion: React.FC = () => {
               <div className="divider"></div>
               <IonRow>
                 <IonCol size="4">
-                  <IonButton href="/clubs/clubId" className="cancel-button" >Cancel</IonButton>
+                  <IonButton routerLink="/clubs/clubId" className="cancel-button" >Cancel</IonButton>
                 </IonCol>
                 <IonCol size="4">
                   <IonButton className="delete-button">Delete</IonButton>
