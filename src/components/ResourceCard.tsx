@@ -34,7 +34,7 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ title, date, type }:
                     </IonCol>
 
                     <IonCol size="3">
-                        <IonButton href="/resources/edit">Edit</IonButton>
+                        <IonButton routerLink="/resources/edit">Edit</IonButton>
                     </IonCol>
                 </IonRow>
             </IonGrid>
