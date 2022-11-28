@@ -14,11 +14,10 @@ import {
   IonItem,
   IonLabel,
   IonInput,
-  IonButton
-} from '@ionic/react';
-import React, { useRef, useEffect, useState } from 'react';
-import './AddDiscussion.css';
-
+  IonButton,
+} from "@ionic/react";
+import React, { useRef, useEffect, useState } from "react";
+import "./AddDiscussion.css";
 
 const AddDiscussion: React.FC = () => {
   const [progress, setProgress] = useState(0);
@@ -43,7 +42,6 @@ const AddDiscussion: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-
         <IonCard>
           <div className="divider"></div>
           <IonGrid>
@@ -51,11 +49,11 @@ const AddDiscussion: React.FC = () => {
               <IonCardTitle>Select a date</IonCardTitle>
               <IonDatetime
                 presentation="date"
-
                 min="2022-03-01"
                 max="2022-05-31"
-
-              > </IonDatetime>
+              >
+                {" "}
+              </IonDatetime>
               <div className="divider"></div>
               <IonRow>
                 <IonCol size="5">
@@ -95,7 +93,11 @@ const AddDiscussion: React.FC = () => {
             </div>
           </IonGrid>
         </IonCard>
-        <IonProgressBar value={progress} type="indeterminate" color="warning"></IonProgressBar>
+        <IonProgressBar
+          value={progress}
+          type="indeterminate"
+          color="warning"
+        ></IonProgressBar>
       </IonContent>
     </IonPage>
   );

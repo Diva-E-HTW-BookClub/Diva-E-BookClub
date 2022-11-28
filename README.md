@@ -55,7 +55,7 @@ See [Development for Android](https://ionicframework.com/docs/developing/android
 
 This projects uses Prettier with ESLint. To manually format a single file use
 
-`npx prettier --write src/pages`
+`npx prettier --write src/directory/filename`
 
 to format all files run `npx prettier --write .`
 
