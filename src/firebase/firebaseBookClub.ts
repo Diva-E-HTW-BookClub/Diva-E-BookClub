@@ -41,7 +41,14 @@ async function incrementBookClubMemberCount(bookClubId: string, incrementBy: num
         memberCount: increment(incrementBy)
     });
 }
+async function getBookClubDocument(bookClubId:string) {
+    var bookClubDocument = doc(firebaseDB, 'bookClubs', String(bookClubId))
 
+    return bookClubDocument
+}
+
+
+// Geht durch alle discussions, vermutlich effizienter über den BookClub auf die discussions zu kommen
 async function getBookClubDiscussions(id: string) {
     const q = query(collection(firebaseDB, "discussions"), where("bookClubId", "==", id));
 
@@ -54,4 +61,4 @@ async function getBookClubDiscussions(id: string) {
 
 
 
-export { createBookClubDocument, updateBookClubDocument, deleteBookClubDocument, incrementBookClubMemberCount, getBookClubDiscussions }
+export { createBookClubDocument, updateBookClubDocument, deleteBookClubDocument, incrementBookClubMemberCount, getBookClubDocument, getBookClubDiscussions }
