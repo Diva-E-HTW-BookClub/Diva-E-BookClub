@@ -19,9 +19,9 @@ import {
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import "./ClubsTab.css";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { ClubCard } from "../components/ClubCard";
-import {searchBookClubs} from "../firebase/firebaseBookClub";
+import { searchBookClubs } from "../firebase/firebaseBookClub";
 
 const ClubsTab: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
@@ -68,15 +68,15 @@ const ClubsTab: React.FC = () => {
         <IonList lines="none">
           {data.map((object, index) => {
             return (
-                <IonItem key={object.id}>
-                  <ClubCard
-                      name={object.data.title}
-                      member={object.data.memberCount}
-                      date={object.data.date}
-                      time={object.data.time}
-                      location={object.data.location}
-                  />
-                </IonItem>
+              <IonItem key={object.id}>
+                <ClubCard
+                  name={object.data.title}
+                  member={object.data.memberCount}
+                  date={object.data.date}
+                  time={object.data.time}
+                  location={object.data.location}
+                />
+              </IonItem>
             );
           })}
         </IonList>
