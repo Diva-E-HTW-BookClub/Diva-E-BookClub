@@ -1,12 +1,13 @@
 # BookClub App – Frontend
 
-This Project is the Frontend part to our BookClub App. It is using TypeScript with the React and the Ionic Framework. 
+This Project is the Frontend part to our BookClub App. It is using TypeScript with the React and the Ionic Framework.
 
 ## How to checkout the Repository
 
 Run `git clone git@github.com:Diva-E-HTW-BookClub/Diva-E-BookClub.git` in the location where you want the project to be downloaded to.
 
 ## Documentation
+
 - Project Documentation (https://docs.google.com/document/d/1R817B2lcFqlVNvU6E1Da_vil-_8D892GBTSQCyfOS4Y/edit?usp=sharing)
 
 ## Requirements
@@ -36,8 +37,6 @@ If there is a problem with running this command on Windows try [this](https://te
 
 If yor get the message "waiting for scripts" run the command `npm run start` instead of `ionic serve`.
 
-
-
 ### Install for Android Studio
 
 **Note**: Development of Ionic Apps is not recommended in Android Studio! It should only be used to build and run for the native Android platform.
@@ -52,6 +51,20 @@ Run the App in Android Studio and it will be started on the emulator.
 
 See [Development for Android](https://ionicframework.com/docs/developing/android) for more information.
 
+## Formatting
+
+This projects uses Prettier with ESLint. To manually format a single file use
+
+`npx prettier --write src/pages`
+
+to format all files run `npx prettier --write .`
+
+If you are using VSCode you may want to install the prettier eslint extension or
+use prettier as the standard formatter for an on save formatting.
+
+**Please format the code before committing!** 
+By that we will only be seeing the necessary changes in the pull requests providing an easier time for reviewing.
+
 ## Helpful Sources
 
 - [Ionic Documentation](https://ionicframework.com/docs/)
@@ -62,5 +75,3 @@ Some Helpful Tutorials
 
 - [React Crash Course](https://youtu.be/Dorf8i6lCuk?t=2079)
 - [Ionic + React Tutorial](https://www.youtube.com/watch?v=_03VKmdrxV8&t=9186s)
-
-
