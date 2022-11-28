@@ -15,11 +15,11 @@ import {
   IonFab,
   IonFabButton,
   IonIcon,
-  useIonViewWillEnter
-} from '@ionic/react';
-import { add } from 'ionicons/icons';
-import './ClubsTab.css';
-import { useState } from 'react';
+  useIonViewWillEnter,
+} from "@ionic/react";
+import { add } from "ionicons/icons";
+import "./ClubsTab.css";
+import { useState } from "react";
 import { ClubCard } from "../components/ClubCard";
 
 const ClubsTab: React.FC = () => {
@@ -30,21 +30,18 @@ const ClubsTab: React.FC = () => {
     const min = max - 20;
     const newData = [];
     for (let i = min; i < max; i++) {
-      newData.push('' + i);
+      newData.push("" + i);
     }
 
-    setData([
-      ...data,
-      ...newData
-    ]);
-  }
+    setData([...data, ...newData]);
+  };
 
   const loadData = (ev: any) => {
     setTimeout(() => {
       pushData();
       ev.target.complete();
     }, 500);
-  }
+  };
 
   useIonViewWillEnter(() => {
     pushData();
@@ -81,15 +78,20 @@ const ClubsTab: React.FC = () => {
           {data.map((item, index) => {
             return (
               <IonItem key={index}>
-                <ClubCard name={"Diva-E's BookClub"} member={3} date={"20.10.2022"} time={"13:00 - 14:00"} location={"Raum Gute Stube"} />
+                <ClubCard
+                  name={"Diva-E's BookClub"}
+                  member={3}
+                  date={"20.10.2022"}
+                  time={"13:00 - 14:00"}
+                  location={"Raum Gute Stube"}
+                />
               </IonItem>
-            )
+            );
           })}
         </IonList>
 
         <IonInfiniteScroll onIonInfinite={loadData}>
-          <IonInfiniteScrollContent loadingSpinner="bubbles">
-          </IonInfiniteScrollContent>
+          <IonInfiniteScrollContent loadingSpinner="bubbles"></IonInfiniteScrollContent>
         </IonInfiniteScroll>
 
         <IonFab slot="fixed" vertical="bottom" horizontal="end">

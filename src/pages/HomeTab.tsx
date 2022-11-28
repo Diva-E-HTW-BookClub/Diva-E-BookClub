@@ -1,5 +1,11 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import './HomeTab.css';
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+} from "@ionic/react";
+import "./HomeTab.css";
 
 const HomeTab: React.FC = () => {
   return (
