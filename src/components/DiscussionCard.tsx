@@ -51,7 +51,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
                         <IonButton routerLink="/agenda">Outline</IonButton>
                     </IonCol>
                     <IonCol size="4">
-                        <IonButton>Comments</IonButton>
+                        <IonButton routerLink="/comments">Comments</IonButton>
                     </IonCol>
                     <IonCol size="4">
                         {isModerator
