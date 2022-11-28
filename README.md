@@ -1,6 +1,6 @@
 # BookClub App – Frontend
 
-This Project is the Frontend part to our BookClub App. It is using TypeScript with the React and the Ionic Framework. 
+This Project is the Frontend part to our BookClub App. It is using TypeScript with the React and the Ionic Framework.
 
 ## How to checkout the Repository
 
@@ -33,8 +33,6 @@ If there is a problem with running this command on Windows try [this](https://te
 
 If yor get the message "waiting for scripts" run the command `npm run start` instead of `ionic serve`.
 
-
-
 ### Install for Android Studio
 
 **Note**: Development of Ionic Apps is not recommended in Android Studio! It should only be used to build and run for the native Android platform.
@@ -59,5 +57,3 @@ Some Helpful Tutorials
 
 - [React Crash Course](https://youtu.be/Dorf8i6lCuk?t=2079)
 - [Ionic + React Tutorial](https://www.youtube.com/watch?v=_03VKmdrxV8&t=9186s)
-
-

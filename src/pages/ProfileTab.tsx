@@ -1,14 +1,19 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton } from '@ionic/react';
-import { logoutUser } from '../firebase/firebaseAuth';
-import './ProfileTab.css';
-
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+  IonButton,
+} from "@ionic/react";
+import { logoutUser } from "../firebase/firebaseAuth";
+import "./ProfileTab.css";
 
 const ProfileTab: React.FC = () => {
-
   async function login() {
-    const res = logoutUser()
+    const res = logoutUser();
   }
-  
+
   return (
     <IonPage>
       <IonHeader>
@@ -17,14 +22,15 @@ const ProfileTab: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle size="large">Profile</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonButton routerLink="/login">Login</IonButton>
-        <IonButton routerLink="/register" color="secondary">Register</IonButton>
+        <IonButton routerLink="/register" color="secondary">
+          Register
+        </IonButton>
         <IonButton onClick={login}>Logout</IonButton>
       </IonContent>
     </IonPage>
