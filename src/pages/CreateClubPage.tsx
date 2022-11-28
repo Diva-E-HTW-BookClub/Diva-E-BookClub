@@ -18,7 +18,11 @@ import {
 import "./CreateClubPage.css";
 import { useState } from "react";
 import { BookCard } from "../components/BookCard";
-import { incrementBookClubMemberCount } from "../firebase/firebaseBookClub";
+import {
+  getBookClubDocument,
+  incrementBookClubMemberCount,
+  searchBookClubs,
+} from "../firebase/firebaseBookClub";
 
 const CreateClubPage: React.FC = () => {
   const [data, setData] = useState<string[]>([]);
@@ -46,10 +50,6 @@ const CreateClubPage: React.FC = () => {
     pushData();
   });
 
-  async function test() {
-    incrementBookClubMemberCount("HhIpIHAI7xUrRoU1EZUI", 5);
-  }
-
   return (
     <IonPage>
       <IonHeader>
@@ -63,7 +63,6 @@ const CreateClubPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonButton onClick={test}>create test club</IonButton>
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle size="large">New Club</IonTitle>

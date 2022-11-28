@@ -6,19 +6,9 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   signOut,
-  User,
 } from "firebase/auth";
-import {
-  addDoc,
-  deleteDoc,
-  doc,
-  setDoc,
-  Timestamp,
-  updateDoc,
-} from "firebase/firestore";
-import { useState } from "react";
+
 import { firebaseApp, firebaseDB } from "./firebaseConfig";
-import AddDiscussion from "../pages/AddDiscussion";
 
 const auth = getAuth();
 

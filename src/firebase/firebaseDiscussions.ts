@@ -10,7 +10,14 @@ import {
 import { updateBookClubDocument } from "./firebaseBookClub";
 import { firebaseDB } from "./firebaseConfig";
 
-// Creates a discussion object with data. The discussion object
+// Expected data format
+// {
+//   bookClubId : String
+//   location : String
+//   title : String
+//   created : Date ( current Date)
+// }
+
 async function createDiscussionDocument(bookClubId: string, data: any) {
   data.bookClubId = bookClubId;
   var res = await addDoc(collection(firebaseDB, "discussions"), data);

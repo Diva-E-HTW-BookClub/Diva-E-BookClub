@@ -8,7 +8,11 @@ import {
   query,
   updateDoc,
   where,
+  documentId,
+  limit,
+  orderBy,
 } from "firebase/firestore";
+import { useState } from "react";
 import { firebaseDB } from "./firebaseConfig";
 
 // Expected data format
@@ -20,6 +24,7 @@ import { firebaseDB } from "./firebaseConfig";
 //   memberCount : number
 //   time : Date
 //   title : String
+//   created : Date ( current Date)
 // }
 async function createBookClubDocument(data: any) {
   addDoc(collection(firebaseDB, "bookClubs"), data);
@@ -51,9 +56,45 @@ async function incrementBookClubMemberCount(
   });
 }
 async function getBookClubDocument(bookClubId: string) {
-  var bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
+  const q = query(
+    collection(firebaseDB, "bookClubs"),
+    where(documentId(), "==", bookClubId)
+  );
 
-  return bookClubDocument;
+  var res = await getDocs(q);
+  // res.forEach((doc) => {
+  //   console.log(doc.id)
+  //   console.log(doc.data())
+  // });
+
+  return res;
+}
+interface jsonObj {
+  id: string;
+  data: object;
+}
+
+async function searchBookClubs(resultLimit: number) {
+  var q: any;
+  q = query(
+    collection(firebaseDB, "bookClubs"),
+    orderBy("title"),
+    limit(resultLimit)
+  );
+
+  var res = await getDocs(q);
+
+  var resultArray: any[] = [];
+
+  res.forEach((doc) => {
+    var jsonObj: {} = {
+      id: doc.id,
+      data: doc.data(),
+    };
+    resultArray.push(jsonObj);
+  });
+
+  return resultArray;
 }
 
 // Geht durch alle discussions, vermutlich effizienter über den BookClub auf die discussions zu kommen
@@ -76,4 +117,5 @@ export {
   incrementBookClubMemberCount,
   getBookClubDocument,
   getBookClubDiscussions,
+  searchBookClubs,
 };
