@@ -62,7 +62,7 @@ to format all files run `npx prettier --write .`
 If you are using VSCode you may want to install the prettier eslint extension or
 use prettier as the standard formatter for an on save formatting.
 
-**Please format the code before committing!** 
+**Please format the code before committing!**
 By that we will only be seeing the necessary changes in the pull requests providing an easier time for reviewing.
 
 ## Helpful Sources
