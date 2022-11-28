@@ -7,7 +7,7 @@ import {
   IonButton,
 } from "@ionic/react";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-import { registerUser } from "../firebase/firebaseAuth";
+import { registerUser } from "../firebaseFunctions";
 import { useState } from "react";
 
 const RegisterPage: React.FC = () => {

@@ -6,6 +6,10 @@ This Project is the Frontend part to our BookClub App. It is using TypeScript wi
 
 Run `git clone git@github.com:Diva-E-HTW-BookClub/Diva-E-BookClub.git` in the location where you want the project to be downloaded to.
 
+## Documentation
+
+- Project Documentation (https://docs.google.com/document/d/1R817B2lcFqlVNvU6E1Da_vil-_8D892GBTSQCyfOS4Y/edit?usp=sharing)
+
 ## Requirements
 
 The complete installation including the following requirements is explained under **Installation**. Click on the requirement to download (if necessary) or to get more information.
@@ -47,7 +51,21 @@ Run the App in Android Studio and it will be started on the emulator.
 
 See [Development for Android](https://ionicframework.com/docs/developing/android) for more information.
 
-## Documentations / Helpful Sources
+## Formatting
+
+This projects uses Prettier with ESLint. To manually format a single file use
+
+`npx prettier --write src/directory/filename`
+
+to format all files run `npx prettier --write .`
+
+If you are using VSCode you may want to install the prettier eslint extension or
+use prettier as the standard formatter for an on save formatting.
+
+**Please format the code before committing!**
+By that we will only be seeing the necessary changes in the pull requests providing an easier time for reviewing.
+
+## Helpful Sources
 
 - [Ionic Documentation](https://ionicframework.com/docs/)
 - [React Documentation](https://reactjs.org/docs/getting-started.html)

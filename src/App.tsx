@@ -3,6 +3,7 @@ import {
   IonApp,
   IonIcon,
   IonLabel,
+  IonNav,
   IonRouterOutlet,
   IonTabBar,
   IonTabButton,
@@ -17,7 +18,13 @@ import ProfileTab from "./pages/ProfileTab";
 import CreateClubPage from "./pages/CreateClubPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import Agenda from "./pages/Agenda";
+import ClubPage from "./pages/ClubPage";
 import AddDiscussion from "./pages/AddDiscussion";
+import AddResource from "./pages/AddResource";
+import EditResource from "./pages/EditResource";
+import Start from "./pages/Start";
+import Comments from "./pages/Comments";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -37,6 +44,7 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import "./theme/general.css";
 
 setupIonicReact();
 
@@ -60,11 +68,29 @@ const App: React.FC = () => (
           <Route exact path="/clubs/create">
             <CreateClubPage />
           </Route>
-          <Route exact path="/AddDiscussion">
+          <Route exact path="/clubs/clubId">
+            <ClubPage />
+          </Route>
+          <Route exact path="/resources/add">
+            <AddResource />
+          </Route>
+          <Route exact path="/resources/edit">
+            <EditResource />
+          </Route>
+          <Route exact path="/discussions/add">
             <AddDiscussion />
           </Route>
-          <Route path="/profile">
+          <Route exact path="/profile">
             <ProfileTab />
+          </Route>
+          <Route exact path="/agenda">
+            <Agenda />
+          </Route>
+          <Route exact path="/comments">
+            <Comments />
+          </Route>
+          <Route path="/start">
+            <IonNav root={() => <Start />}></IonNav>;
           </Route>
           <Route exact path="/">
             <Redirect to="/home" />

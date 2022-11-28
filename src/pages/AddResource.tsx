@@ -44,7 +44,7 @@ const AddDiscussion: React.FC = () => {
               <div className="divider"></div>
               <div className="divider"></div>
               <IonRow>
-                <IonCol size="4">
+                <IonCol size="5">
                   <IonButton
                     routerLink="/clubs/clubId"
                     className="cancel-button"
@@ -52,10 +52,7 @@ const AddDiscussion: React.FC = () => {
                     Cancel
                   </IonButton>
                 </IonCol>
-                <IonCol size="4">
-                  <IonButton className="delete-button">Delete</IonButton>
-                </IonCol>
-                <IonCol size="4">
+                <IonCol size="5">
                   <IonButton>Done</IonButton>
                 </IonCol>
               </IonRow>

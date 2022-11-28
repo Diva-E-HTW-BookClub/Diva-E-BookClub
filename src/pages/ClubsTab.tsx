@@ -16,28 +16,36 @@ import {
   IonFabButton,
   IonIcon,
   useIonViewWillEnter,
-  IonButton,
 } from "@ionic/react";
-import { add, book } from "ionicons/icons";
+import { add } from "ionicons/icons";
 import "./ClubsTab.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ClubCard } from "../components/ClubCard";
-import { searchBookClubs } from "../firebase/firebaseBookClub";
 
 const ClubsTab: React.FC = () => {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<string[]>([]);
 
-  useEffect(() => {
-    getBookClubs();
-    console.log("page loaded");
-  }, []);
+  const pushData = () => {
+    const max = data.length + 20;
+    const min = max - 20;
+    const newData = [];
+    for (let i = min; i < max; i++) {
+      newData.push("" + i);
+    }
 
-  async function getBookClubs() {
-    var res = searchBookClubs(10);
-    var bookClubArray = await res;
+    setData([...data, ...newData]);
+  };
 
-    setData(bookClubArray);
-  }
+  const loadData = (ev: any) => {
+    setTimeout(() => {
+      pushData();
+      ev.target.complete();
+    }, 500);
+  };
+
+  useIonViewWillEnter(() => {
+    pushData();
+  });
 
   return (
     <IonPage>
@@ -67,23 +75,27 @@ const ClubsTab: React.FC = () => {
         </IonSegment>
 
         <IonList lines="none">
-          {data.map((object, index) => {
+          {data.map((item, index) => {
             return (
-              <IonItem key={object.id}>
+              <IonItem key={index}>
                 <ClubCard
-                  name={object.data.title}
-                  member={object.data.memberCount}
-                  date={object.data.date}
-                  time={object.data.time}
-                  location={object.data.location}
+                  name={"Diva-E's BookClub"}
+                  member={3}
+                  date={"20.10.2022"}
+                  time={"13:00 - 14:00"}
+                  location={"Raum Gute Stube"}
                 />
               </IonItem>
             );
           })}
         </IonList>
 
+        <IonInfiniteScroll onIonInfinite={loadData}>
+          <IonInfiniteScrollContent loadingSpinner="bubbles"></IonInfiniteScrollContent>
+        </IonInfiniteScroll>
+
         <IonFab slot="fixed" vertical="bottom" horizontal="end">
-          <IonFabButton href="/clubs/create">
+          <IonFabButton routerLink="/clubs/create">
             <IonIcon icon={add}></IonIcon>
           </IonFabButton>
         </IonFab>
