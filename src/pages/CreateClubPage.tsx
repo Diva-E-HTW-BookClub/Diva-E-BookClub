@@ -13,8 +13,7 @@ import {
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   IonButtons,
-  useIonViewWillEnter,
-  IonBackButton,
+  IonBackButton
 } from "@ionic/react";
 import "./CreateClubPage.css";
 import React, { useState } from "react";
@@ -23,32 +22,60 @@ import { BookCard } from "../components/BookCard";
 const CreateClubPage: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [selectedBookIndex, setSelectedBookIndex] = useState<number>();
+  const [query, setQuery] = useState<string>("");
 
-  const loadData = (event: any) => {
-    setTimeout(() => {
-      fetch(
-        "https://openlibrary.org/search.json?q=Clean Code&fields=title,author_name,cover_i&limit=20&offset=" +
-          data.length
-      )
-        .then((res) => res.json())
-        .then(
-          (result) => {
-            setData([...data, ...result.docs]);
-            if (event != null) {
-              // needed to make the infinite scroll work
-              event.target.complete();
-            }
-          },
-          // catch errors for both fetch and res.json()
-          (error) => {}
-        );
-    }, 500);
-  };
+  // calls HTTP API of OpenLibrary to search books by the given query and offset
+  async function searchBooks(q: string, offset: number) {
+    console.log(q);
+    if (q === "") {
+      return [];
+    }
+    const api = "https://openlibrary.org/search.json";
+    const result = await fetch(`${api}?q=${q}&fields=title,author_name,cover_i&limit=20&offset=${offset}`);
+    const json = await result.json();
+    return json.docs.map(cleanBookData);
+  }
 
-  useIonViewWillEnter(() => {
-    // load data without calling event.target.complete()
-    loadData(null);
-  });
+  // handle missing book cover and author
+  function cleanBookData(doc: any){
+    if (doc.cover_i == undefined) {
+      doc.image = "assets/images/default_book_cover.jpg";
+    } else {
+      doc.image = `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg`;
+    }
+    if (doc.author_name == undefined) {
+      doc.author = "Unknown author";
+    } else {
+      doc.author = doc.author_name[0];
+    }
+    return doc;
+  }
+
+  // called when user scrolls all the way down
+  async function scroll(event: any) {
+    try {
+      let books = await searchBooks(query, data.length);
+      setData([...data, ...books]);
+      // needed to make the infinite scroll work
+      event.target.complete();
+    } catch (error) {
+      // catch errors for both fetch and result.json()
+      console.log(error);
+    }
+  }
+
+  // called when user types in the search bar
+  async function search(event: any) {
+    let newQuery = event.target.value;
+    setQuery(newQuery);
+    try {
+      let books = await searchBooks(newQuery, 0);
+      setData(books);
+    } catch (error) {
+      // catch errors for both fetch and result.json()
+      console.log(error);
+    }
+  }
 
   return (
     <IonPage>
@@ -83,20 +110,16 @@ const CreateClubPage: React.FC = () => {
           </IonLabel>
           <IonInput placeholder="Enter a number (max 50)"></IonInput>
         </IonItem>
-        <IonSearchbar placeholder="Find a book"></IonSearchbar>
+        <IonSearchbar placeholder="Find a book" onIonInput={search}></IonSearchbar>
 
         <IonList lines="none">
           {data.map((item, index) => {
             return (
               <IonItem key={index} onClick={() => setSelectedBookIndex(index)}>
                 <BookCard
-                  image={
-                    "https://covers.openlibrary.org/b/id/" +
-                    String(item.cover_i) +
-                    "-M.jpg"
-                  }
+                  image={item.image}
                   title={item.title}
-                  author={item.author_name ? item.author_name[0] : ""}
+                  author={item.author}
                   selected={selectedBookIndex === index}
                 />
               </IonItem>
@@ -104,7 +127,7 @@ const CreateClubPage: React.FC = () => {
           })}
         </IonList>
 
-        <IonInfiniteScroll onIonInfinite={loadData}>
+        <IonInfiniteScroll onIonInfinite={scroll}>
           <IonInfiniteScrollContent loadingSpinner="bubbles"></IonInfiniteScrollContent>
         </IonInfiniteScroll>
       </IonContent>
