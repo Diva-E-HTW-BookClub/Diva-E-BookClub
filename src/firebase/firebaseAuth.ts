@@ -6,17 +6,8 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   signOut,
-  User,
 } from "firebase/auth";
-import {
-  addDoc,
-  deleteDoc,
-  doc,
-  setDoc,
-  Timestamp,
-  updateDoc,
-} from "firebase/firestore";
-import { useState } from "react";
+
 import { firebaseApp, firebaseDB } from "./firebaseConfig";
 
 const auth = getAuth();
@@ -29,6 +20,7 @@ onAuthStateChanged(auth, (user) => {
     // https://firebase.google.com/docs/reference/js/firebase.User
     const uid = user.uid;
     // ...
+    //Redux - Statemanager for react
     console.log("signed in");
   } else {
     // User is signed out
@@ -81,42 +73,6 @@ async function logoutUser() {
     .catch((error) => {
       //Failed with error
     });
-}
-
-async function createBookClubDocument(id: number, data: any) {
-  const bookClubDocument = doc(firebaseDB, "bookClubs", String(id));
-
-  setDoc(bookClubDocument, data);
-}
-
-async function updateBookClubDocument(id: number, data: any) {
-  const bookClubDocument = doc(firebaseDB, "bookClubs", String(id));
-
-  updateDoc(bookClubDocument, data);
-}
-
-async function deleteBookClubDocument(id: number) {
-  const bookClubDocument = doc(firebaseDB, "bookClubs", String(id));
-
-  deleteDoc(bookClubDocument);
-}
-
-async function createBookDocument(id: number, data: any) {
-  const bookDocument = doc(firebaseDB, "books", String(id));
-
-  setDoc(bookDocument, data);
-}
-
-async function updateBookDocument(id: number, data: any) {
-  const bookDocument = doc(firebaseDB, "books", String(id));
-
-  updateDoc(bookDocument, data);
-}
-
-async function deleteBookDocument(id: number) {
-  const bookDocument = doc(firebaseDB, "books", String(id));
-
-  deleteDoc(bookDocument);
 }
 
 export { registerUser, loginUser, logoutUser };

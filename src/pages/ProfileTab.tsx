@@ -6,8 +6,8 @@ import {
   IonToolbar,
   IonButton,
 } from "@ionic/react";
-import { logoutUser } from "../firebaseFunctions";
 import "./ProfileTab.css";
+import { logoutUser } from "../firebase/firebaseAuth";
 
 const ProfileTab: React.FC = () => {
   async function login() {
