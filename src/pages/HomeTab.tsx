@@ -49,6 +49,7 @@ const HomeTab: React.FC = () => {
             <ClubCard
               name={"Diva-E's BookClub"}
               member={3}
+              image={"https://m.media-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg"}
               date={"20.10.2022"}
               time={"13:00 - 14:00"}
               location={"Raum Gute Stube"}
@@ -56,6 +57,7 @@ const HomeTab: React.FC = () => {
             <ClubCard
               name={"Diva-E's BookClub"}
               member={3}
+              image={"https://m.media-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg"}
               date={"20.10.2022"}
               time={"13:00 - 14:00"}
               location={"Raum Gute Stube"}

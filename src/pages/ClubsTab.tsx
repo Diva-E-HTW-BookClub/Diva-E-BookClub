@@ -14,17 +14,16 @@ import {
   IonInfiniteScrollContent,
   IonFab,
   IonFabButton,
-  IonIcon,
-  useIonViewWillEnter,
+  IonIcon
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import "./ClubsTab.css";
 import { useEffect, useState } from "react";
 import { ClubCard } from "../components/ClubCard";
-import { searchBookClubs } from "../firebase/firebaseBookClub";
+import { searchBookClubs, BookClub } from "../firebase/firebaseBookClub";
 
 const ClubsTab: React.FC = () => {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<BookClub[]>([]);
 
   useEffect(() => {
     getBookClubs();
@@ -32,10 +31,8 @@ const ClubsTab: React.FC = () => {
   }, []);
 
   async function getBookClubs() {
-    var res = searchBookClubs(10);
-    var bookClubArray = await res;
-
-    setData(bookClubArray);
+    let bookClubs = await searchBookClubs(10);
+    setData(bookClubs);
   }
 
   return (
@@ -66,15 +63,16 @@ const ClubsTab: React.FC = () => {
         </IonSegment>
 
         <IonList lines="none">
-          {data.map((object, index) => {
+          {data.map((bookClub, index) => {
             return (
-              <IonItem key={object.id}>
+              <IonItem key={bookClub.id}>
                 <ClubCard
-                  name={object.data.title}
-                  member={object.data.memberCount}
-                  date={object.data.date}
-                  time={object.data.time}
-                  location={object.data.location}
+                  name={bookClub.name}
+                  member={bookClub.participants.length}
+                  image={bookClub.book.imageUrl}
+                  date={""}
+                  time={""}
+                  location={""}
                 />
               </IonItem>
             );
