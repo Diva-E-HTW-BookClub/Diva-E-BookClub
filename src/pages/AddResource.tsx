@@ -11,14 +11,11 @@ import {
   IonItem,
   IonLabel,
   IonInput,
-  IonButton
-} from '@ionic/react';
-import './AddResource.css';
-
+  IonButton,
+} from "@ionic/react";
+import "./AddResource.css";
 
 const AddDiscussion: React.FC = () => {
-  
-  
   return (
     <IonPage>
       <IonHeader>
@@ -27,11 +24,10 @@ const AddDiscussion: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-      
         <IonCard>
           <IonGrid>
-            <div className="box">   
-            <div className="divider"></div>           
+            <div className="box">
+              <div className="divider"></div>
               <IonItem>
                 <IonLabel position="stacked">
                   <h1>Title</h1>
@@ -49,7 +45,12 @@ const AddDiscussion: React.FC = () => {
               <div className="divider"></div>
               <IonRow>
                 <IonCol size="5">
-                  <IonButton href="/clubs/clubId" className="cancel-button" >Cancel</IonButton>
+                  <IonButton
+                    routerLink="/clubs/clubId"
+                    className="cancel-button"
+                  >
+                    Cancel
+                  </IonButton>
                 </IonCol>
                 <IonCol size="5">
                   <IonButton>Done</IonButton>
@@ -59,7 +60,6 @@ const AddDiscussion: React.FC = () => {
             </div>
           </IonGrid>
         </IonCard>
-        
       </IonContent>
     </IonPage>
   );
