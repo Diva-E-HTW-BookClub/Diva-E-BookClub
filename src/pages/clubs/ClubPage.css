@@ -1,3 +1,7 @@
-ion-card {
+.hidden-border {
   box-shadow: none !important;
+}
+
+.large-icon {
+  font-size: 28px;
 }

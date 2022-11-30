@@ -7,6 +7,7 @@ import {
   IonButton,
 } from "@ionic/react";
 import { peopleCircle } from "ionicons/icons";
+import { useState } from "react";
 
 interface DiscussionCardProps {
   chapter: string;
@@ -25,42 +26,46 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
   location,
   isModerator,
 }: DiscussionCardProps) => {
+  const [showButtons, setShowButtons] = useState<boolean>(false);
+
   return (
-    <IonCard>
+    // show/hide buttons by clicking on the discussion card
+    <IonCard onClick={() => setShowButtons(!showButtons)}>
       <IonGrid>
         <IonRow>
-          <IonCol size="4">
+          <IonCol>
             {chapter}
             <br></br>
             {date}
           </IonCol>
 
-          <IonCol size="4">
-            <IonIcon icon={peopleCircle}></IonIcon>
+          <IonCol>
+            <IonIcon icon={peopleCircle} class="large-icon"></IonIcon>
             {member}
           </IonCol>
 
-          <IonCol size="4">
+          <IonCol>
             {time} <br></br>
             {location}
           </IonCol>
         </IonRow>
 
-        <IonRow>
-          <IonCol size="4">
-            <IonButton routerLink="/agenda">Outline</IonButton>
-          </IonCol>
-          <IonCol size="4">
-            <IonButton routerLink="/comments">Comments</IonButton>
-          </IonCol>
-          <IonCol size="4">
-            {isModerator ? (
-              <IonButton>Edit</IonButton>
-            ) : (
-              <IonButton>Join</IonButton>
-            )}
-          </IonCol>
-        </IonRow>
+        {showButtons &&
+          <IonRow>
+            <IonCol>
+              <IonButton routerLink="/agenda">Outline</IonButton>
+            </IonCol>
+            <IonCol>
+              <IonButton routerLink="/comments">Comments</IonButton>
+            </IonCol>
+            <IonCol>
+              {isModerator ? (
+                <IonButton>Edit</IonButton>
+              ) : (
+                <IonButton>Join</IonButton>
+              )}
+            </IonCol>
+          </IonRow>}
       </IonGrid>
     </IonCard>
   );

@@ -84,7 +84,7 @@ const ClubPage: React.FC = () => {
             <IonTitle size="large">{clubName}</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonCard>
+        <IonCard class="hidden-border">
           <IonGrid>
             <IonRow>
               <IonCol size="4">
