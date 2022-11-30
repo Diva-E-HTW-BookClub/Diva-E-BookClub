@@ -19,8 +19,8 @@ import {
 import { add } from "ionicons/icons";
 import "./ClubsTab.css";
 import { useEffect, useState } from "react";
-import { ClubCard } from "../components/ClubCard";
-import { searchBookClubs, BookClub } from "../firebase/firebaseBookClub";
+import { ClubCard } from "../../components/ClubCard";
+import { searchBookClubs, BookClub } from "../../firebase/firebaseBookClub";
 
 const ClubsTab: React.FC = () => {
   const [data, setData] = useState<BookClub[]>([]);

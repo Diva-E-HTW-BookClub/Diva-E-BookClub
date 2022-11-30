@@ -12,19 +12,19 @@ import {
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { homeSharp, chatbubblesSharp, personSharp } from "ionicons/icons";
-import HomeTab from "./pages/HomeTab";
-import ClubsTab from "./pages/ClubsTab";
-import ProfileTab from "./pages/ProfileTab";
-import CreateClubPage from "./pages/CreateClubPage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
+import HomeTab from "./pages/home/HomeTab";
+import ClubsTab from "./pages/clubs/ClubsTab";
+import ProfileTab from "./pages/profile/ProfileTab";
+import CreateClubPage from "./pages/clubs/CreateClubPage";
+import LoginPage from "./pages/identity/LoginPage";
+import RegisterPage from "./pages/identity/RegisterPage";
 import Agenda from "./pages/Agenda";
-import ClubPage from "./pages/ClubPage";
-import AddDiscussion from "./pages/AddDiscussion";
-import AddResource from "./pages/AddResource";
-import EditResource from "./pages/EditResource";
-import Start from "./pages/Start";
-import Comments from "./pages/Comments";
+import ClubPage from "./pages/clubs/ClubPage";
+import AddDiscussion from "./pages/discussion/AddDiscussion";
+import AddResource from "./pages/resources/AddResource";
+import EditResource from "./pages/resources/EditResource";
+import Start from "./pages/identity/Start";
+import Comments from "./pages/comments/Comments";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";

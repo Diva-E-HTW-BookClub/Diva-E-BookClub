@@ -9,7 +9,7 @@ import {
   IonButton,
 } from "@ionic/react";
 import React, { useState } from "react";
-import { ClubCard } from "../components/ClubCard";
+import { ClubCard } from "../../components/ClubCard";
 import "./HomeTab.css";
 
 const HomeTab: React.FC = () => {
