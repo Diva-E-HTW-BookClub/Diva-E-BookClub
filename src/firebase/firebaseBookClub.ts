@@ -12,21 +12,33 @@ import {
   limit,
   orderBy,
 } from "firebase/firestore";
-import { useState } from "react";
 import { firebaseDB } from "./firebaseConfig";
 
-// Expected data format
-// {
-//   Book : String
-//   description : String
-//   discussionIds : [number]
-//   location : String
-//   memberCount : number
-//   time : Date
-//   title : String
-//   created : Date ( current Date)
-// }
-async function createBookClubDocument(data: any) {
+type Book = {
+  title: string,
+  authors: string[],
+  imageUrl: string
+}
+
+type Discussion = {
+  chapter: string,
+  participants: string[],
+  startTime: Date,
+  endTime: Date,
+  location: string
+}
+
+type BookClub = {
+  id: string,
+  name: string,
+  moderator: string,
+  participants: string[],
+  maxParticipantsNumber: number,
+  book: Book,
+  discussions: Discussion[]
+}
+
+async function createBookClubDocument(data: BookClub) {
   addDoc(collection(firebaseDB, "bookClubs"), data);
 }
 
@@ -69,32 +81,29 @@ async function getBookClubDocument(bookClubId: string) {
 
   return res;
 }
-interface jsonObj {
-  id: string;
-  data: object;
-}
 
+// get book clubs ordered by name and convert results to BookClub[]
 async function searchBookClubs(resultLimit: number) {
-  var q: any;
-  q = query(
+  let q = query(
     collection(firebaseDB, "bookClubs"),
-    orderBy("title"),
+    orderBy("name"),
     limit(resultLimit)
   );
 
-  var res = await getDocs(q);
+  var results = await getDocs(q);
 
-  var resultArray: any[] = [];
-
-  res.forEach((doc) => {
-    var jsonObj: {} = {
+  return results.docs.map(doc => {
+    let data = doc.data();
+    return {
       id: doc.id,
-      data: doc.data(),
-    };
-    resultArray.push(jsonObj);
+      name: data.name,
+      moderator: data.moderator,
+      participants: data.participants,
+      maxParticipantsNumber: data.maxParticipantsNumber,
+      book: data.book,
+      discussions: data.discussions
+    }
   });
-
-  return resultArray;
 }
 
 // Geht durch alle discussions, vermutlich effizienter über den BookClub auf die discussions zu kommen
@@ -119,3 +128,7 @@ export {
   getBookClubDiscussions,
   searchBookClubs,
 };
+
+export type {
+  BookClub
+}

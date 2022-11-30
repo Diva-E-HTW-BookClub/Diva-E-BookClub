@@ -13,6 +13,7 @@ import {
 interface ClubCardProps {
   name: string;
   member: number;
+  image: string;
   date: string;
   time: string;
   location: string;
@@ -21,6 +22,7 @@ interface ClubCardProps {
 export const ClubCard: React.FC<ClubCardProps> = ({
   name,
   member,
+  image,
   date,
   time,
   location,
@@ -31,8 +33,8 @@ export const ClubCard: React.FC<ClubCardProps> = ({
         <IonRow>
           <IonCol size="4">
             <IonImg
-              alt="Clean Code"
-              src="https://m.media-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg"
+              alt="assets/images/default_book_cover.jpg"
+              src={image}
             />
           </IonCol>
           <IonCol size="8">

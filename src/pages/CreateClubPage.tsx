@@ -18,15 +18,17 @@ import {
 import "./CreateClubPage.css";
 import React, { useState } from "react";
 import { BookCard } from "../components/BookCard";
+import { createBookClubDocument } from "../firebase/firebaseBookClub";
 
 const CreateClubPage: React.FC = () => {
-  const [data, setData] = useState<any[]>([]);
-  const [selectedBookIndex, setSelectedBookIndex] = useState<number>();
+  const [books, setBooks] = useState<any[]>([]);
+  const [selectedBookIndex, setSelectedBookIndex] = useState<number>(0);
   const [query, setQuery] = useState<string>("");
+  const [clubName, setClubName] = useState<string>("");
+  const [maxParticipants, setMaxParticipants] = useState<number>(0);
 
   // calls HTTP API of OpenLibrary to search books by the given query and offset
   async function searchBooks(q: string, offset: number) {
-    console.log(q);
     if (q === "") {
       return [];
     }
@@ -37,7 +39,7 @@ const CreateClubPage: React.FC = () => {
   }
 
   // handle missing book cover and author
-  function cleanBookData(doc: any){
+  function cleanBookData(doc: any) {
     if (doc.cover_i == undefined) {
       doc.image = "assets/images/default_book_cover.jpg";
     } else {
@@ -54,8 +56,8 @@ const CreateClubPage: React.FC = () => {
   // called when user scrolls all the way down
   async function scroll(event: any) {
     try {
-      let books = await searchBooks(query, data.length);
-      setData([...data, ...books]);
+      let newBooks = await searchBooks(query, books.length);
+      setBooks([...books, ...newBooks]);
       // needed to make the infinite scroll work
       event.target.complete();
     } catch (error) {
@@ -70,11 +72,28 @@ const CreateClubPage: React.FC = () => {
     setQuery(newQuery);
     try {
       let books = await searchBooks(newQuery, 0);
-      setData(books);
+      setBooks(books);
     } catch (error) {
       // catch errors for both fetch and result.json()
       console.log(error);
     }
+  }
+
+  async function createClub() {
+    let book = books[selectedBookIndex];
+    createBookClubDocument({
+      id: "",
+      name: clubName,
+      moderator: "test-user-moderator",
+      participants: [],
+      maxParticipantsNumber: maxParticipants,
+      book: {
+        title: book.title,
+        authors: book.author_name,
+        imageUrl: book.image
+      },
+      discussions: []
+    });
   }
 
   return (
@@ -86,7 +105,7 @@ const CreateClubPage: React.FC = () => {
           </IonButtons>
           <IonTitle>New Club</IonTitle>
           <IonButtons slot="end">
-            <IonButton routerLink="/clubs/clubId" color="primary">
+            <IonButton routerLink="/clubs/clubId" color="primary" onClick={createClub}>
               Create
             </IonButton>
           </IonButtons>
@@ -102,24 +121,24 @@ const CreateClubPage: React.FC = () => {
           <IonLabel position="stacked">
             <h1>Club name</h1>
           </IonLabel>
-          <IonInput placeholder="Enter book club name"></IonInput>
+          <IonInput required placeholder="Enter book club name" onIonInput={(e: any) => setClubName(e.target.value)}></IonInput>
         </IonItem>
         <IonItem>
           <IonLabel position="stacked">
             <h1>Max number of participants</h1>
           </IonLabel>
-          <IonInput placeholder="Enter a number (max 50)"></IonInput>
+          <IonInput required placeholder="Enter a number (max 50)" onIonInput={(e: any) => setMaxParticipants(e.target.value)}></IonInput>
         </IonItem>
         <IonSearchbar placeholder="Find a book" onIonInput={search}></IonSearchbar>
 
         <IonList lines="none">
-          {data.map((item, index) => {
+          {books.map((book, index) => {
             return (
               <IonItem key={index} onClick={() => setSelectedBookIndex(index)}>
                 <BookCard
-                  image={item.image}
-                  title={item.title}
-                  author={item.author}
+                  image={book.image}
+                  title={book.title}
+                  author={book.author}
                   selected={selectedBookIndex === index}
                 />
               </IonItem>
