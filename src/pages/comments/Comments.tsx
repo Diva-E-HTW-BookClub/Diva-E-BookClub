@@ -19,7 +19,7 @@ import {
 } from "@ionic/react";
 import "./Comments.css";
 import React, { useState } from "react";
-import { CommentCard } from "../components/CommentCard";
+import { CommentCard } from "../../components/CommentCard";
 import { add, camera, document } from "ionicons/icons";
 
 const Comments: React.FC = () => {

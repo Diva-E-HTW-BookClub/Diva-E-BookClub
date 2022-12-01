@@ -17,8 +17,8 @@ import {
 } from "@ionic/react";
 import "./CreateClubPage.css";
 import React, { useState } from "react";
-import { BookCard } from "../components/BookCard";
-import { createBookClubDocument } from "../firebase/firebaseBookClub";
+import { BookCard } from "../../components/BookCard";
+import { createBookClubDocument } from "../../firebase/firebaseBookClub";
 
 const CreateClubPage: React.FC = () => {
   const [books, setBooks] = useState<any[]>([]);

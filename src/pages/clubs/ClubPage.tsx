@@ -28,8 +28,8 @@ import {
 import "./ClubPage.css";
 import { calendar, documents, add } from "ionicons/icons";
 import React, { useState } from "react";
-import { DiscussionCard } from "../components/DiscussionCard";
-import { ResourceCard } from "../components/ResourceCard";
+import { DiscussionCard } from "../../components/DiscussionCard";
+import { ResourceCard } from "../../components/ResourceCard";
 
 const ClubPage: React.FC = () => {
   let clubName = "Diva-e's Reading Club";
