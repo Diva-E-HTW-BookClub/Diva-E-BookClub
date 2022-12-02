@@ -7,7 +7,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { updateBookClubDocument } from "./firebaseBookClub";
+import { addDiscussionToBookClub, updateBookClubDocument } from "./firebaseBookClub";
 import { firebaseDB } from "./firebaseConfig";
 
 // Expected data format
@@ -23,11 +23,8 @@ async function createDiscussionDocument(bookClubId: string, data: any) {
   var res = await addDoc(collection(firebaseDB, "discussions"), data);
 
   if (res) {
-    const discussionDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
-    updateBookClubDocument(discussionDocument.id, {
-      discussionIds: arrayUnion(res.id),
-    });
-  }
+    addDiscussionToBookClub(bookClubId, res.id)
+  } 
 }
 
 async function updateDiscussionDocument(discussionId: string, data: any) {

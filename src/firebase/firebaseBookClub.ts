@@ -11,6 +11,8 @@ import {
   documentId,
   limit,
   orderBy,
+  arrayUnion,
+  getDoc,
 } from "firebase/firestore";
 import { firebaseDB } from "./firebaseConfig";
 
@@ -68,18 +70,22 @@ async function incrementBookClubMemberCount(
   });
 }
 async function getBookClubDocument(bookClubId: string) {
-  const q = query(
-    collection(firebaseDB, "bookClubs"),
-    where(documentId(), "==", bookClubId)
-  );
+  const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
 
-  var res = await getDocs(q);
-  // res.forEach((doc) => {
-  //   console.log(doc.id)
-  //   console.log(doc.data())
-  // });
+  var result_doc = await getDoc(bookClubDocument);
+  let doc_data = result_doc.data()
 
-  return res;
+  if (doc_data) {
+    return {
+      id: doc_data.id,
+      name: doc_data.name,
+      moderator: doc_data.moderator,
+      participants: doc_data.participants,
+      maxParticipantsNumber: doc_data.maxParticipantsNumber,
+      book: doc_data.book,
+      discussions: doc_data.discussions,
+    }
+  }
 }
 
 // get book clubs ordered by name and convert results to BookClub[]
@@ -107,15 +113,32 @@ async function searchBookClubs(resultLimit: number) {
 }
 
 // Geht durch alle discussions, vermutlich effizienter über den BookClub auf die discussions zu kommen
-async function getBookClubDiscussions(id: string) {
+async function getBookClubDiscussions(bookClubId: string) {
+  const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
+  
   const q = query(
     collection(firebaseDB, "discussions"),
-    where("bookClubId", "==", id)
+    where("bookClubId", "==", bookClubId)
   );
 
-  var res = await getDocs(q);
-  res.forEach((doc) => {
-    console.log(doc.data());
+  var results = await getDocs(q);
+
+  return results.docs.map(doc => {
+    let data = doc.data();  
+    return {
+      chapter: data.chapter,
+      participants: data.participants,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      location: data.location
+    }
+  });
+}
+
+async function addDiscussionToBookClub(bookClubId: string, discussionId: string) {
+  const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
+  updateBookClubDocument(bookClubDocument.id, {
+    discussionIds: arrayUnion(discussionId),
   });
 }
 
@@ -127,8 +150,9 @@ export {
   getBookClubDocument,
   getBookClubDiscussions,
   searchBookClubs,
+  addDiscussionToBookClub,
 };
 
 export type {
-  BookClub
+  BookClub, Discussion
 }

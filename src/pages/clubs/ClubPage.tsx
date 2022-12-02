@@ -27,11 +27,15 @@ import {
 } from "@ionic/react";
 import "./ClubPage.css";
 import { calendar, documents, add } from "ionicons/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DiscussionCard } from "../../components/DiscussionCard";
 import { ResourceCard } from "../../components/ResourceCard";
+import { BookClub, Discussion, getBookClubDiscussions, getBookClubDocument, searchBookClubs,  } from "../../firebase/firebaseBookClub";
+import { useParams } from "react-router";
 
 const ClubPage: React.FC = () => {
+  let {bookClubId}: {bookClubId: string} = useParams();
+
   let clubName = "Diva-e's Reading Club";
   let bookTitle = "Clean Code";
   let bookAuthor = "Robert C. Martin";
@@ -41,32 +45,32 @@ const ClubPage: React.FC = () => {
   let clubParticipants = "6";
   let clubParticipantsMax = "12";
 
-  const [data, setData] = useState<string[]>([]);
+  const [discussionData, setDiscussionData] = useState<Discussion[]>([]);
+  const [bookClubData, setBookClubData] = useState<BookClub>()
   const [selectedSegment, setSelectedSegment] = useState<string>("calendar");
   //replace isModerator by an API call for a users roll
   const [isModerator, setIsModerator] = useState<boolean>(true);
 
-  const pushData = () => {
-    const max = data.length + 20;
-    const min = max - 20;
-    const newData = [];
-    for (let i = min; i < max; i++) {
-      newData.push("" + i);
-    }
+  useEffect(() => {
+    getDiscussions();
+    getBookClub();
+    console.log(bookClubData)
+    console.log("page loaded");
+  }, []);
 
-    setData([...data, ...newData]);
-  };
+  async function getBookClub() {
+    let bookClub = await getBookClubDocument(bookClubId)
+    console.log(bookClub)
+    setBookClubData(bookClub)
+  }
 
-  const loadData = (ev: any) => {
-    setTimeout(() => {
-      pushData();
-      ev.target.complete();
-    }, 500);
-  };
+  async function getDiscussions() {
+    let discussions = await getBookClubDiscussions(bookClubId);
+    setDiscussionData(discussions);
+  }
 
-  useIonViewWillEnter(() => {
-    pushData();
-  });
+  // console.log(bookClubId)
+  // console.log(getBookClubDiscussions(bookClubId))
 
   return (
     <IonPage>
@@ -127,16 +131,16 @@ const ClubPage: React.FC = () => {
         </IonSegment>
 
         <IonList lines="none">
-          {data.map((item, index) => {
+          {discussionData.map((discussion, index) => {
             return (
               <IonItem key={index}>
                 {selectedSegment === "calendar" ? (
                   <DiscussionCard
-                    chapter={"Diva-E's BookClub"}
-                    member={3}
-                    date={"20.10.2022"}
-                    time={"13:00 - 14:00"}
-                    location={"Raum Gute Stube"}
+                    chapter={discussion.chapter}
+                    member={0}
+                    date={"NEED TO ADD"}
+                    time={"NEED TO ADD"}
+                    location={discussion.location}
                     isModerator={isModerator}
                   />
                 ) : (

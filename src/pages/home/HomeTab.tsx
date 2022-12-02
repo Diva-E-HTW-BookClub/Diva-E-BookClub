@@ -47,6 +47,7 @@ const HomeTab: React.FC = () => {
         {!isNewUser && (
           <>
             <ClubCard
+              id="TESTID"
               name={"Diva-E's BookClub"}
               member={3}
               image={"https://m.media-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg"}
@@ -55,6 +56,7 @@ const HomeTab: React.FC = () => {
               location={"Raum Gute Stube"}
             />
             <ClubCard
+              id="TESTID2"
               name={"Diva-E's BookClub"}
               member={3}
               image={"https://m.media-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg"}
