@@ -32,18 +32,10 @@ import { DiscussionCard } from "../../components/DiscussionCard";
 import { ResourceCard } from "../../components/ResourceCard";
 import { BookClub, Discussion, getBookClubDiscussions, getBookClubDocument, searchBookClubs,  } from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
+import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
 
 const ClubPage: React.FC = () => {
   let {bookClubId}: {bookClubId: string} = useParams();
-
-  let clubName = "Diva-e's Reading Club";
-  let bookTitle = "Clean Code";
-  let bookAuthor = "Robert C. Martin";
-  let bookCoverImg =
-    "https://m.media-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg";
-  let bookCurrentChapter = "Chapter 1";
-  let clubParticipants = "6";
-  let clubParticipantsMax = "12";
 
   const [discussionData, setDiscussionData] = useState<Discussion[]>([]);
   const [bookClubData, setBookClubData] = useState<BookClub>()
@@ -54,13 +46,11 @@ const ClubPage: React.FC = () => {
   useEffect(() => {
     getDiscussions();
     getBookClub();
-    console.log(bookClubData)
     console.log("page loaded");
   }, []);
 
   async function getBookClub() {
     let bookClub = await getBookClubDocument(bookClubId)
-    console.log(bookClub)
     setBookClubData(bookClub)
   }
 
@@ -69,9 +59,16 @@ const ClubPage: React.FC = () => {
     setDiscussionData(discussions);
   }
 
+  createDiscussionDocument("BkIkXar6JcsYlHr473x7", {"title": "title", "date" : "11.05"})
+  let clubName = bookClubData?.name
+  let bookTitle = bookClubData?.book.title
+  let bookAuthor = bookClubData?.book.authors
+  let bookCoverImg = bookClubData?.book.imageUrl
+  let bookCurrentChapter = "?"
+  let clubParticipants = bookClubData?.participants
+  let clubParticipantsMax = bookClubData?.maxParticipantsNumber
   // console.log(bookClubId)
   // console.log(getBookClubDiscussions(bookClubId))
-
   return (
     <IonPage>
       <IonHeader>
@@ -79,7 +76,7 @@ const ClubPage: React.FC = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/clubs" />
           </IonButtons>
-          <IonTitle>{clubName}</IonTitle>
+          <IonTitle>{bookClubData?.name}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>

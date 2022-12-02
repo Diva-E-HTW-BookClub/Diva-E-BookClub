@@ -20,11 +20,7 @@ import { firebaseDB } from "./firebaseConfig";
 
 async function createDiscussionDocument(bookClubId: string, data: any) {
   data.bookClubId = bookClubId;
-  var res = await addDoc(collection(firebaseDB, "discussions"), data);
-
-  if (res) {
-    addDiscussionToBookClub(bookClubId, res.id)
-  } 
+  var res = await addDoc(collection(firebaseDB, "bookClubs", "discussions"), data);
 }
 
 async function updateDiscussionDocument(discussionId: string, data: any) {
