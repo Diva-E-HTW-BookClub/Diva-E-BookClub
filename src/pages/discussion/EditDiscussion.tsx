@@ -17,9 +17,9 @@ import {
   IonButton,
 } from "@ionic/react";
 import React, { useRef, useEffect, useState } from "react";
-import "./AddDiscussion.css";
+import "./EditDiscussion.css";
 
-const AddDiscussion: React.FC = () => {
+const EditDiscussion: React.FC = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -34,11 +34,12 @@ const AddDiscussion: React.FC = () => {
       setProgress(0);
     }, 1000);
   }
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Add Discussion</IonTitle>
+          <IonTitle>Edit Discussion</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -50,7 +51,7 @@ const AddDiscussion: React.FC = () => {
               <IonDatetime
                 presentation="date"
                 min="2022-03-01"
-                max="2022-05-31"
+                max="2023-05-31"
               >
                 {" "}
               </IonDatetime>
@@ -60,16 +61,17 @@ const AddDiscussion: React.FC = () => {
                   <IonCardTitle>Start</IonCardTitle>
                   <IonDatetime presentation="time"></IonDatetime>
                 </IonCol>
+
                 <IonCol size="5">
                   <IonCardTitle>End</IonCardTitle>
                   <IonDatetime presentation="time"></IonDatetime>
                 </IonCol>
               </IonRow>
-
               <div className="divider"></div>
               <IonItem>
                 <IonLabel position="stacked">
-                  <h1>Name of Chapter</h1>
+                  {" "}
+                  <h1>Name of Chapter</h1>{" "}
                 </IonLabel>
                 <IonInput placeholder="Enter the name of the chapter"></IonInput>
               </IonItem>
@@ -83,10 +85,10 @@ const AddDiscussion: React.FC = () => {
               <div className="divider"></div>
               <IonRow>
                 <IonCol size="5">
-                <IonButton routerLink="/clubs/clubId" >Cancel</IonButton>
+                  <IonButton routerLink="/clubs/clubId">Cancel</IonButton>
                 </IonCol>
                 <IonCol size="5">
-                  <IonButton routerLink="/clubs/clubId" >Done</IonButton>
+                  <IonButton routerLink="/clubs/clubId">Done</IonButton>
                 </IonCol>
               </IonRow>
               <div className="divider"></div>
@@ -103,4 +105,4 @@ const AddDiscussion: React.FC = () => {
   );
 };
 
-export default AddDiscussion;
+export default EditDiscussion;
