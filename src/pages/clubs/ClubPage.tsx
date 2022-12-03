@@ -30,7 +30,7 @@ import { calendar, documents, add } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { DiscussionCard } from "../../components/DiscussionCard";
 import { ResourceCard } from "../../components/ResourceCard";
-import { BookClub, Discussion, getBookClubDiscussions, getBookClubDocument, searchBookClubs,  } from "../../firebase/firebaseBookClub";
+import { BookClub, Discussion, getBookClubDocument, searchBookClubs,  } from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
 import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
 
@@ -44,7 +44,6 @@ const ClubPage: React.FC = () => {
   const [isModerator, setIsModerator] = useState<boolean>(true);
 
   useEffect(() => {
-    getDiscussions();
     getBookClub();
     console.log("page loaded");
   }, []);
@@ -54,12 +53,8 @@ const ClubPage: React.FC = () => {
     setBookClubData(bookClub)
   }
 
-  async function getDiscussions() {
-    let discussions = await getBookClubDiscussions(bookClubId);
-    setDiscussionData(discussions);
-  }
-
-  createDiscussionDocument("BkIkXar6JcsYlHr473x7", {"title": "title", "date" : "11.05"})
+  console.log(getBookClubDocument("BkIkXar6JcsYlHr473x7"))
+    
   let clubName = bookClubData?.name
   let bookTitle = bookClubData?.book.title
   let bookAuthor = bookClubData?.book.authors

@@ -19,26 +19,17 @@ import { firebaseDB } from "./firebaseConfig";
 // }
 
 async function createDiscussionDocument(bookClubId: string, data: any) {
-  data.bookClubId = bookClubId;
-  var res = await addDoc(collection(firebaseDB, "bookClubs", "discussions"), data);
+  var res = await addDoc(collection(firebaseDB, "bookClubs", bookClubId, "discussions"), data);
 }
 
-async function updateDiscussionDocument(discussionId: string, data: any) {
-  const discussionDocument = doc(
-    firebaseDB,
-    "discussions",
-    String(discussionId)
-  );
+async function updateDiscussionDocument(bookClubId: string, discussionId: string, data: any) {
+  const discussionDocument = doc(firebaseDB, "bookClubs", bookClubId, "discussions", discussionId);
 
   updateDoc(discussionDocument, data);
 }
 
-async function deleteDiscussionDocument(discussionId: string) {
-  const discussionDocument = doc(
-    firebaseDB,
-    "discussions",
-    String(discussionId)
-  );
+async function deleteDiscussionDocument(bookClubId: string, discussionId: string) {
+  const discussionDocument = doc(firebaseDB, "bookClubs", bookClubId, "discussions", discussionId);
 
   deleteDoc(discussionDocument);
 }
