@@ -25,6 +25,7 @@ import AddResource from "./pages/resources/AddResource";
 import EditResource from "./pages/resources/EditResource";
 import Start from "./pages/identity/Start";
 import Comments from "./pages/comments/Comments";
+import EditDiscussion from "./pages/discussion/EditDiscussion";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -89,6 +90,10 @@ const App: React.FC = () => (
           <Route exact path="/comments">
             <Comments />
           </Route>
+          <Route exact path="/discussions/edit">
+            <EditDiscussion />
+          </Route>
+
           <Route path="/start">
             <IonNav root={() => <Start />}></IonNav>;
           </Route>
