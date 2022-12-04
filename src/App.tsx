@@ -81,6 +81,9 @@ const App: React.FC = () => (
           <Route exact path="/discussions/add">
             <AddDiscussion />
           </Route>
+          <Route exact path="/discussions/live">
+            <LiveDiscussion />
+          </Route>
           <Route exact path="/profile">
             <ProfileTab />
           </Route>
