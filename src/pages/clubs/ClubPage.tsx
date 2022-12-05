@@ -27,47 +27,40 @@ import {
 } from "@ionic/react";
 import "./ClubPage.css";
 import { calendar, documents, add } from "ionicons/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DiscussionCard } from "../../components/DiscussionCard";
 import { ResourceCard } from "../../components/ResourceCard";
+import { BookClub, Discussion, getBookClubDocument, searchBookClubs,  } from "../../firebase/firebaseBookClub";
+import { useParams } from "react-router";
+import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
 
 const ClubPage: React.FC = () => {
-  let clubName = "Diva-e's Reading Club";
-  let bookTitle = "Clean Code";
-  let bookAuthor = "Robert C. Martin";
-  let bookCoverImg =
-    "https://m.media-amazon.com/images/I/41xShlnTZTL._SX376_BO1,204,203,200_.jpg";
-  let bookCurrentChapter = "Chapter 1";
-  let clubParticipants = "6";
-  let clubParticipantsMax = "12";
+  let {bookClubId}: {bookClubId: string} = useParams();
 
-  const [data, setData] = useState<string[]>([]);
+  const [bookClubData, setBookClubData] = useState<BookClub>()
   const [selectedSegment, setSelectedSegment] = useState<string>("calendar");
   //replace isModerator by an API call for a users roll
   const [isModerator, setIsModerator] = useState<boolean>(true);
 
-  const pushData = () => {
-    const max = data.length + 20;
-    const min = max - 20;
-    const newData = [];
-    for (let i = min; i < max; i++) {
-      newData.push("" + i);
-    }
+  useEffect(() => {
+    getBookClub();
+    console.log("page loaded");
+  }, []);
 
-    setData([...data, ...newData]);
-  };
+  async function getBookClub() {
+    let bookClub = await getBookClubDocument(bookClubId)
+    setBookClubData(bookClub)
+  }
 
-  const loadData = (ev: any) => {
-    setTimeout(() => {
-      pushData();
-      ev.target.complete();
-    }, 500);
-  };
-
-  useIonViewWillEnter(() => {
-    pushData();
-  });
-
+  let clubName = bookClubData?.name
+  let bookTitle = bookClubData?.book.title
+  let bookAuthor = bookClubData?.book.authors
+  let bookCoverImg = bookClubData?.book.imageUrl
+  let bookCurrentChapter = "?"
+  let clubParticipants = bookClubData?.participants
+  let clubParticipantsMax = bookClubData?.maxParticipantsNumber
+  // console.log(bookClubId)
+  // console.log(getBookClubDiscussions(bookClubId))
   return (
     <IonPage>
       <IonHeader>
@@ -75,7 +68,7 @@ const ClubPage: React.FC = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/clubs" />
           </IonButtons>
-          <IonTitle>{clubName}</IonTitle>
+          <IonTitle>{bookClubData?.name}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -127,17 +120,19 @@ const ClubPage: React.FC = () => {
         </IonSegment>
 
         <IonList lines="none">
-          {data.map((item, index) => {
+          {bookClubData?.discussions.map((discussion, index) => {
             return (
               <IonItem key={index}>
                 {selectedSegment === "calendar" ? (
                   <DiscussionCard
-                    chapter={"Diva-E's BookClub"}
-                    member={3}
-                    date={"20.10.2022"}
-                    time={"13:00 - 14:00"}
-                    location={"Raum Gute Stube"}
-                    isModerator={isModerator}
+                    bookClubId={bookClubId}
+                    discussionId={discussion.id}
+                    chapter={discussion.title}
+                    participants={discussion.participants.length}
+                    startTime={discussion.startTime}
+                    duration={discussion.duration}
+                    location={discussion.location}
+                    agenda={discussion.agenda}
                   />
                 ) : (
                   <ResourceCard
@@ -156,7 +151,7 @@ const ClubPage: React.FC = () => {
             <IonFabButton
               routerLink={
                 selectedSegment === "calendar"
-                  ? "/discussions/add"
+                  ? "/clubs/" + bookClubId + "/discussions/add"
                   : "/resources/add"
               }
             >

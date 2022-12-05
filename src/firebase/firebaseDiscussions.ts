@@ -7,7 +7,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { updateBookClubDocument } from "./firebaseBookClub";
+import {  updateBookClubDocument } from "./firebaseBookClub";
 import { firebaseDB } from "./firebaseConfig";
 
 // Expected data format
@@ -19,33 +19,17 @@ import { firebaseDB } from "./firebaseConfig";
 // }
 
 async function createDiscussionDocument(bookClubId: string, data: any) {
-  data.bookClubId = bookClubId;
-  var res = await addDoc(collection(firebaseDB, "discussions"), data);
-
-  if (res) {
-    const discussionDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
-    updateBookClubDocument(discussionDocument.id, {
-      discussionIds: arrayUnion(res.id),
-    });
-  }
+  var res = await addDoc(collection(firebaseDB, "bookClubs", bookClubId, "discussions"), data);
 }
 
-async function updateDiscussionDocument(discussionId: string, data: any) {
-  const discussionDocument = doc(
-    firebaseDB,
-    "discussions",
-    String(discussionId)
-  );
+async function updateDiscussionDocument(bookClubId: string, discussionId: string, data: any) {
+  const discussionDocument = doc(firebaseDB, "bookClubs", bookClubId, "discussions", discussionId);
 
   updateDoc(discussionDocument, data);
 }
 
-async function deleteDiscussionDocument(discussionId: string) {
-  const discussionDocument = doc(
-    firebaseDB,
-    "discussions",
-    String(discussionId)
-  );
+async function deleteDiscussionDocument(bookClubId: string, discussionId: string) {
+  const discussionDocument = doc(firebaseDB, "bookClubs", bookClubId, "discussions", discussionId);
 
   deleteDoc(discussionDocument);
 }

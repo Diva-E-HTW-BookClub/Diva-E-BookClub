@@ -72,7 +72,7 @@ const App: React.FC = () => (
           <Route exact path="/clubs/create">
             <CreateClubPage />
           </Route>
-          <Route exact path="/clubs/clubId">
+          <Route exact path="/clubs/:bookClubId">
             <ClubPage />
           </Route>
           <Route exact path="/resources/add">
@@ -81,11 +81,11 @@ const App: React.FC = () => (
           <Route exact path="/resources/edit">
             <EditResource />
           </Route>
-          <Route exact path="/discussions/add">
+          <Route exact path="/clubs/:bookClubId/discussions/add">
             <AddDiscussion />
           </Route>
-          <Route exact path="/discussions/live">
-            <LiveDiscussion />
+          <Route exact path="/clubs/:bookClubId/discussions/:discussionId/comments">
+            <Comments />
           </Route>
           <Route exact path="/profile">
             <ProfileTab />
@@ -93,11 +93,8 @@ const App: React.FC = () => (
           <Route exact path="/agenda">
             <Agenda />
           </Route>
-          <Route exact path="/comments">
-            <Comments />
-          </Route>
-          <Route exact path="/discussions/edit">
-            <EditDiscussion />
+          <Route path="/start">
+            <IonNav root={() => <Start />}></IonNav>;
           </Route>
 
           <Route exact path="/">

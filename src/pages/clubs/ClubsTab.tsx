@@ -67,6 +67,7 @@ const ClubsTab: React.FC = () => {
             return (
               <IonItem key={bookClub.id}>
                 <ClubCard
+                  id={bookClub.id}
                   name={bookClub.name}
                   member={bookClub.participants.length}
                   image={bookClub.book.imageUrl}

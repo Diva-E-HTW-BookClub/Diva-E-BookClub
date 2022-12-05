@@ -17,6 +17,7 @@ interface ClubCardProps {
   date: string;
   time: string;
   location: string;
+  id: string,
 }
 
 export const ClubCard: React.FC<ClubCardProps> = ({
@@ -26,9 +27,10 @@ export const ClubCard: React.FC<ClubCardProps> = ({
   date,
   time,
   location,
+  id,
 }: ClubCardProps) => {
   return (
-    <IonCard routerLink="/clubs/clubId">
+    <IonCard routerLink={"/clubs/" + id }>
       <IonGrid>
         <IonRow>
           <IonCol size="4">
@@ -50,6 +52,7 @@ export const ClubCard: React.FC<ClubCardProps> = ({
               {date}
               <br />
               {location}
+              {id}
             </IonCardContent>
           </IonCol>
         </IonRow>

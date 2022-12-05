@@ -11,9 +11,15 @@ import {
   documentId,
   limit,
   orderBy,
+  arrayUnion,
+  getDoc,
 } from "firebase/firestore";
 import { firebaseDB } from "./firebaseConfig";
 
+type Comment = {
+  text: string,
+  passage: string,
+}
 type Book = {
   title: string,
   authors: string[],
@@ -21,11 +27,13 @@ type Book = {
 }
 
 type Discussion = {
-  chapter: string,
+  id: string,
+  title: string,
   participants: string[],
-  startTime: Date,
-  endTime: Date,
-  location: string
+  startTime: string,
+  duration: string,
+  location: string,
+  agenda: string,
 }
 
 type BookClub = {
@@ -54,32 +62,42 @@ async function deleteBookClubDocument(bookClubId: string) {
   deleteDoc(bookClubDocument);
 }
 
-//Increments a given BookClub's memberCount by incrementBy
-//Supports negative numbers -> decrease count
-async function incrementBookClubMemberCount(
-  bookClubId: string,
-  incrementBy: number
-) {
-  console.log("starting");
-  const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
-
-  await updateDoc(bookClubDocument, {
-    memberCount: increment(incrementBy),
-  });
-}
 async function getBookClubDocument(bookClubId: string) {
-  const q = query(
-    collection(firebaseDB, "bookClubs"),
-    where(documentId(), "==", bookClubId)
+  const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
+  var bookClubResultDocument = await getDoc(bookClubDocument);
+  let bookClubData = bookClubResultDocument.data()
+
+  let discussionQuery = query(
+    collection(firebaseDB, "bookClubs", String(bookClubId), "discussions"),
+    orderBy("title"),
+    limit(100)
   );
+  var discussionDocuments = await getDocs(discussionQuery);
+  var discussionArray: Discussion[] = []
 
-  var res = await getDocs(q);
-  // res.forEach((doc) => {
-  //   console.log(doc.id)
-  //   console.log(doc.data())
-  // });
-
-  return res;
+  discussionDocuments.forEach((doc) => { 
+    let discussionData = doc.data()
+    discussionArray.push({
+      id: doc.id,
+      title: discussionData.title,
+      participants: discussionData.participants,
+      startTime: discussionData.startTime,
+      duration: discussionData.duration,
+      location: discussionData.location,
+      agenda: discussionData.agenda,
+    })
+  })
+  if (bookClubData) {
+    return {
+      id: bookClubData.id,
+      name: bookClubData.name,
+      moderator: bookClubData.moderator,
+      participants: bookClubData.participants,
+      maxParticipantsNumber: bookClubData.maxParticipantsNumber,
+      book: bookClubData.book,
+      discussions: discussionArray,
+    }
+  }
 }
 
 // get book clubs ordered by name and convert results to BookClub[]
@@ -106,29 +124,14 @@ async function searchBookClubs(resultLimit: number) {
   });
 }
 
-// Geht durch alle discussions, vermutlich effizienter über den BookClub auf die discussions zu kommen
-async function getBookClubDiscussions(id: string) {
-  const q = query(
-    collection(firebaseDB, "discussions"),
-    where("bookClubId", "==", id)
-  );
-
-  var res = await getDocs(q);
-  res.forEach((doc) => {
-    console.log(doc.data());
-  });
-}
-
 export {
   createBookClubDocument,
   updateBookClubDocument,
   deleteBookClubDocument,
-  incrementBookClubMemberCount,
   getBookClubDocument,
-  getBookClubDiscussions,
   searchBookClubs,
 };
 
 export type {
-  BookClub
+  BookClub, Discussion, Comment
 }
