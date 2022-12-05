@@ -1,0 +1,24 @@
+.testclass {
+  margin-left: 100px;
+}
+
+.box {
+  margin-left: 30px;
+}
+
+.isOrange{
+  --progress-background: #d6660b;
+}
+
+.isDarkOrange{
+  --progress-background: #d63a0b;
+}
+
+.isRed{
+  --progress-background: #e00e0e;
+}
+
+ion-progress-bar{
+  --progress-background: #e7b837;
+  padding:12px;
+}

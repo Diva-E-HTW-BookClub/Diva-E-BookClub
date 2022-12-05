@@ -54,7 +54,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
           </IonCol>
         </IonRow>
 
-        {showButtons &&
+        {showButtons && (
           <IonRow>
             <IonCol>
               <IonButton routerLink="/agenda">Outline </IonButton>
@@ -69,7 +69,8 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
                 <IonButton>Join</IonButton>
               )} */}
             </IonCol>
-          </IonRow>}
+          </IonRow>
+        )}
       </IonGrid>
     </IonCard>
   );

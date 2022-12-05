@@ -23,8 +23,9 @@ import ClubPage from "./pages/clubs/ClubPage";
 import AddDiscussion from "./pages/discussion/AddDiscussion";
 import AddResource from "./pages/resources/AddResource";
 import EditResource from "./pages/resources/EditResource";
-import Start from "./pages/identity/Start";
+import StartPage from "./pages/identity/StartPage";
 import Comments from "./pages/comments/Comments";
+import EditDiscussion from "./pages/discussion/EditDiscussion";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -59,6 +60,9 @@ const App: React.FC = () => (
           <Route exact path="/register">
             <RegisterPage />
           </Route>
+          <Route exact path="/start">
+            <StartPage />
+          </Route>
           <Route exact path="/home">
             <HomeTab />
           </Route>
@@ -92,8 +96,9 @@ const App: React.FC = () => (
           <Route path="/start">
             <IonNav root={() => <Start />}></IonNav>;
           </Route>
+
           <Route exact path="/">
-            <Redirect to="/home" />
+            <Redirect to="/start"/>
           </Route>
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
