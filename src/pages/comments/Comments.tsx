@@ -7,6 +7,7 @@ import {
   IonFabButton,
   IonHeader,
   IonIcon,
+  IonInput,
   IonItem,
   IonLabel,
   IonModal,
@@ -18,35 +19,34 @@ import {
   useIonViewWillEnter,
 } from "@ionic/react";
 import "./Comments.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CommentCard } from "../../components/CommentCard";
+
 import { add, camera, document } from "ionicons/icons";
+import { createCommentDocument, getComments } from "../../firebase/firebaseComments";
+import { useParams } from "react-router";
 
 const Comments: React.FC = () => {
-  const [data, setData] = useState<string[]>([]);
+  let {bookClubId}: {bookClubId: string} = useParams();
+  let {discussionId}: {discussionId: string} = useParams();
+  
+  const [commentData, setCommentData] = useState<Comment[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const pushData = () => {
-    const max = data.length + 5;
-    const min = max - 5;
-    const newData = [];
-    for (let i = min; i < max; i++) {
-      newData.push("" + i);
-    }
+  const [commentText, setCommentText] = useState<string>("")
+  const [commentPassage, setCommentPassage] = useState<string>("")
 
-    setData([...data, ...newData]);
-  };
+  // useEffect(() => {
+  //   setCommentData(getComments(bookClubId, discussionId))
+  // }, []);
 
-  const loadData = (ev: any) => {
-    setTimeout(() => {
-      pushData();
-      ev.target.complete();
-    }, 500);
-  };
-
-  useIonViewWillEnter(() => {
-    pushData();
-  });
+  async function createComment() {
+      createCommentDocument(bookClubId, discussionId, {
+          text: commentText,
+          passage: commentPassage
+      })
+  }
+ 
 
   return (
     <IonPage>
@@ -64,7 +64,7 @@ const Comments: React.FC = () => {
             <IonTitle size="large">Comments</IonTitle>
           </IonToolbar>
         </IonHeader>
-        {data.map((item, index) => {
+        {commentData.map((item, index) => {
           return (
             <CommentCard
               key={index}
@@ -120,17 +120,19 @@ const Comments: React.FC = () => {
               </div>
             </IonItem>
             <IonItem lines="none">
-              <IonLabel>Passage Quotation</IonLabel>
+              <IonLabel>Text Passage</IonLabel>
             </IonItem>
             <IonItem>
-              <IonTextarea cols={5}></IonTextarea>
+              <IonInput placeholder="Enter the passage you are talking about" onIonInput={(e: any) => setCommentPassage(e.target.value)}></IonInput>
             </IonItem>
             <IonItem lines="none">
-              <IonLabel>Notes</IonLabel>
+              <IonLabel>Comment</IonLabel>
             </IonItem>
             <IonItem>
-              <IonTextarea cols={5}></IonTextarea>
+              <IonTextarea cols={5} required placeholder="Enter your comment!" onIonChange={(e:any) => setCommentText(e.target.value) }></IonTextarea>
             </IonItem>
+            <IonButton onClick={() => setIsOpen(false)}>Cancel</IonButton>
+            <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments"} color="primary" onClick={createComment}>Create</IonButton>
           </IonContent>
         </IonModal>
       </IonContent>

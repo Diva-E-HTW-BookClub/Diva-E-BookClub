@@ -77,17 +77,17 @@ const App: React.FC = () => (
           <Route exact path="/resources/edit">
             <EditResource />
           </Route>
-          <Route exact path="/discussions/add">
+          <Route exact path="/clubs/:bookClubId/discussions/add">
             <AddDiscussion />
+          </Route>
+          <Route exact path="/clubs/:bookClubId/discussions/:discussionId/comments">
+            <Comments />
           </Route>
           <Route exact path="/profile">
             <ProfileTab />
           </Route>
           <Route exact path="/agenda">
             <Agenda />
-          </Route>
-          <Route exact path="/comments">
-            <Comments />
           </Route>
           <Route path="/start">
             <IonNav root={() => <Start />}></IonNav>;

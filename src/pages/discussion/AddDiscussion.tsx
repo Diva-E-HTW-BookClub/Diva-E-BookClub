@@ -17,10 +17,19 @@ import {
   IonButton,
 } from "@ionic/react";
 import React, { useRef, useEffect, useState } from "react";
+import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
+import { useParams } from "react-router";
 import "./AddDiscussion.css";
 
 const AddDiscussion: React.FC = () => {
+  let {bookClubId}: {bookClubId: string} = useParams();
+
   const [progress, setProgress] = useState(0);
+  const [discussionTitle, setDiscussionTitle] = useState<string>("")
+  const [discussionStartTime, setDiscussionStartTime] = useState<string>("")
+  const [discussionDuration, setDiscussionDuration] = useState<string>("")
+  const [discussionLocation, setDiscussionLocation] = useState<string>("")
+  
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -34,6 +43,19 @@ const AddDiscussion: React.FC = () => {
       setProgress(0);
     }, 1000);
   }
+
+  async function addDiscussion() {
+    createDiscussionDocument(bookClubId, {
+      title: discussionTitle,
+      participants: [],
+      starTime: discussionStartTime,
+      duration: discussionDuration,
+      location: discussionLocation,
+      agenda: "",
+    })
+    
+  }
+
   return (
     <IonPage>
       <IonHeader>
@@ -47,46 +69,37 @@ const AddDiscussion: React.FC = () => {
           <IonGrid>
             <div className="box">
               <IonCardTitle>Select a date</IonCardTitle>
-              <IonDatetime
-                presentation="date"
-                min="2022-03-01"
-                max="2022-05-31"
-              >
-                {" "}
+              <IonDatetime presentation="date" onIonChange={(e: any) => setDiscussionStartTime(e.target.value)}>
               </IonDatetime>
               <div className="divider"></div>
               <IonRow>
                 <IonCol size="5">
-                  <IonCardTitle>Start</IonCardTitle>
-                  <IonDatetime presentation="time"></IonDatetime>
+                  <IonCardTitle>Duration</IonCardTitle>
+                  <IonDatetime presentation="time" onIonChange={(e: any) => setDiscussionDuration(e.target.value)}></IonDatetime>
                 </IonCol>
-                <IonCol size="5">
-                  <IonCardTitle>End</IonCardTitle>
-                  <IonDatetime presentation="time"></IonDatetime>
-                </IonCol>
-              </IonRow>
+              </IonRow>I
 
               <div className="divider"></div>
               <IonItem>
                 <IonLabel position="stacked">
-                  <h1>Name of Chapter</h1>
+                  <h1>Title</h1>
                 </IonLabel>
-                <IonInput placeholder="Enter the name of the chapter"></IonInput>
+                <IonInput required placeholder="Enter a title for your discussion!" onIonInput={(e: any) => setDiscussionTitle(e.target.value)}></IonInput>
               </IonItem>
               <div className="divider"></div>
               <IonItem>
                 <IonLabel position="stacked">
                   <h1>Location</h1>
                 </IonLabel>
-                <IonInput placeholder="Enter the location"></IonInput>
+                <IonInput required placeholder="Enter the location for your discussion!" onIonInput={(e: any) => setDiscussionLocation(e.target.value)}></IonInput>
               </IonItem>
               <div className="divider"></div>
               <IonRow>
                 <IonCol size="5">
-                  <IonButton>Cancel</IonButton>
+                  <IonButton routerLink={"/clubs/" + bookClubId}>Cancel</IonButton>
                 </IonCol>
                 <IonCol size="5">
-                  <IonButton>Done</IonButton>
+                <IonButton routerLink={"/clubs/" + bookClubId} color="primary" onClick={addDiscussion}>Create</IonButton>
                 </IonCol>
               </IonRow>
               <div className="divider"></div>

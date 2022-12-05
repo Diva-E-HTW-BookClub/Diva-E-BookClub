@@ -10,21 +10,25 @@ import { peopleCircle } from "ionicons/icons";
 import { useState } from "react";
 
 interface DiscussionCardProps {
+  bookClubId: string,
+  discussionId: string,
   chapter: string;
-  member: number;
-  date: string;
-  time: string;
+  participants: number;
+  startTime: string;
+  duration: string;
   location: string;
-  isModerator: boolean;
+  agenda: string;
 }
 
 export const DiscussionCard: React.FC<DiscussionCardProps> = ({
+  bookClubId,
+  discussionId,
   chapter,
-  member,
-  date,
-  time,
+  participants,
+  startTime,
+  duration,
   location,
-  isModerator,
+  agenda,
 }: DiscussionCardProps) => {
   const [showButtons, setShowButtons] = useState<boolean>(false);
 
@@ -36,16 +40,16 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
           <IonCol>
             {chapter}
             <br></br>
-            {date}
+            {startTime}
           </IonCol>
 
           <IonCol>
             <IonIcon icon={peopleCircle} class="large-icon"></IonIcon>
-            {member}
+            {participants}
           </IonCol>
 
           <IonCol>
-            {time} <br></br>
+            {duration} <br></br>
             {location}
           </IonCol>
         </IonRow>
@@ -53,17 +57,17 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
         {showButtons &&
           <IonRow>
             <IonCol>
-              <IonButton routerLink="/agenda">Outline</IonButton>
+              <IonButton routerLink="/agenda">Outline </IonButton>
             </IonCol>
             <IonCol>
-              <IonButton routerLink="/comments">Comments</IonButton>
+              <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments"}>Comments</IonButton>
             </IonCol>
             <IonCol>
-              {isModerator ? (
+              {/* {isModerator ? (
                 <IonButton>Edit</IonButton>
               ) : (
                 <IonButton>Join</IonButton>
-              )}
+              )} */}
             </IonCol>
           </IonRow>}
       </IonGrid>

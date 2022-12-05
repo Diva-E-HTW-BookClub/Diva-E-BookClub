@@ -7,7 +7,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { addDiscussionToBookClub, updateBookClubDocument } from "./firebaseBookClub";
+import {  updateBookClubDocument } from "./firebaseBookClub";
 import { firebaseDB } from "./firebaseConfig";
 
 // Expected data format

@@ -16,6 +16,10 @@ import {
 } from "firebase/firestore";
 import { firebaseDB } from "./firebaseConfig";
 
+type Comment = {
+  text: string,
+  passage: string,
+}
 type Book = {
   title: string,
   authors: string[],
@@ -23,11 +27,13 @@ type Book = {
 }
 
 type Discussion = {
-  chapter: string,
+  id: string,
+  title: string,
   participants: string[],
-  startTime: Date,
-  endTime: Date,
-  location: string
+  startTime: string,
+  duration: string,
+  location: string,
+  agenda: string,
 }
 
 type BookClub = {
@@ -56,19 +62,6 @@ async function deleteBookClubDocument(bookClubId: string) {
   deleteDoc(bookClubDocument);
 }
 
-//Increments a given BookClub's memberCount by incrementBy
-//Supports negative numbers -> decrease count
-async function incrementBookClubMemberCount(
-  bookClubId: string,
-  incrementBy: number
-) {
-
-  const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
-
-  await updateDoc(bookClubDocument, {
-    memberCount: increment(incrementBy),
-  });
-}
 async function getBookClubDocument(bookClubId: string) {
   const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
   var bookClubResultDocument = await getDoc(bookClubDocument);
@@ -83,13 +76,15 @@ async function getBookClubDocument(bookClubId: string) {
   var discussionArray: Discussion[] = []
 
   discussionDocuments.forEach((doc) => { 
-    let data = doc.data()
+    let discussionData = doc.data()
     discussionArray.push({
-      chapter: data.chapter,
-      participants: data.participants,
-      startTime: data.startTime,
-      endTime: data.endTime,
-      location: data.endTime
+      id: doc.id,
+      title: discussionData.title,
+      participants: discussionData.participants,
+      startTime: discussionData.startTime,
+      duration: discussionData.duration,
+      location: discussionData.location,
+      agenda: discussionData.agenda,
     })
   })
   if (bookClubData) {
@@ -129,23 +124,14 @@ async function searchBookClubs(resultLimit: number) {
   });
 }
 
-async function addDiscussionToBookClub(bookClubId: string, discussionId: string) {
-  const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
-  updateBookClubDocument(bookClubDocument.id, {
-    discussionIds: arrayUnion(discussionId),
-  });
-}
-
 export {
   createBookClubDocument,
   updateBookClubDocument,
   deleteBookClubDocument,
-  incrementBookClubMemberCount,
   getBookClubDocument,
   searchBookClubs,
-  addDiscussionToBookClub,
 };
 
 export type {
-  BookClub, Discussion
+  BookClub, Discussion, Comment
 }
