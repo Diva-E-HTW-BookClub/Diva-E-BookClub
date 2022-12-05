@@ -94,7 +94,7 @@ const App: React.FC = () => (
             <Agenda />
           </Route>
           <Route path="/start">
-            <IonNav root={() => <Start />}></IonNav>;
+            <StartPage/>
           </Route>
 
           <Route exact path="/">
