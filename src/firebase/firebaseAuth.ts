@@ -12,7 +12,7 @@ import { firebaseApp, firebaseDB } from "./firebaseConfig";
 
 const auth = getAuth();
 
-export var currentUser: string = "";
+export var currentUser: any;
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -31,20 +31,20 @@ onAuthStateChanged(auth, (user) => {
 
 async function registerUser(email: string, password: string) {
   const auth = getAuth(firebaseApp);
-  createUserWithEmailAndPassword(auth, email, password)
+  return createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-      // Signed in
-      const user = userCredential.user;
-
-      return "success";
+      // Registered
+      currentUser = userCredential.user;
+      return "";
     })
     .catch((error) => {
-      console.log(error.message);
       // Firebase: Error (auth/invalid-email).
       // Firebase: Password should be at least 6 characters (auth/weak-password).
       // Firebase: Error (auth/email-already-in-use).
       const errorCode = error.code;
       const errorMessage = error.message;
+      console.log(errorMessage);
+      return errorCode;
     });
 }
 
@@ -54,11 +54,12 @@ async function loginUser(email: string, password: string) {
     .then((userCredential) => {
       // Signed in
       const user = userCredential.user;
+      
     })
     .catch((error) => {
       console.log(error.message);
       // Firebase: Error (auth/wrong-password).
-      // Firebase: Error (auth/inv alid-email).
+      // Firebase: Error (auth/invalid-email).
       const errorCode = error.code;
       const errorMessage = error.message;
     });

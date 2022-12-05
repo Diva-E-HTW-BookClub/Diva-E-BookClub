@@ -6,7 +6,14 @@ import {
   IonInput,
   IonButton,
   useIonToast,
+  IonLabel,
+  IonButtons,
+  IonBackButton,
+  IonToolbar,
+  IonItem,
+  IonRouterLink
 } from "@ionic/react";
+import "./LoginPage.css";
 import { useState } from "react";
 import { loginUser } from "../../firebase/firebaseAuth";
 
@@ -29,27 +36,33 @@ const LoginPage: React.FC = () => {
   };
 
   return (
+
     <IonPage>
       <IonHeader>
-        <IonTitle>Login Page</IonTitle>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton defaultHref="/start" />
+          </IonButtons>
+          <IonTitle>Log in</IonTitle>
+        </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonInput
-          placeholder="email"
-          onIonChange={(e: any) => setEmail(e.target.value)}
-        ></IonInput>
-        <IonInput
-          type="password"
-          placeholder="password"
-          onIonChange={(e: any) => setPassword(e.target.value)}
-        ></IonInput>
-        <IonButton onClick={login}>Login</IonButton>
-
-        <p>
-          {" "}
-          You dont have an account?{" "}
-          <IonButton routerLink="/register">Register</IonButton>{" "}
-        </p>
+        <h1>Welcome Back</h1>
+        <IonItem>
+          <IonLabel position="stacked">Email Address</IonLabel>
+          <IonInput onIonChange={(e: any) => setEmail(e.target.value)}></IonInput>
+        </IonItem>
+        <IonItem>
+          <IonLabel position="stacked">Password</IonLabel>
+          <IonInput type="password" onIonChange={(e: any) => setPassword(e.target.value)}></IonInput>
+        </IonItem>
+        <IonButton onClick={login}>Log in</IonButton>
+        <IonItem lines="none">
+          <p>
+            Don't have an Account?
+            <IonRouterLink routerDirection="forward" routerLink="/register"> Register</IonRouterLink>
+          </p>
+        </IonItem>
       </IonContent>
     </IonPage>
   );
