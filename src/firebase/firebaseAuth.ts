@@ -50,11 +50,11 @@ async function registerUser(email: string, password: string) {
 
 async function loginUser(email: string, password: string) {
   const auth = getAuth(firebaseApp);
-  signInWithEmailAndPassword(auth, email, password)
+  return signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed in
-      const user = userCredential.user;
-      
+      currentUser = userCredential.user;
+      return "";
     })
     .catch((error) => {
       console.log(error.message);
@@ -62,6 +62,8 @@ async function loginUser(email: string, password: string) {
       // Firebase: Error (auth/invalid-email).
       const errorCode = error.code;
       const errorMessage = error.message;
+      console.log(errorMessage);
+      return errorCode;
     });
 }
 
