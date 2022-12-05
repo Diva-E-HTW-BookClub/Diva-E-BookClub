@@ -30,24 +30,26 @@ const Comments: React.FC = () => {
   let {bookClubId}: {bookClubId: string} = useParams();
   let {discussionId}: {discussionId: string} = useParams();
   
-  const [commentData, setCommentData] = useState<Comment[]>([]);
+  const [commentData, setCommentData] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
   const [commentText, setCommentText] = useState<string>("")
   const [commentPassage, setCommentPassage] = useState<string>("")
 
-  // useEffect(() => {
-  //   setCommentData(getComments(bookClubId, discussionId))
-  // }, []);
+  useEffect(() => {
+    getCommentData()
+  }, []);
 
+  async function getCommentData() {
+    var commentData = await getComments(bookClubId, discussionId)
+    setCommentData(commentData)
+  }
   async function createComment() {
       createCommentDocument(bookClubId, discussionId, {
           text: commentText,
           passage: commentPassage
       })
   }
- 
-
   return (
     <IonPage>
       <IonHeader>
@@ -68,12 +70,12 @@ const Comments: React.FC = () => {
           return (
             <CommentCard
               key={index}
-              userName={"Sönke"}
-              pageLine={"P.20-21 L.18-20"}
+              userName="PLACEHOLDER NAME"
+              pageLine={item.passage}
               quote={
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
               }
-              note={"WTF is this?"}
+              note={item.text}
             />
           );
         })}
