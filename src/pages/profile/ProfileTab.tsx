@@ -13,6 +13,7 @@ import {
 import { camera, personCircleOutline } from "ionicons/icons";
 import { useState } from "react";
 import "./ProfileTab.css";
+import { currentUser } from "../../firebase/firebaseAuth";
 
 const ProfileTab: React.FC = () => {
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
@@ -36,7 +37,10 @@ const ProfileTab: React.FC = () => {
             icon={personCircleOutline}
           ></IonIcon>
         </IonItem>
-        {isReadOnly && (
+        {!currentUser && (
+          "You are not logged in!"
+        )}
+        {isReadOnly && currentUser && (
           <>
             <IonItem>
               <IonLabel position="stacked">User Name</IonLabel>
@@ -47,10 +51,7 @@ const ProfileTab: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">Email Address</IonLabel>
-              <IonInput
-                placeholder="email@address.com"
-                readonly={true}
-              ></IonInput>
+              <h4>{currentUser.email}</h4>
             </IonItem>
             <IonItem lines="none">
               <IonButton
