@@ -20,10 +20,12 @@ import { add } from "ionicons/icons";
 import "./ClubsTab.css";
 import { useEffect, useState } from "react";
 import { ClubCard } from "../../components/ClubCard";
-import { searchBookClubs, BookClub } from "../../firebase/firebaseBookClub";
+import { searchBookClubs, searchBookClubsByParticipant, BookClub } from "../../firebase/firebaseBookClub";
+import { getCurrentUserId } from "../../firebase/firebaseAuth";
 
 const ClubsTab: React.FC = () => {
   const [data, setData] = useState<BookClub[]>([]);
+  const [selectedSegment, setSelectedSegment] = useState<string>("trending");
 
   useEffect(() => {
     getBookClubs();
@@ -33,6 +35,21 @@ const ClubsTab: React.FC = () => {
   async function getBookClubs() {
     let bookClubs = await searchBookClubs(10);
     setData(bookClubs);
+  }
+
+  // show book clubs depending on selected segment
+  async function getBookClubsOnClick(event: any) {
+    let segmentValue = event.detail.value;
+    setSelectedSegment(segmentValue);
+    if (segmentValue === "your") {
+      let bookClubs = await searchBookClubsByParticipant(getCurrentUserId());
+      setData(bookClubs);
+    } else if (segmentValue === "trending") {
+      // will sort results by participants number (tbd)
+      getBookClubs();
+    } else if (segmentValue === "new") {
+      getBookClubs();
+    }
   }
 
   return (
@@ -50,7 +67,7 @@ const ClubsTab: React.FC = () => {
         </IonHeader>
         <IonSearchbar></IonSearchbar>
 
-        <IonSegment value="trending">
+        <IonSegment onIonChange={getBookClubsOnClick} value={selectedSegment}>
           <IonSegmentButton value="trending">
             <IonLabel>Trending</IonLabel>
           </IonSegmentButton>
@@ -80,7 +97,7 @@ const ClubsTab: React.FC = () => {
           })}
         </IonList>
 
-        <IonInfiniteScroll onIonInfinite={() => {}}>
+        <IonInfiniteScroll onIonInfinite={() => { }}>
           <IonInfiniteScrollContent loadingSpinner="bubbles"></IonInfiniteScrollContent>
         </IonInfiniteScroll>
 
