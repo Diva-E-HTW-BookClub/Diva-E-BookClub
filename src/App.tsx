@@ -72,7 +72,7 @@ const App: React.FC = () => (
           <Route exact path="/clubs/create">
             <CreateClubPage />
           </Route>
-          <Route exact path="/clubs/:bookClubId">
+          <Route exact path="/clubs/:bookClubId/view">
             <ClubPage />
           </Route>
           <Route exact path="/resources/add">
