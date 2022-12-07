@@ -105,7 +105,7 @@ const CreateClubPage: React.FC = () => {
           </IonButtons>
           <IonTitle>New Club</IonTitle>
           <IonButtons slot="end">
-            <IonButton routerLink="/clubs/clubId" color="primary" onClick={createClub}>
+            <IonButton routerLink="/clubs/" color="primary" onClick={createClub}>
               Create
             </IonButton>
           </IonButtons>

@@ -20,12 +20,15 @@ import LoginPage from "./pages/identity/LoginPage";
 import RegisterPage from "./pages/identity/RegisterPage";
 import Agenda from "./pages/Agenda";
 import ClubPage from "./pages/clubs/ClubPage";
-import AddDiscussion from "./pages/discussion/AddDiscussion";
+import AddDiscussion from "./pages/discussion/CreateDiscussion";
 import AddResource from "./pages/resources/AddResource";
-import EditResource from "./pages/resources/EditResource";
 import StartPage from "./pages/identity/StartPage";
 import Comments from "./pages/comments/Comments";
+
+import EditResource from "./pages/resources/EditResource";
+import EditClubPage from "./pages/clubs/EditClubPage";
 import EditDiscussion from "./pages/discussion/EditDiscussion";
+import EditComment from "./pages/comments/EditComment";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -69,11 +72,14 @@ const App: React.FC = () => (
           <Route exact path="/clubs">
             <ClubsTab />
           </Route>
-          <Route exact path="/clubs/create">
+          <Route exact path="/create_club">
             <CreateClubPage />
           </Route>
           <Route exact path="/clubs/:bookClubId">
             <ClubPage />
+          </Route>
+          <Route exact path="/clubs/:bookClubId/edit">
+            <EditClubPage />
           </Route>
           <Route exact path="/resources/add">
             <AddResource />
@@ -86,6 +92,12 @@ const App: React.FC = () => (
           </Route>
           <Route exact path="/clubs/:bookClubId/discussions/:discussionId/comments">
             <Comments />
+          </Route>
+          <Route exact path="/clubs/:bookClubId/discussions/:discussionId/edit">
+            <EditDiscussion />
+          </Route>
+          <Route exact path="/clubs/:bookClubId/discussions/:discussionId/comments/:commentId/edit">
+            <EditComment />
           </Route>
           <Route exact path="/profile">
             <ProfileTab />

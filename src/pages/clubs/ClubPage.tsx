@@ -30,9 +30,9 @@ import { calendar, documents, add } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { DiscussionCard } from "../../components/DiscussionCard";
 import { ResourceCard } from "../../components/ResourceCard";
-import { BookClub, Discussion, getBookClubDocument, searchBookClubs,  } from "../../firebase/firebaseBookClub";
+import { BookClub, getBookClubDocument, } from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
-import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
+
 
 const ClubPage: React.FC = () => {
   let {bookClubId}: {bookClubId: string} = useParams();
@@ -44,9 +44,9 @@ const ClubPage: React.FC = () => {
 
   useEffect(() => {
     getBookClub();
-    console.log("page loaded");
-  }, []);
 
+  }, []);
+  
   async function getBookClub() {
     let bookClub = await getBookClubDocument(bookClubId)
     setBookClubData(bookClub)
@@ -94,7 +94,9 @@ const ClubPage: React.FC = () => {
                     {clubParticipants}/{clubParticipantsMax}
                   </h3>
                   {isModerator ? (
-                    <IonButton>Edit</IonButton>
+                    <IonRow>
+                      <IonButton routerLink={"/clubs/" + bookClubId + "/edit"}>Edit</IonButton>
+                    </IonRow>
                   ) : (
                     <IonButton>Join</IonButton>
                   )}
@@ -130,7 +132,7 @@ const ClubPage: React.FC = () => {
                     chapter={discussion.title}
                     participants={discussion.participants.length}
                     startTime={discussion.startTime}
-                    duration={discussion.duration}
+                    endTime={discussion.endTime}
                     location={discussion.location}
                     agenda={discussion.agenda}
                   />

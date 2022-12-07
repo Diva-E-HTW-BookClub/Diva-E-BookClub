@@ -1,18 +1,26 @@
-import { IonCard, IonCardSubtitle, IonCardTitle, IonIcon } from "@ionic/react";
+import { IonButton, IonCard, IonCardSubtitle, IonCardTitle, IonIcon } from "@ionic/react";
 import { personCircleOutline } from "ionicons/icons";
 
+
 interface CommentCardProps {
-  userName: String;
-  pageLine: String;
-  quote: String;
-  note: String;
+  userName: string;
+  passage: string;
+  quote: string;
+  text: string;
+  commentId: string;
+  bookClubId: string,
+  discussionId: string,
 }
 
 export const CommentCard: React.FC<CommentCardProps> = ({
   userName,
-  pageLine,
+  passage,
   quote,
-  note,
+  text,
+  commentId,
+  bookClubId,
+  discussionId,
+
 }) => {
   return (
     <IonCard>
@@ -20,9 +28,10 @@ export const CommentCard: React.FC<CommentCardProps> = ({
         <IonIcon size="large" icon={personCircleOutline}></IonIcon>
         {userName}
       </IonCardTitle>
-      <IonCardSubtitle>{pageLine}</IonCardSubtitle>
+      <IonCardSubtitle>{passage}</IonCardSubtitle>
       <p>{quote}</p>
-      <p>{note}</p>
+      <p>{text}</p>
+      <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments/" + commentId + "/edit"} > Edit </IonButton>
     </IonCard>
   );
 };

@@ -23,7 +23,7 @@ import React, { useEffect, useState } from "react";
 import { CommentCard } from "../../components/CommentCard";
 
 import { add, camera, document } from "ionicons/icons";
-import { createCommentDocument, getComments } from "../../firebase/firebaseComments";
+import { createCommentDocument, getDiscussionComments } from "../../firebase/firebaseComments";
 import { useParams } from "react-router";
 
 const Comments: React.FC = () => {
@@ -35,20 +35,23 @@ const Comments: React.FC = () => {
 
   const [commentText, setCommentText] = useState<string>("")
   const [commentPassage, setCommentPassage] = useState<string>("")
+  const [commentQuote, setCommentQuote] = useState<string>("")
 
   useEffect(() => {
     getCommentData()
   }, []);
 
   async function getCommentData() {
-    var commentData = await getComments(bookClubId, discussionId)
+    var commentData = await getDiscussionComments(bookClubId, discussionId)
     setCommentData(commentData)
   }
   async function createComment() {
       createCommentDocument(bookClubId, discussionId, {
           text: commentText,
-          passage: commentPassage
+          passage: commentPassage,
+          quote: commentQuote
       })
+      setIsOpen(false)
   }
   return (
     <IonPage>
@@ -69,14 +72,16 @@ const Comments: React.FC = () => {
         {commentData.map((item, index) => {
           return (
             <CommentCard
+              commentId = {item.commentId}
+              discussionId = {discussionId}
+              bookClubId = {bookClubId}
               key={index}
               userName="PLACEHOLDER NAME"
-              pageLine={item.passage}
-              quote={
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-              }
-              note={item.text}
+              passage={item.passage}
+              quote={item.quote}
+              text={item.text}
             />
+            
           );
         })}
         <IonFab slot="fixed" vertical="bottom" horizontal="end">
@@ -91,21 +96,11 @@ const Comments: React.FC = () => {
               <IonButtons slot="start">
                 <IonButton onClick={() => setIsOpen(false)}>Cancel</IonButton>
               </IonButtons>
-              <IonButtons slot="end">
-                <IonButton onClick={() => setIsOpen(false)}>Post</IonButton>
-              </IonButtons>
             </IonToolbar>
           </IonHeader>
           <IonContent className="ion-padding">
             <IonItem lines="none">
               <h1>Write a Comment</h1>
-            </IonItem>
-            <IonItem>
-              <IonLabel>
-                <h1>Effective Java</h1>
-                <h2>Joshua Bloch</h2>
-              </IonLabel>
-              <IonText>Chapter 2</IonText>
             </IonItem>
             <IonItem lines="none">
               <div>
@@ -126,6 +121,12 @@ const Comments: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonInput placeholder="Enter the passage you are talking about" onIonInput={(e: any) => setCommentPassage(e.target.value)}></IonInput>
+            </IonItem>
+            <IonItem lines="none">
+              <IonLabel>Quote</IonLabel>
+            </IonItem>
+            <IonItem>
+              <IonTextarea cols={5} required placeholder="Enter a quote" onIonChange={(e:any) => setCommentQuote(e.target.value) }></IonTextarea>
             </IonItem>
             <IonItem lines="none">
               <IonLabel>Comment</IonLabel>
