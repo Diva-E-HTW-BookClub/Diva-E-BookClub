@@ -15,68 +15,50 @@ import {
   IonLabel,
   IonInput,
   IonButton,
-  IonButtons,
-  IonBackButton,
 } from "@ionic/react";
 import React, { useRef, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { createDiscussionDocument, getDiscussionDocument } from "../../firebase/firebaseDiscussions";
 import { useParams } from "react-router";
-import { deleteDiscussionDocument, getDiscussionDocument, updateDiscussionDocument } from "../../firebase/firebaseDiscussions";
-import "./EditDiscussion.css";
+import "./AddDiscussion.css";
+import { useForm } from "react-hook-form";
 
 type FormValues = {
   title: string;
   startTime: string;
   endTime: string;
   location: string;
+
+  participants: [];
+  agenda: string;
 }
 
-const EditDiscussion: React.FC = () => {
-  let {bookClubId}: {bookClubId: string} = useParams();
-  let {discussionId}: {discussionId: string} = useParams();
 
+const AddDiscussion: React.FC = () => {
+  let {bookClubId}: {bookClubId: string} = useParams();
 
   const { register, handleSubmit, setValue, formState: { errors } } =
-        useForm<FormValues>({
-    });
-  
-    async function submitData(data: any) {
-      const result = await updateDiscussionDocument(bookClubId, discussionId, {
-        title: data.title,
-        startTime: data.startTime,
-        endTime: data.endTime,
-        location: data.location,
-      })
-      console.log(result)
-  }
-    
+  useForm<FormValues>({
+  });
+
+  async function submitData(data: any) {
+    const result = await createDiscussionDocument(bookClubId, {
+      title: data.title,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      location: data.location,
+
+      participants: [],
+      agenda: "",
+    })
+}
   useEffect(() => {
-    getDiscussion()
   }, []);
-
-  async function getDiscussion() {
-    let commentDoc = await getDiscussionDocument(bookClubId, discussionId)
-
-    setValue("title", commentDoc?.title)
-    setValue("startTime", commentDoc?.startTime)
-    setValue("endTime", commentDoc?.endTime)  
-    setValue("location", commentDoc?.location)   
-  }
-
-  async function deleteDiscussion() {
-    deleteDiscussionDocument(bookClubId, discussionId)
-  }
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
-              <IonBackButton defaultHref="/clubs" />
-          </IonButtons>
-          <IonTitle>Edit Discussion</IonTitle>
-          <IonButtons slot="end">
-          </IonButtons>
+          <IonTitle>Add Discussion</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -109,9 +91,8 @@ const EditDiscussion: React.FC = () => {
                 </IonLabel>
                 <IonInput {...register("location", {})} />
               </IonItem>
-              <IonButton type="submit" routerLink={"/clubs/" + bookClubId}>Update</IonButton>
+              <IonButton type="submit" routerLink={"/clubs/" + bookClubId}>Create</IonButton>
             </form>
-            <IonButton color="danger" onClick={() => deleteDiscussion()} routerLink={"/clubs/" + bookClubId}> Delete </IonButton>
           </div>
           </IonGrid>
         </IonCard>
@@ -120,4 +101,4 @@ const EditDiscussion: React.FC = () => {
   );
 };
 
-export default EditDiscussion;
+export default AddDiscussion;

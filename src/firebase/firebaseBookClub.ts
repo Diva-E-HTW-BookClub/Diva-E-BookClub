@@ -16,10 +16,12 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { firebaseDB } from "./firebaseConfig";
+import { deleteDiscussionDocument } from "./firebaseDiscussions";
 
 type Comment = {
   text: string,
   passage: string,
+  commentId: string,
 }
 type Book = {
   title: string,
@@ -32,7 +34,7 @@ type Discussion = {
   title: string,
   participants: string[],
   startTime: string,
-  duration: string,
+  endTime: string,
   location: string,
   agenda: string,
 }
@@ -53,15 +55,26 @@ async function createBookClubDocument(data: BookClub) {
 }
 
 async function updateBookClubDocument(bookClubId: string, data: any) {
+  console.log(data)
   const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
 
   updateDoc(bookClubDocument, data);
 }
 
+//Needs to delete the BookClub, its discussions and all of their comments
 async function deleteBookClubDocument(bookClubId: string) {
   const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
-
   deleteDoc(bookClubDocument);
+
+   //delete Discussions
+   let discussionQuery = query(
+    collection(firebaseDB, "bookClubs", String(bookClubId), "discussions"),
+  );
+  
+  var discussionDocuments = await getDocs(discussionQuery);
+  discussionDocuments.forEach((doc) => {
+      deleteDiscussionDocument(bookClubId, doc.id)
+  })
 }
 
 async function getBookClubDocument(bookClubId: string) {
@@ -84,7 +97,7 @@ async function getBookClubDocument(bookClubId: string) {
       title: discussionData.title,
       participants: discussionData.participants,
       startTime: discussionData.startTime,
-      duration: discussionData.duration,
+      endTime: discussionData.endTime,
       location: discussionData.location,
       agenda: discussionData.agenda,
     })

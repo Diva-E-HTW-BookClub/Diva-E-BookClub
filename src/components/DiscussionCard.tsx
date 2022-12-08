@@ -15,7 +15,7 @@ interface DiscussionCardProps {
   chapter: string;
   participants: number;
   startTime: string;
-  duration: string;
+  endTime: string;
   location: string;
   agenda: string;
 }
@@ -26,7 +26,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
   chapter,
   participants,
   startTime,
-  duration,
+  endTime,
   location,
   agenda,
 }: DiscussionCardProps) => {
@@ -41,6 +41,8 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
             {chapter}
             <br></br>
             {startTime}
+            <br></br>
+            {endTime}
           </IonCol>
 
           <IonCol>
@@ -49,7 +51,6 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
           </IonCol>
 
           <IonCol>
-            {duration} <br></br>
             {location}
           </IonCol>
         </IonRow>
@@ -61,6 +62,9 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
             </IonCol>
             <IonCol>
               <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments"}>Comments</IonButton>
+            </IonCol>
+            <IonCol>
+              <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/edit"}>Edit</IonButton>
             </IonCol>
             <IonCol>
               {/* {isModerator ? (

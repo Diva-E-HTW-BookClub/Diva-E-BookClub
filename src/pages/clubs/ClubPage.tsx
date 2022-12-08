@@ -30,11 +30,12 @@ import { calendar, documents, add } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { DiscussionCard } from "../../components/DiscussionCard";
 import { ResourceCard } from "../../components/ResourceCard";
-import { BookClub, Discussion, getBookClubDocument, searchBookClubs,  } from "../../firebase/firebaseBookClub";
+import { BookClub, getBookClubDocument, } from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
 import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
 import { getCurrentUserId } from "../../firebase/firebaseAuth";
 import { addParticipant, removeParticipant } from "../../firebase/firebaseBookClub";
+
 
 const ClubPage: React.FC = () => {
   let {bookClubId}: {bookClubId: string} = useParams();
@@ -45,9 +46,9 @@ const ClubPage: React.FC = () => {
 
   useEffect(() => {
     getBookClub();
-    console.log("page loaded");
-  }, []);
 
+  }, []);
+  
   async function getBookClub() {
     let bookClub = await getBookClubDocument(bookClubId)
     // check if the current user is moderator of the club
@@ -113,7 +114,7 @@ const ClubPage: React.FC = () => {
                     {clubParticipants}/{clubParticipantsMax}
                   </h3>
                   {isModerator &&
-                  <IonButton>Edit</IonButton>
+                  <IonButton routerLink={"/clubs/" + bookClubId + "/edit"}>Edit</IonButton>
                   }
                   {!isModerator && bookClubData != null && !bookClubData.participants.includes(getCurrentUserId()) &&
                     <IonButton onClick={joinClub}>Join</IonButton>
@@ -153,7 +154,7 @@ const ClubPage: React.FC = () => {
                     chapter={discussion.title}
                     participants={discussion.participants.length}
                     startTime={discussion.startTime}
-                    duration={discussion.duration}
+                    endTime={discussion.endTime}
                     location={discussion.location}
                     agenda={discussion.agenda}
                   />
