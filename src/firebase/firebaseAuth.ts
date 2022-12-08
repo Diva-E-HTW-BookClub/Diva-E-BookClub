@@ -1,5 +1,3 @@
-import { IonToast } from "@ionic/core/components";
-import { NONAME } from "dns";
 import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
@@ -8,11 +6,19 @@ import {
   signOut,
 } from "firebase/auth";
 
-import { firebaseApp, firebaseDB } from "./firebaseConfig";
+import { firebaseApp } from "./firebaseConfig";
 
 const auth = getAuth();
 
 export var currentUser: any;
+
+function getCurrentUserId() {
+  if (currentUser == null) {
+    return "test-user";
+  } else {
+    return currentUser.uid;
+  }
+}
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -78,4 +84,4 @@ async function logoutUser() {
     });
 }
 
-export { registerUser, loginUser, logoutUser };
+export { registerUser, loginUser, logoutUser, getCurrentUserId };

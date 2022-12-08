@@ -19,8 +19,11 @@ import "./CreateClubPage.css";
 import React, { useState } from "react";
 import { BookCard } from "../../components/BookCard";
 import { createBookClubDocument } from "../../firebase/firebaseBookClub";
+import { getCurrentUserId } from "../../firebase/firebaseAuth";
+import { useHistory } from "react-router-dom";
 
 const CreateClubPage: React.FC = () => {
+  const history = useHistory();
   const [books, setBooks] = useState<any[]>([]);
   const [selectedBookIndex, setSelectedBookIndex] = useState<number>(0);
   const [query, setQuery] = useState<string>("");
@@ -81,11 +84,14 @@ const CreateClubPage: React.FC = () => {
 
   async function createClub() {
     let book = books[selectedBookIndex];
-    createBookClubDocument({
+    // for now if user is not logged in use test-user as user id
+    // later only logged in users should create book clubs
+    let userId = getCurrentUserId();
+    let bookClubId = await createBookClubDocument({
       id: "",
       name: clubName,
-      moderator: "test-user-moderator",
-      participants: [],
+      moderator: userId,
+      participants: [userId],
       maxParticipantsNumber: maxParticipants,
       book: {
         title: book.title,
@@ -94,6 +100,7 @@ const CreateClubPage: React.FC = () => {
       },
       discussions: []
     });
+    history.push(`${bookClubId}/view`);
   }
 
   return (

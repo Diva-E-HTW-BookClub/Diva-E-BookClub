@@ -12,6 +12,7 @@ import {
   limit,
   orderBy,
   arrayUnion,
+  arrayRemove,
   getDoc,
 } from "firebase/firestore";
 import { firebaseDB } from "./firebaseConfig";
@@ -49,7 +50,8 @@ type BookClub = {
 }
 
 async function createBookClubDocument(data: BookClub) {
-  addDoc(collection(firebaseDB, "bookClubs"), data);
+  const doc = await addDoc(collection(firebaseDB, "bookClubs"), data);
+  return doc.id;
 }
 
 async function updateBookClubDocument(bookClubId: string, data: any) {
@@ -137,12 +139,54 @@ async function searchBookClubs(resultLimit: number) {
   });
 }
 
+// get book clubs by participant ordered by name and convert results to BookClub[]
+async function searchBookClubsByParticipant(participantId: string) {
+  let q = query(
+    collection(firebaseDB, "bookClubs"),
+    where("participants", "array-contains", participantId)
+  );
+
+  var results = await getDocs(q);
+
+  return results.docs.map(doc => {
+    let data = doc.data();
+    return {
+      id: doc.id,
+      name: data.name,
+      moderator: data.moderator,
+      participants: data.participants,
+      maxParticipantsNumber: data.maxParticipantsNumber,
+      book: data.book,
+      discussions: data.discussions
+    }
+  });
+}
+
+// https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array
+async function addParticipant(bookClubId: string, participantId: string) {
+  const bookClubDocument = doc(firebaseDB, "bookClubs", bookClubId);
+  // Atomically add a new participant to the "participants" array field.
+  await updateDoc(bookClubDocument, {
+      participants: arrayUnion(participantId)
+  });
+}
+async function removeParticipant(bookClubId: string, participantId: string) {
+  const bookClubDocument = doc(firebaseDB, "bookClubs", bookClubId);
+  // Atomically remove a participant from the "participants" array field.
+  await updateDoc(bookClubDocument, {
+      participants: arrayRemove(participantId)
+  });
+}
+
 export {
   createBookClubDocument,
   updateBookClubDocument,
   deleteBookClubDocument,
   getBookClubDocument,
   searchBookClubs,
+  searchBookClubsByParticipant,
+  addParticipant,
+  removeParticipant
 };
 
 export type {
