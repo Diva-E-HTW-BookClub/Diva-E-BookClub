@@ -19,7 +19,7 @@ import {
 import React, { useRef, useEffect, useState } from "react";
 import { createDiscussionDocument, getDiscussionDocument } from "../../firebase/firebaseDiscussions";
 import { useParams } from "react-router";
-import "./AddDiscussion.css";
+import "./EditDiscussion.css";
 import { useForm } from "react-hook-form";
 
 type FormValues = {
