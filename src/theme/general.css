@@ -1,6 +1,45 @@
 /* General Css for the Diva-E Book Club App
 
 /** Ionic CSS Variables **/
+:root {
+  /* Set the background of the entire app */
+  --ion-background-color: #F9F9F9;
+  /**button color**/
+  --ion-color-primary: #3B432B;
+  --ion-color-primary-rgb: 59, 67, 43;
+   /**button font color**/
+  --ion-color-primary-contrast: #ffffffbe;
+  --ion-color-primary-contrast-rgb: 255, 255, 190;
+   /**button shade color**/
+  --ion-color-primary-shade: #5d6944;
+  --ion-color-primary-tint: #A5A52D; 
+}
+
+:root {
+  --ion-color-favorite: #8fa169;
+  --ion-color-favorite-rgb: 255, 255, 190;
+  --ion-color-favorite-contrast: #5d6944;
+  --ion-color-favorite-contrast-rgb: 255, 255, 255;
+  --ion-color-favorite-shade: #5d6944;
+  --ion-color-favorite-tint: #3B432B;
+}
+
+
+
+.ion-color-favorite {
+  --ion-color-base: var(--ion-color-favorite);
+  --ion-color-base-rgb: var(--ion-color-favorite-rgb);
+  --ion-color-contrast: var(--ion-color-favorite-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-favorite-contrast-rgb);
+  --ion-color-shade: var(--ion-color-favorite-shade);
+  --ion-color-tint: var(--ion-color-favorite-tint);
+}
+.tab{
+  background:  var(--ion-color-favorite);
+  color: var(--ion-color-favorite-tint);
+}
+
+
 
 .divider {
   height: 30px;
