@@ -20,9 +20,12 @@ import React, { useEffect, useState } from "react";
 import { CommentCard } from "../../components/CommentCard";
 
 import { add, camera, document } from "ionicons/icons";
-import { createCommentDocument, getDiscussionComments } from "../../firebase/firebaseComments";
+import {
+  createCommentDocument,
+  getDiscussionComments,
+} from "../../firebase/firebaseComments";
 import { useParams } from "react-router";
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 type CommentValues = {
   passage: string;
@@ -30,52 +33,51 @@ type CommentValues = {
 };
 
 const Comments: React.FC = () => {
-  let {bookClubId}: {bookClubId: string} = useParams();
-  let {discussionId}: {discussionId: string} = useParams();
-  
+  let { bookClubId }: { bookClubId: string } = useParams();
+  let { discussionId }: { discussionId: string } = useParams();
+
   const [commentData, setCommentData] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    getCommentData()
+    getCommentData();
   }, []);
 
   async function getCommentData() {
-    var commentData = await getDiscussionComments(bookClubId, discussionId)
-    setCommentData(commentData)
+    var commentData = await getDiscussionComments(bookClubId, discussionId);
+    setCommentData(commentData);
   }
   async function createComment(data: any) {
-      createCommentDocument(bookClubId, discussionId, data)
-      setIsOpen(false)
+    createCommentDocument(bookClubId, discussionId, data);
+    setIsOpen(false);
   }
 
   const cancelModal = () => {
     reset({
       passage: "",
       text: "",
-    })
-    setIsOpen(false)
-  }
+    });
+    setIsOpen(false);
+  };
 
-  const { register, handleSubmit, reset } =
-      useForm<CommentValues>({
-        mode: "onChange",
-        defaultValues: {
-          passage: "",
-          text: "",
-        },
-      });
+  const { register, handleSubmit, reset } = useForm<CommentValues>({
+    mode: "onChange",
+    defaultValues: {
+      passage: "",
+      text: "",
+    },
+  });
 
   const addCommentModal = () => {
     return (
-        <IonModal isOpen={isOpen}>
-          <IonHeader>
-            <IonToolbar>
-              <IonTitle>Add Comment</IonTitle>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent className="ion-padding">
-            <form onSubmit={handleSubmit(createComment)}>
+      <IonModal isOpen={isOpen}>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Add Comment</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent className="ion-padding">
+          <form onSubmit={handleSubmit(createComment)}>
             <IonItem lines="none">
               <h1>Write a Comment</h1>
             </IonItem>
@@ -95,19 +97,29 @@ const Comments: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">Text Passage</IonLabel>
-              <IonTextarea {...register("passage")} autoGrow placeholder="Enter the passage you are talking about"></IonTextarea>
+              <IonTextarea
+                {...register("passage")}
+                autoGrow
+                placeholder="Enter the passage you are talking about"
+              ></IonTextarea>
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">Comment</IonLabel>
-              <IonTextarea {...register("text")} autoGrow placeholder="Enter your comment"></IonTextarea>
+              <IonTextarea
+                {...register("text")}
+                autoGrow
+                placeholder="Enter your comment"
+              ></IonTextarea>
             </IonItem>
             <IonButton onClick={cancelModal}>Cancel</IonButton>
-            <IonButton type="submit" color="primary">Create</IonButton>
-            </form>
-          </IonContent>
-        </IonModal>
-    )
-  }
+            <IonButton type="submit" color="primary">
+              Create
+            </IonButton>
+          </form>
+        </IonContent>
+      </IonModal>
+    );
+  };
 
   return (
     <IonPage>
@@ -128,9 +140,9 @@ const Comments: React.FC = () => {
         {commentData.map((item, index) => {
           return (
             <CommentCard
-              commentId = {item.commentId}
-              discussionId = {discussionId}
-              bookClubId = {bookClubId}
+              commentId={item.commentId}
+              discussionId={discussionId}
+              bookClubId={bookClubId}
               key={index}
               userName="PLACEHOLDER NAME"
               passage={item.passage}
