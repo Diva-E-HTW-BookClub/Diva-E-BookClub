@@ -13,7 +13,7 @@ import {
   IonPage,
   IonTextarea,
   IonTitle,
-  IonToolbar,
+  IonToolbar, useIonActionSheet,
 } from "@ionic/react";
 import "./Comments.css";
 import React, { useEffect, useState } from "react";
@@ -26,6 +26,7 @@ import {
 } from "../../firebase/firebaseComments";
 import { useParams } from "react-router";
 import { useForm } from "react-hook-form";
+import {OverlayEventDetail} from "@ionic/react/dist/types/components/react-component-lib/interfaces";
 
 type CommentValues = {
   passage: string;
@@ -38,6 +39,9 @@ const Comments: React.FC = () => {
 
   const [commentData, setCommentData] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+
+  const [present] = useIonActionSheet();
+  const [result, setResult] = useState<OverlayEventDetail>();
 
   useEffect(() => {
     getCommentData();
@@ -59,6 +63,33 @@ const Comments: React.FC = () => {
     });
     setIsOpen(false);
   };
+
+  const actionSheet = () => {
+    present({
+      buttons: [
+        {
+          text: 'Take Photo',
+          data: {
+            action: 'take photo',
+          },
+        },
+        {
+          text: 'Choose Photo from Gallery',
+          data: {
+            action: 'choose photo',
+          },
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          data: {
+            action: 'cancel',
+          },
+        },
+      ],
+      onDidDismiss: ({ detail }) => setResult(detail),
+    })
+  }
 
   const { register, handleSubmit, reset } = useForm<CommentValues>({
     mode: "onChange",
@@ -83,7 +114,7 @@ const Comments: React.FC = () => {
             </IonItem>
             <IonItem lines="none">
               <div>
-                <IonButton size="default">
+                <IonButton onClick={actionSheet} size="default">
                   <IonIcon slot="icon-only" icon={camera}></IonIcon>
                 </IonButton>
                 <IonLabel>Add Photo</IonLabel>
