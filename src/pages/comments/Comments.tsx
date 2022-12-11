@@ -146,7 +146,6 @@ const Comments: React.FC = () => {
               key={index}
               userName="PLACEHOLDER NAME"
               passage={item.passage}
-              quote={item.quote}
               text={item.text}
             />
           );
