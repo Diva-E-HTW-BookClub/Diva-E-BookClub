@@ -76,7 +76,7 @@ const EditClubPage: React.FC = () => {
                     <IonInput {...register("maxParticipantsNumber", {})}/>
 
                 </IonItem>
-                <IonButton type="submit" routerLink={"/clubs/" + bookClubId}>Update</IonButton>
+                <IonButton type="submit" routerLink={"/clubs/" + bookClubId + "/view"}>Update</IonButton>
             </form>
             <IonButton onClick={() => deleteBookClub()} color="danger" routerLink={"/clubs"}>Delete Club</IonButton>
 

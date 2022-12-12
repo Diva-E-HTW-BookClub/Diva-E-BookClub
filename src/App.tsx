@@ -108,10 +108,12 @@ const App: React.FC = () => (
           <Route path="/start">
             <StartPage/>
           </Route>
-
           <Route exact path="/">
             <Redirect to="/start"/>
           </Route>
+  
+          <Route render={() => <Redirect to="/start" />} />
+
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
           <IonTabButton tab="home" href="/home">

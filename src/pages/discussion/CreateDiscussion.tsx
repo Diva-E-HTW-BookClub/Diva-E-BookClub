@@ -91,7 +91,7 @@ const AddDiscussion: React.FC = () => {
                 </IonLabel>
                 <IonInput {...register("location", {})} />
               </IonItem>
-              <IonButton type="submit" routerLink={"/clubs/" + bookClubId}>Create</IonButton>
+              <IonButton type="submit" routerLink={"/clubs/" + bookClubId + "/view"}>Create</IonButton>
             </form>
           </div>
           </IonGrid>

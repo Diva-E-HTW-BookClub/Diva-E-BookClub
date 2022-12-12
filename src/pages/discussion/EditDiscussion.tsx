@@ -109,7 +109,7 @@ const EditDiscussion: React.FC = () => {
                 </IonLabel>
                 <IonInput {...register("location", {})} />
               </IonItem>
-              <IonButton type="submit" routerLink={"/clubs/" + bookClubId}>Update</IonButton>
+              <IonButton type="submit" routerLink={"/clubs/" + bookClubId + "/view"}>Update</IonButton>
             </form>
             <IonButton color="danger" onClick={() => deleteDiscussion()} routerLink={"/clubs/" + bookClubId}> Delete </IonButton>
           </div>
