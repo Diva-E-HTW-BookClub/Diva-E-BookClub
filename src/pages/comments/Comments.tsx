@@ -7,46 +7,51 @@ import {
   IonFabButton,
   IonHeader,
   IonIcon,
-  IonInput,
   IonItem,
   IonLabel,
   IonModal,
   IonPage,
-  IonText,
   IonTextarea,
   IonTitle,
-  IonToolbar,
-  useIonViewWillEnter,
+  IonToolbar, useIonActionSheet,
 } from "@ionic/react";
 import "./Comments.css";
 import React, { useEffect, useState } from "react";
 import { CommentCard } from "../../components/CommentCard";
 
 import { add, camera, document } from "ionicons/icons";
-import { createCommentDocument, getDiscussionComments } from "../../firebase/firebaseComments";
+import {
+  createCommentDocument,
+  getDiscussionComments,
+} from "../../firebase/firebaseComments";
 import { useParams } from "react-router";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-type FormValues = {
-  text: string;
+
+import {OverlayEventDetail} from "@ionic/react/dist/types/components/react-component-lib/interfaces";
+
+type CommentValues = {
   passage: string;
-  quote: string;
-}
+  text: string;
+};
 
 const Comments: React.FC = () => {
-  let {bookClubId}: {bookClubId: string} = useParams();
-  let {discussionId}: {discussionId: string} = useParams();
+  let { bookClubId }: { bookClubId: string } = useParams();
+  let { discussionId }: { discussionId: string } = useParams();
   const user = useSelector((state:any) => state.user.user)
   const [commentData, setCommentData] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   
+  const [present] = useIonActionSheet();
+  const [result, setResult] = useState<OverlayEventDetail>();
 
   const { register, handleSubmit, formState: { errors } } =
   useForm<FormValues>({
   });
   
+
   useEffect(() => {
-    getCommentData()
+    getCommentData();
   }, []);
 
   async function submitData(data:any) {
@@ -56,10 +61,112 @@ const Comments: React.FC = () => {
     setIsOpen(false)
   }
   async function getCommentData() {
-    var commentData = await getDiscussionComments(bookClubId, discussionId)
-    setCommentData(commentData)
+    var commentData = await getDiscussionComments(bookClubId, discussionId);
+    setCommentData(commentData);
   }
   
+  async function createComment(data: any) {
+    createCommentDocument(bookClubId, discussionId, data);
+    setIsOpen(false);
+  }
+
+  const cancelModal = () => {
+    reset({
+      passage: "",
+      text: "",
+    });
+    setIsOpen(false);
+  };
+
+  const actionSheet = () => {
+    present({
+      buttons: [
+        {
+          text: 'Take Photo',
+          data: {
+            action: 'take photo',
+          },
+        },
+        {
+          text: 'Choose Photo from Gallery',
+          data: {
+            action: 'choose photo',
+          },
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          data: {
+            action: 'cancel',
+          },
+        },
+      ],
+      onDidDismiss: ({ detail }) => setResult(detail),
+    })
+  }
+
+  const { register, handleSubmit, reset } = useForm<CommentValues>({
+    mode: "onChange",
+    defaultValues: {
+      passage: "",
+      text: "",
+    },
+  });
+
+  const addCommentModal = () => {
+    return (
+      <IonModal isOpen={isOpen}>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Add Comment</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent className="ion-padding">
+          <form onSubmit={handleSubmit(createComment)}>
+            <IonItem lines="none">
+              <h1>Write a Comment</h1>
+            </IonItem>
+            <IonItem lines="none">
+              <div>
+                <IonButton onClick={actionSheet} size="default">
+                  <IonIcon slot="icon-only" icon={camera}></IonIcon>
+                </IonButton>
+                <IonLabel>Add Photo</IonLabel>
+              </div>
+              <div>
+                <IonButton size="default">
+                  <IonIcon slot="icon-only" icon={document}></IonIcon>
+                </IonButton>
+                <IonLabel>Add Document</IonLabel>
+              </div>
+            </IonItem>
+            <IonItem>
+              <IonLabel position="stacked">Text Passage</IonLabel>
+              <IonTextarea
+                {...register("passage")}
+                autoGrow
+                placeholder="Enter the passage you are talking about"
+              ></IonTextarea>
+            </IonItem>
+            <IonItem>
+              <IonLabel position="stacked">Comment</IonLabel>
+              <IonTextarea
+                {...register("text")}
+                autoGrow
+                placeholder="Enter your comment"
+              ></IonTextarea>
+            </IonItem>
+            <IonButton onClick={cancelModal}>Cancel</IonButton>
+            <IonButton type="submit" color="primary">
+              Create
+            </IonButton>
+          </form>
+        </IonContent>
+      </IonModal>
+    );
+  };
+
+
   return (
     <IonPage>
       <IonHeader>
@@ -79,16 +186,14 @@ const Comments: React.FC = () => {
         {commentData.map((item, index) => {
           return (
             <CommentCard
-              commentId = {item.commentId}
-              discussionId = {discussionId}
-              bookClubId = {bookClubId}
+              commentId={item.commentId}
+              discussionId={discussionId}
+              bookClubId={bookClubId}
               key={index}
               userName="PLACEHOLDER NAME"
               passage={item.passage}
-              quote={item.quote}
               text={item.text}
             />
-            
           );
         })}
         <IonFab slot="fixed" vertical="bottom" horizontal="end">
@@ -96,57 +201,7 @@ const Comments: React.FC = () => {
             <IonIcon icon={add}></IonIcon>
           </IonFabButton>
         </IonFab>
-        <IonModal isOpen={isOpen}>
-          <IonHeader>
-            <IonToolbar>
-              <IonTitle>Add Comment</IonTitle>
-              <IonButtons slot="start">
-                <IonButton onClick={() => setIsOpen(false)}>Cancel</IonButton>
-              </IonButtons>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent className="ion-padding">
-            <IonItem lines="none">
-              <h1>Write a Comment</h1>
-            </IonItem>
-            <form onSubmit={handleSubmit(submitData)}>
-              <IonItem lines="none">
-                <div>
-                  <IonButton size="default">
-                    <IonIcon slot="icon-only" icon={camera}></IonIcon>
-                  </IonButton>
-                  <IonLabel>Add Photo</IonLabel>
-                </div>
-                <div>
-                  <IonButton size="default">
-                    <IonIcon slot="icon-only" icon={document}></IonIcon>
-                  </IonButton>
-                  <IonLabel>Add Document</IonLabel>
-                </div>
-              </IonItem>
-              <IonItem lines="none">
-                <IonLabel>Text Passage</IonLabel>
-              </IonItem>
-              <IonItem>
-                <IonInput placeholder="Enter the passage you are talking about" {...register("passage", {})}></IonInput>
-              </IonItem>
-              <IonItem lines="none">
-                <IonLabel>Quote</IonLabel>
-              </IonItem>
-              <IonItem>
-                <IonTextarea cols={5} required placeholder="Enter a quote" {...register("quote", {})}></IonTextarea>
-              </IonItem>
-              <IonItem lines="none">
-                <IonLabel>Comment</IonLabel>
-              </IonItem>
-              <IonItem>
-                <IonTextarea cols={5} required placeholder="Enter your comment!" {...register("text", {})}></IonTextarea>
-              </IonItem>
-              <IonButton onClick={() => setIsOpen(false)}>Cancel</IonButton>
-              <IonButton type="submit" routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments"} color="primary">Create</IonButton>
-            </form>
-          </IonContent>
-        </IonModal>
+        {addCommentModal()}
       </IonContent>
     </IonPage>
   );
