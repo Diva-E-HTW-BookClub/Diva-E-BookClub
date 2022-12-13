@@ -41,12 +41,7 @@ const EditDiscussion: React.FC = () => {
     });
   
     async function submitData(data: any) {
-      const result = await updateDiscussionDocument(bookClubId, discussionId, {
-        title: data.title,
-        startTime: data.startTime,
-        endTime: data.endTime,
-        location: data.location,
-      })
+      const result = await updateDiscussionDocument(bookClubId, discussionId, data)
       console.log(result)
   }
     
@@ -109,9 +104,9 @@ const EditDiscussion: React.FC = () => {
                 </IonLabel>
                 <IonInput {...register("location", {})} />
               </IonItem>
-              <IonButton type="submit" routerLink={"/clubs/" + bookClubId}>Update</IonButton>
+              <IonButton type="submit" routerLink={"/clubs/" + bookClubId + "/view"}>Update</IonButton>
             </form>
-            <IonButton color="danger" onClick={() => deleteDiscussion()} routerLink={"/clubs/" + bookClubId}> Delete </IonButton>
+            <IonButton color="danger" onClick={() => deleteDiscussion()} routerLink={"/clubs/" + bookClubId + "/view"}> Delete </IonButton>
           </div>
           </IonGrid>
         </IonCard>

@@ -21,11 +21,13 @@ import "./ClubsTab.css";
 import { useEffect, useState } from "react";
 import { ClubCard } from "../../components/ClubCard";
 import { searchBookClubs, searchBookClubsByParticipant, BookClub } from "../../firebase/firebaseBookClub";
-import { getCurrentUserId } from "../../firebase/firebaseAuth";
+import { useSelector } from "react-redux";
 
 const ClubsTab: React.FC = () => {
   const [data, setData] = useState<BookClub[]>([]);
   const [selectedSegment, setSelectedSegment] = useState<string>("trending");
+  const user = useSelector((state:any) => state.user.user)
+  
 
   useEffect(() => {
     getBookClubs();
@@ -42,7 +44,7 @@ const ClubsTab: React.FC = () => {
     let segmentValue = event.detail.value;
     setSelectedSegment(segmentValue);
     if (segmentValue === "your") {
-      let bookClubs = await searchBookClubsByParticipant(getCurrentUserId());
+      let bookClubs = await searchBookClubsByParticipant(user.uid);
       setData(bookClubs);
     } else if (segmentValue === "trending") {
       // will sort results by participants number (tbd)

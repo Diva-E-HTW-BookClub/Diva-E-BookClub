@@ -22,6 +22,7 @@ type Comment = {
   text: string,
   passage: string,
   commentId: string,
+  owner: string,
 }
 type Book = {
   title: string,
@@ -37,16 +38,18 @@ type Discussion = {
   endTime: string,
   location: string,
   agenda: string,
+  owner: string,
 }
 
 type BookClub = {
   id: string,
   name: string,
-  moderator: string,
+  moderator: string[],
   participants: string[],
   maxParticipantsNumber: number,
   book: Book,
-  discussions: Discussion[]
+  discussions: Discussion[],
+  owner: string,
 }
 
 async function createBookClubDocument(data: BookClub) {
@@ -100,6 +103,7 @@ async function getBookClubDocument(bookClubId: string) {
       endTime: discussionData.endTime,
       location: discussionData.location,
       agenda: discussionData.agenda,
+      owner: discussionData.owner,
     })
   })
   if (bookClubData) {
@@ -111,6 +115,7 @@ async function getBookClubDocument(bookClubId: string) {
       maxParticipantsNumber: bookClubData.maxParticipantsNumber,
       book: bookClubData.book,
       discussions: discussionArray,
+      owner: bookClubData.owner,
     }
   }
 }
@@ -134,7 +139,8 @@ async function searchBookClubs(resultLimit: number) {
       participants: data.participants,
       maxParticipantsNumber: data.maxParticipantsNumber,
       book: data.book,
-      discussions: data.discussions
+      discussions: data.discussions,
+      owner: data.owner,
     }
   });
 }
@@ -157,7 +163,8 @@ async function searchBookClubsByParticipant(participantId: string) {
       participants: data.participants,
       maxParticipantsNumber: data.maxParticipantsNumber,
       book: data.book,
-      discussions: data.discussions
+      discussions: data.discussions,
+      owner: data.owner,
     }
   });
 }
@@ -170,6 +177,7 @@ async function addParticipant(bookClubId: string, participantId: string) {
       participants: arrayUnion(participantId)
   });
 }
+
 async function removeParticipant(bookClubId: string, participantId: string) {
   const bookClubDocument = doc(firebaseDB, "bookClubs", bookClubId);
   // Atomically remove a participant from the "participants" array field.

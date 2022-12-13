@@ -13,10 +13,14 @@ import {
 import { camera, personCircleOutline } from "ionicons/icons";
 import { useState } from "react";
 import "./ProfileTab.css";
-import { currentUser } from "../../firebase/firebaseAuth";
+import { logoutUser } from "../../firebase/firebaseAuth";
+import { useSelector } from "react-redux";
+
 
 const ProfileTab: React.FC = () => {
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
+  const user = useSelector((state:any) => state.user.user)
+
   return (
     <IonPage>
       <IonHeader>
@@ -37,10 +41,10 @@ const ProfileTab: React.FC = () => {
             icon={personCircleOutline}
           ></IonIcon>
         </IonItem>
-        {!currentUser && (
+        {!user && (
           "You are not logged in!"
         )}
-        {isReadOnly && currentUser && (
+        {isReadOnly && user && (
           <>
             <IonItem>
               <IonLabel position="stacked">User Name</IonLabel>
@@ -51,7 +55,10 @@ const ProfileTab: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">Email Address</IonLabel>
-              <h4>{currentUser.email}</h4>
+              <h4>{user.email}</h4>
+            </IonItem>
+            <IonItem>
+              <IonButton onClick={logoutUser}> logout </IonButton>
             </IonItem>
             <IonItem lines="none">
               <IonButton

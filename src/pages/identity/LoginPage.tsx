@@ -17,6 +17,7 @@ import "./LoginPage.css";
 import { useHistory } from "react-router-dom";
 import { loginUser } from "../../firebase/firebaseAuth";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
 type FormValues = {
   email: string;
@@ -25,6 +26,7 @@ type FormValues = {
 
 const LoginPage: React.FC = () => {
   const history = useHistory();
+  const dispatch = useDispatch()
 
   const { register, handleSubmit, setError, formState: { errors } } =
     useForm<FormValues>({
@@ -36,6 +38,7 @@ const LoginPage: React.FC = () => {
 
   async function submitData(data: any) {
     const result = await loginUser(data.email, data.password);
+
     // if result has no errors redirect to home page
     if (result === "") {
       history.push("/home");
