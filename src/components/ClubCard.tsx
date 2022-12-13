@@ -30,7 +30,7 @@ export const ClubCard: React.FC<ClubCardProps> = ({
   id,
 }: ClubCardProps) => {
   return (
-    <IonCard routerLink={"/clubs/" + id + "/view" }>
+    <IonCard routerLink={`/clubs/${id}/view`}>
       <IonGrid>
         <IonRow>
           <IonCol size="4">
