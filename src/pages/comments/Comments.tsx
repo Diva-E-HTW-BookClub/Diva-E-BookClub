@@ -25,34 +25,41 @@ import { CommentCard } from "../../components/CommentCard";
 import { add, camera, document } from "ionicons/icons";
 import { createCommentDocument, getDiscussionComments } from "../../firebase/firebaseComments";
 import { useParams } from "react-router";
+import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+type FormValues = {
+  text: string;
+  passage: string;
+  quote: string;
+}
 
 const Comments: React.FC = () => {
   let {bookClubId}: {bookClubId: string} = useParams();
   let {discussionId}: {discussionId: string} = useParams();
-  
+  const user = useSelector((state:any) => state.user.user)
   const [commentData, setCommentData] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  
 
-  const [commentText, setCommentText] = useState<string>("")
-  const [commentPassage, setCommentPassage] = useState<string>("")
-  const [commentQuote, setCommentQuote] = useState<string>("")
-
+  const { register, handleSubmit, formState: { errors } } =
+  useForm<FormValues>({
+  });
+  
   useEffect(() => {
     getCommentData()
   }, []);
 
+  async function submitData(data:any) {
+    let userId = user.uid;
+    const result = await createCommentDocument(bookClubId, discussionId, Object.assign(data, {owner: userId}))
+
+    setIsOpen(false)
+  }
   async function getCommentData() {
     var commentData = await getDiscussionComments(bookClubId, discussionId)
     setCommentData(commentData)
   }
-  async function createComment() {
-      createCommentDocument(bookClubId, discussionId, {
-          text: commentText,
-          passage: commentPassage,
-          quote: commentQuote
-      })
-      setIsOpen(false)
-  }
+  
   return (
     <IonPage>
       <IonHeader>
@@ -102,40 +109,42 @@ const Comments: React.FC = () => {
             <IonItem lines="none">
               <h1>Write a Comment</h1>
             </IonItem>
-            <IonItem lines="none">
-              <div>
-                <IonButton size="default">
-                  <IonIcon slot="icon-only" icon={camera}></IonIcon>
-                </IonButton>
-                <IonLabel>Add Photo</IonLabel>
-              </div>
-              <div>
-                <IonButton size="default">
-                  <IonIcon slot="icon-only" icon={document}></IonIcon>
-                </IonButton>
-                <IonLabel>Add Document</IonLabel>
-              </div>
-            </IonItem>
-            <IonItem lines="none">
-              <IonLabel>Text Passage</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonInput placeholder="Enter the passage you are talking about" onIonInput={(e: any) => setCommentPassage(e.target.value)}></IonInput>
-            </IonItem>
-            <IonItem lines="none">
-              <IonLabel>Quote</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonTextarea cols={5} required placeholder="Enter a quote" onIonChange={(e:any) => setCommentQuote(e.target.value) }></IonTextarea>
-            </IonItem>
-            <IonItem lines="none">
-              <IonLabel>Comment</IonLabel>
-            </IonItem>
-            <IonItem>
-              <IonTextarea cols={5} required placeholder="Enter your comment!" onIonChange={(e:any) => setCommentText(e.target.value) }></IonTextarea>
-            </IonItem>
-            <IonButton onClick={() => setIsOpen(false)}>Cancel</IonButton>
-            <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments"} color="primary" onClick={createComment}>Create</IonButton>
+            <form onSubmit={handleSubmit(submitData)}>
+              <IonItem lines="none">
+                <div>
+                  <IonButton size="default">
+                    <IonIcon slot="icon-only" icon={camera}></IonIcon>
+                  </IonButton>
+                  <IonLabel>Add Photo</IonLabel>
+                </div>
+                <div>
+                  <IonButton size="default">
+                    <IonIcon slot="icon-only" icon={document}></IonIcon>
+                  </IonButton>
+                  <IonLabel>Add Document</IonLabel>
+                </div>
+              </IonItem>
+              <IonItem lines="none">
+                <IonLabel>Text Passage</IonLabel>
+              </IonItem>
+              <IonItem>
+                <IonInput placeholder="Enter the passage you are talking about" {...register("passage", {})}></IonInput>
+              </IonItem>
+              <IonItem lines="none">
+                <IonLabel>Quote</IonLabel>
+              </IonItem>
+              <IonItem>
+                <IonTextarea cols={5} required placeholder="Enter a quote" {...register("quote", {})}></IonTextarea>
+              </IonItem>
+              <IonItem lines="none">
+                <IonLabel>Comment</IonLabel>
+              </IonItem>
+              <IonItem>
+                <IonTextarea cols={5} required placeholder="Enter your comment!" {...register("text", {})}></IonTextarea>
+              </IonItem>
+              <IonButton onClick={() => setIsOpen(false)}>Cancel</IonButton>
+              <IonButton type="submit" routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments"} color="primary">Create</IonButton>
+            </form>
           </IonContent>
         </IonModal>
       </IonContent>

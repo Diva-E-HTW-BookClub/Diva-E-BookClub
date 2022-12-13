@@ -22,11 +22,7 @@ const EditComment: React.FC = () => {
     });
 
     async function submitData(data: any) {
-        const result = await updateCommentDocument(bookClubId, discussionId, commentId, {
-            passage: data.passage,
-            quote: data.quote,
-            text: data.text,
-        })
+        const result = await updateCommentDocument(bookClubId, discussionId, commentId, data)
         console.log(result)
     }
     

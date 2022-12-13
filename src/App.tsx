@@ -5,6 +5,7 @@ import {
   IonLabel,
   IonNav,
   IonRouterOutlet,
+  IonSpinner,
   IonTabBar,
   IonTabButton,
   IonTabs,
@@ -49,89 +50,109 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 import "./theme/general.css";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { getCurrentUser } from "./firebase/firebaseAuth";
+import { setUserState } from "./reducers/actions";
 
 setupIonicReact();
+const RoutingSystem: React.FC = () => {
+return <IonApp>
+        <IonReactRouter>
+          <IonTabs>
+            <IonRouterOutlet>
+              <Route exact path="/login">
+                <LoginPage />
+              </Route>
+              <Route exact path="/register">
+                <RegisterPage />
+              </Route>
+              <Route exact path="/start">
+                <StartPage />
+              </Route>
+              <Route exact path="/home">
+                <HomeTab />
+              </Route>
+              <Route exact path="/clubs">
+                <ClubsTab />
+              </Route>
+              <Route exact path="/create_club">
+                <CreateClubPage />
+              </Route>
+              <Route exact path="/clubs/:bookClubId/view">
+                <ClubPage />
+              </Route>
+              <Route exact path="/clubs/:bookClubId/edit">
+                <EditClubPage />
+              </Route>
+              <Route exact path="/resources/add">
+                <AddResource />
+              </Route>
+              <Route exact path="/resources/edit">
+                <EditResource />
+              </Route>
+              <Route exact path="/clubs/:bookClubId/discussions/add">
+                <AddDiscussion />
+              </Route>
+              <Route exact path="/clubs/:bookClubId/discussions/:discussionId/comments">
+                <Comments />
+              </Route>
+              <Route exact path="/clubs/:bookClubId/discussions/:discussionId/edit">
+                <EditDiscussion />
+              </Route>
+              <Route exact path="/clubs/:bookClubId/discussions/:discussionId/comments/:commentId/edit">
+                <EditComment />
+              </Route>
+              <Route exact path="/profile">
+                <ProfileTab />
+              </Route>
+              <Route exact path="/agenda">
+                <Agenda />
+              </Route>
+              <Route path="/start">
+                <StartPage/>
+              </Route>
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path="/login">
-            <LoginPage />
-          </Route>
-          <Route exact path="/register">
-            <RegisterPage />
-          </Route>
-          <Route exact path="/start">
-            <StartPage />
-          </Route>
-          <Route exact path="/home">
-            <HomeTab />
-          </Route>
-          <Route exact path="/clubs">
-            <ClubsTab />
-          </Route>
-          <Route exact path="/create_club">
-            <CreateClubPage />
-          </Route>
-          <Route exact path="/clubs/:bookClubId/view">
-            <ClubPage />
-          </Route>
-          <Route exact path="/clubs/:bookClubId/edit">
-            <EditClubPage />
-          </Route>
-          <Route exact path="/resources/add">
-            <AddResource />
-          </Route>
-          <Route exact path="/resources/edit">
-            <EditResource />
-          </Route>
-          <Route exact path="/clubs/:bookClubId/discussions/add">
-            <AddDiscussion />
-          </Route>
-          <Route exact path="/clubs/:bookClubId/discussions/:discussionId/comments">
-            <Comments />
-          </Route>
-          <Route exact path="/clubs/:bookClubId/discussions/:discussionId/edit">
-            <EditDiscussion />
-          </Route>
-          <Route exact path="/clubs/:bookClubId/discussions/:discussionId/comments/:commentId/edit">
-            <EditComment />
-          </Route>
-          <Route exact path="/profile">
-            <ProfileTab />
-          </Route>
-          <Route exact path="/agenda">
-            <Agenda />
-          </Route>
-          <Route path="/start">
-            <StartPage/>
-          </Route>
-          <Route exact path="/">
-            <Redirect to="/start"/>
-          </Route>
-  
-          <Route render={() => <Redirect to="/start" />} />
+              <Route exact path="/">
+                <Redirect to="/start"/>
+              </Route>
+            </IonRouterOutlet>
+            <IonTabBar slot="bottom">
+              <IonTabButton tab="home" href="/home">
+                <IonIcon icon={homeSharp} />
+                <IonLabel>Home</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="clubs" href="/clubs">
+                <IonIcon icon={chatbubblesSharp} />
+                <IonLabel>Clubs</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="profile" href="/profile">
+                <IonIcon icon={personSharp} />
+                <IonLabel>Profile</IonLabel>
+              </IonTabButton>
+            </IonTabBar>
+          </IonTabs>
+        </IonReactRouter>
+      </IonApp>
+}
 
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="home" href="/home">
-            <IonIcon icon={homeSharp} />
-            <IonLabel>Home</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="clubs" href="/clubs">
-            <IonIcon icon={chatbubblesSharp} />
-            <IonLabel>Clubs</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="profile" href="/profile">
-            <IonIcon icon={personSharp} />
-            <IonLabel>Profile</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
-);
+const App: React.FC = () => {
+  const [busy, setBusy] = useState(true)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    getCurrentUser().then((user: any) => {
+      if (user) {
+        dispatch(setUserState(user))
+        //console.log("logged in :)")
+      } else {
+        //console.log("not logged in :(")
+      }
+      setBusy(false)
+    })
+  }, [])
+  //Spinner that is displayed while content is loading
+  return <IonApp>{busy ? <IonSpinner /> : <RoutingSystem />}</IonApp>
+}
 
 export default App;

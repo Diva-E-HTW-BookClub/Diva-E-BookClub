@@ -21,6 +21,7 @@ import { createDiscussionDocument, getDiscussionDocument } from "../../firebase/
 import { useParams } from "react-router";
 import "./EditDiscussion.css";
 import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
 
 type FormValues = {
   title: string;
@@ -35,12 +36,13 @@ type FormValues = {
 
 const AddDiscussion: React.FC = () => {
   let {bookClubId}: {bookClubId: string} = useParams();
-
+  const user = useSelector((state:any) => state.user.user)
   const { register, handleSubmit, setValue, formState: { errors } } =
   useForm<FormValues>({
   });
 
   async function submitData(data: any) {
+    let userId = user.uid;
     const result = await createDiscussionDocument(bookClubId, {
       title: data.title,
       startTime: data.startTime,
@@ -49,10 +51,10 @@ const AddDiscussion: React.FC = () => {
 
       participants: [],
       agenda: "",
+
+      owner: userId,
     })
 }
-  useEffect(() => {
-  }, []);
 
   return (
     <IonPage>
