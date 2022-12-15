@@ -43,7 +43,7 @@ const ClubsTab: React.FC = () => {
   async function getBookClubsOnClick(event: any) {
     let segmentValue = event.detail.value;
     setSelectedSegment(segmentValue);
-    if (segmentValue === "your") {
+    if (segmentValue === "your" && user) {
       let bookClubs = await searchBookClubsByParticipant(user.uid);
       setData(bookClubs);
     } else if (segmentValue === "trending") {

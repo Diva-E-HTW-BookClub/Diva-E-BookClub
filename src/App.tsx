@@ -54,6 +54,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { getCurrentUser } from "./firebase/firebaseAuth";
 import { setUserState } from "./reducers/actions";
+import PrivateRoute from "./routes/PrivateRoutes";
 
 setupIonicReact();
 const RoutingSystem: React.FC = () => {
@@ -76,46 +77,28 @@ return <IonApp>
               <Route exact path="/clubs">
                 <ClubsTab />
               </Route>
-              <Route exact path="/create_club">
-                <CreateClubPage />
-              </Route>
-              <Route exact path="/clubs/:bookClubId/view">
-                <ClubPage />
-              </Route>
-              <Route exact path="/clubs/:bookClubId/edit">
-                <EditClubPage />
-              </Route>
-              <Route exact path="/resources/add">
-                <AddResource />
-              </Route>
-              <Route exact path="/resources/edit">
-                <EditResource />
-              </Route>
-              <Route exact path="/clubs/:bookClubId/discussions/add">
-                <AddDiscussion />
-              </Route>
-              <Route exact path="/clubs/:bookClubId/discussions/:discussionId/comments">
-                <Comments />
-              </Route>
-              <Route exact path="/clubs/:bookClubId/discussions/:discussionId/edit">
-                <EditDiscussion />
-              </Route>
-              <Route exact path="/clubs/:bookClubId/discussions/:discussionId/comments/:commentId/edit">
-                <EditComment />
-              </Route>
-              <Route exact path="/profile">
-                <ProfileTab />
-              </Route>
-              <Route exact path="/agenda">
-                <Agenda />
-              </Route>
               <Route path="/start">
                 <StartPage/>
+              </Route>
+              <Route path="/profile" >
+                <ProfileTab/>
               </Route>
 
               <Route exact path="/">
                 <Redirect to="/start"/>
               </Route>
+
+              <PrivateRoute path="/create_club" component={CreateClubPage} exact/>
+              <PrivateRoute path="/clubs/:bookClubId/view" component={ClubPage} exact/>
+              <PrivateRoute path="/clubs/:bookClubId/edit" component={EditClubPage} exact/>
+              <PrivateRoute path="/resources/add" component={AddResource} exact/>
+              <PrivateRoute path="/resources/edit" component={EditResource} exact/>
+              <PrivateRoute path="/clubs/:bookClubId/discussions/add" component={AddDiscussion} exact/>
+              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments" component={Comments} exact/>
+              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/edit" component={EditDiscussion} exact/>
+              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments/:commentId/edit" component={EditComment} exact/>
+              <PrivateRoute path="/agenda" component={Agenda} exact/>
+
             </IonRouterOutlet>
             <IonTabBar slot="bottom">
               <IonTabButton tab="home" href="/home">

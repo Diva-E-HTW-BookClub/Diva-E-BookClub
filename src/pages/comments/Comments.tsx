@@ -44,9 +44,13 @@ const Comments: React.FC = () => {
   
   const [present] = useIonActionSheet();
   const [result, setResult] = useState<OverlayEventDetail>();
-
-  const { register, handleSubmit, formState: { errors } } =
-  useForm<FormValues>({
+  
+  const { register, handleSubmit, reset } = useForm<CommentValues>({
+    mode: "onChange",
+    defaultValues: {
+      passage: "",
+      text: "",
+    },
   });
   
 
@@ -104,14 +108,6 @@ const Comments: React.FC = () => {
       onDidDismiss: ({ detail }) => setResult(detail),
     })
   }
-
-  const { register, handleSubmit, reset } = useForm<CommentValues>({
-    mode: "onChange",
-    defaultValues: {
-      passage: "",
-      text: "",
-    },
-  });
 
   const addCommentModal = () => {
     return (
