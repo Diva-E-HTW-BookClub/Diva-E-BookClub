@@ -26,6 +26,8 @@ import {
 } from "../../firebase/firebaseComments";
 import { useParams } from "react-router";
 import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+
 import {OverlayEventDetail} from "@ionic/react/dist/types/components/react-component-lib/interfaces";
 
 type CommentValues = {
@@ -36,21 +38,37 @@ type CommentValues = {
 const Comments: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
   let { discussionId }: { discussionId: string } = useParams();
-
+  const user = useSelector((state:any) => state.user.user)
   const [commentData, setCommentData] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-
+  
   const [present] = useIonActionSheet();
   const [result, setResult] = useState<OverlayEventDetail>();
+  
+  const { register, handleSubmit, reset } = useForm<CommentValues>({
+    mode: "onChange",
+    defaultValues: {
+      passage: "",
+      text: "",
+    },
+  });
+  
 
   useEffect(() => {
     getCommentData();
   }, []);
 
+  async function submitData(data:any) {
+    let userId = user.uid;
+    const result = await createCommentDocument(bookClubId, discussionId, Object.assign(data, {owner: userId}))
+
+    setIsOpen(false)
+  }
   async function getCommentData() {
     var commentData = await getDiscussionComments(bookClubId, discussionId);
     setCommentData(commentData);
   }
+  
   async function createComment(data: any) {
     createCommentDocument(bookClubId, discussionId, data);
     setIsOpen(false);
@@ -90,14 +108,6 @@ const Comments: React.FC = () => {
       onDidDismiss: ({ detail }) => setResult(detail),
     })
   }
-
-  const { register, handleSubmit, reset } = useForm<CommentValues>({
-    mode: "onChange",
-    defaultValues: {
-      passage: "",
-      text: "",
-    },
-  });
 
   const addCommentModal = () => {
     return (
@@ -151,6 +161,7 @@ const Comments: React.FC = () => {
       </IonModal>
     );
   };
+
 
   return (
     <IonPage>
