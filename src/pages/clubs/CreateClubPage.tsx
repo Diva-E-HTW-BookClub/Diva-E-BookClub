@@ -114,7 +114,7 @@ const CreateClubPage: React.FC = () => {
           </IonButtons>
           <IonTitle>New Club</IonTitle>
           <IonButtons slot="end">
-            <IonButton routerLink="/clubs/" color="primary" onClick={createClub}>
+            <IonButton color="primary" onClick={createClub}>
               Create
             </IonButton>
           </IonButtons>
@@ -138,7 +138,7 @@ const CreateClubPage: React.FC = () => {
           </IonLabel>
           <IonInput required placeholder="Enter a number (max 50)" onIonInput={(e: any) => setMaxParticipants(e.target.value)}></IonInput>
         </IonItem>
-        <IonSearchbar placeholder="Find a book" onIonInput={search}></IonSearchbar>
+        <IonSearchbar placeholder="Find a book" debounce={1000} onIonInput={search}></IonSearchbar>
 
         <IonList lines="none">
           {books.map((book, index) => {

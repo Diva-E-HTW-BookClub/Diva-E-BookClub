@@ -14,44 +14,69 @@ import {
   IonInfiniteScrollContent,
   IonFab,
   IonFabButton,
-  IonIcon
+  IonIcon,
+  IonSelect,
+  IonSelectOption
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import "./ClubsTab.css";
 import { useEffect, useState } from "react";
 import { ClubCard } from "../../components/ClubCard";
-import { searchBookClubs, searchBookClubsByParticipant, BookClub } from "../../firebase/firebaseBookClub";
+import { searchBookClubs, BookClub } from "../../firebase/firebaseBookClub";
 import { useSelector } from "react-redux";
 
 const ClubsTab: React.FC = () => {
-  const [data, setData] = useState<BookClub[]>([]);
-  const [selectedSegment, setSelectedSegment] = useState<string>("trending");
+  const [bookClubs, setBookClubs] = useState<BookClub[]>([]);
+  const [inputText, setInputText] = useState<string>("");
+  const [selectedSegment, setSelectedSegment] = useState<string>("your");
+  const [selectedFilter, setSelectedFilter] = useState<string>("name");
   const user = useSelector((state:any) => state.user.user)
-  
 
+  // displays book clubs when the tab loads
+  // using default values of selected input text, filter, and segment
   useEffect(() => {
-    getBookClubs();
-    console.log("page loaded");
+    getBookClubs(inputText, selectedFilter, selectedSegment);
   }, []);
 
-  async function getBookClubs() {
-    let bookClubs = await searchBookClubs(10);
-    setData(bookClubs);
+  // displays book clubs when user types in search bar
+  // using entered text
+  async function search(event: any) {
+    let inputTextValue = event.target.value;
+    setInputText(inputTextValue);
+    getBookClubs(inputTextValue, selectedFilter, selectedSegment);
   }
 
-  // show book clubs depending on selected segment
-  async function getBookClubsOnClick(event: any) {
+  // displays book clubs when user selects the filter (name or book title)
+  // using new filter value
+  async function selectFilter(event: any) {
+    let filterValue = event.detail.value;
+    setSelectedFilter(filterValue);
+    getBookClubs(inputText, filterValue, selectedSegment);
+  }
+
+  // displays book clubs when user selects the segment (your or new)
+  // using new segment value
+  async function selectSegment(event: any) {
     let segmentValue = event.detail.value;
     setSelectedSegment(segmentValue);
-    if (segmentValue === "your" && user) {
-      let bookClubs = await searchBookClubsByParticipant(user.uid);
-      setData(bookClubs);
-    } else if (segmentValue === "trending") {
-      // will sort results by participants number (tbd)
-      getBookClubs();
-    } else if (segmentValue === "new") {
-      getBookClubs();
-    }
+    getBookClubs(inputText, selectedFilter, segmentValue);
+  }
+
+  // called when user scrolls all the way down
+  // displays next 10 clubs adding them to the book clubs list
+  async function scroll(event: any) {
+    let newBookClubs = await searchBookClubs(selectedFilter, inputText, getCurrentUserId(), selectedSegment === "your", 10, bookClubs[bookClubs.length - 1].id);
+    // adds new values to the book clubs state
+    setBookClubs([...bookClubs, ...newBookClubs]);
+    // needed to make the infinite scroll work
+    event.target.complete();
+  }
+
+  // finds first 10 book clubs in firestore based on input text, filter and segment parameters
+  async function getBookClubs(text: string, filter: string, segment: string) {
+    let bookClubs = await searchBookClubs(filter, text, getCurrentUserId(), segment === "your", 10);
+    // rewrites book clubs state with new values
+    setBookClubs(bookClubs);
   }
 
   return (
@@ -67,12 +92,15 @@ const ClubsTab: React.FC = () => {
             <IonTitle size="large">Clubs</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonSearchbar></IonSearchbar>
-
-        <IonSegment onIonChange={getBookClubsOnClick} value={selectedSegment}>
-          <IonSegmentButton value="trending">
-            <IonLabel>Trending</IonLabel>
-          </IonSegmentButton>
+        <IonSearchbar placeholder={`Enter club ${selectedFilter}`} debounce={1000} onIonInput={search}></IonSearchbar>
+        <IonItem>
+          <IonLabel>Search by</IonLabel>
+          <IonSelect interface="popover" value={selectedFilter} onIonChange={selectFilter}>
+            <IonSelectOption value="name">name</IonSelectOption>
+            <IonSelectOption value="book">book</IonSelectOption>
+          </IonSelect>
+        </IonItem>
+        <IonSegment value={selectedSegment} onIonChange={selectSegment}>
           <IonSegmentButton value="your">
             <IonLabel>Your</IonLabel>
           </IonSegmentButton>
@@ -82,7 +110,7 @@ const ClubsTab: React.FC = () => {
         </IonSegment>
 
         <IonList lines="none">
-          {data.map((bookClub, index) => {
+          {bookClubs.map(bookClub => {
             return (
               <IonItem key={bookClub.id}>
                 <ClubCard
@@ -99,7 +127,7 @@ const ClubsTab: React.FC = () => {
           })}
         </IonList>
 
-        <IonInfiniteScroll onIonInfinite={() => { }}>
+        <IonInfiniteScroll onIonInfinite={scroll}>
           <IonInfiniteScrollContent loadingSpinner="bubbles"></IonInfiniteScrollContent>
         </IonInfiniteScroll>
 

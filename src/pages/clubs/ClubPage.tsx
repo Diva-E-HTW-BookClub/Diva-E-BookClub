@@ -30,15 +30,14 @@ import { calendar, documents, add } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { DiscussionCard } from "../../components/DiscussionCard";
 import { ResourceCard } from "../../components/ResourceCard";
-import { BookClub, getBookClubDocument, } from "../../firebase/firebaseBookClub";
+import { BookClub, getBookClubDocument, addParticipant, removeParticipant } from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
 import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
 import { addParticipant, removeParticipant } from "../../firebase/firebaseBookClub";
 import { useSelector } from "react-redux";
 
-
 const ClubPage: React.FC = () => {
-  let {bookClubId}: {bookClubId: string} = useParams();
+  let { bookClubId }: { bookClubId: string } = useParams();
 
   const user = useSelector((state:any) => state.user.user)
   const [bookClubData, setBookClubData] = useState<BookClub>()
