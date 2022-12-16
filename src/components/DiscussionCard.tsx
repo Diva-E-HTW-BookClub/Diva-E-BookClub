@@ -5,74 +5,208 @@ import {
   IonGrid,
   IonRow,
   IonButton,
+  IonLabel,
+  IonCardSubtitle,
 } from "@ionic/react";
-import { peopleCircle } from "ionicons/icons";
-import { useState } from "react";
+import {
+  chatbox,
+  chevronDownOutline,
+  chevronUpOutline,
+  clipboard,
+  pencil,
+  people,
+  peopleOutline,
+  personAdd,
+  personRemove,
+} from "ionicons/icons";
+import React, { useEffect, useState } from "react";
+import "./DiscussionCard.css";
+import { getCurrentUserId } from "../firebase/firebaseAuth";
+import {
+  addDiscussionParticipant,
+  getDiscussionDocument,
+  removeDiscussionParticipant,
+} from "../firebase/firebaseDiscussions";
 
 interface DiscussionCardProps {
-  bookClubId: string,
-  discussionId: string,
-  chapter: string;
-  participants: number;
+  bookClubId: string;
+  discussionId: string;
+  title: string;
+  date: string;
   startTime: string;
   endTime: string;
   location: string;
   agenda: string;
+  isModerator: boolean;
 }
 
 export const DiscussionCard: React.FC<DiscussionCardProps> = ({
   bookClubId,
   discussionId,
-  chapter,
-  participants,
+  title,
   startTime,
   endTime,
   location,
   agenda,
+  date,
+  isModerator,
 }: DiscussionCardProps) => {
   const [showButtons, setShowButtons] = useState<boolean>(false);
+  const [discussionParticipants, setDiscussionParticipants] =
+    useState<string[]>();
+
+  useEffect(() => {
+    getDiscussionParticipants();
+  }, []);
+
+  const isParticipant = () => {
+    return discussionParticipants?.includes(getCurrentUserId());
+  };
+
+  async function getDiscussionParticipants() {
+    let data = await getDiscussionDocument(bookClubId, discussionId);
+    setDiscussionParticipants(data?.participants);
+  }
+
+  async function joinDiscussion() {
+    if (discussionParticipants != null) {
+      await addDiscussionParticipant(
+        bookClubId,
+        discussionId,
+        getCurrentUserId()
+      );
+      getDiscussionParticipants();
+    }
+  }
+
+  async function leaveDiscussion() {
+    if (discussionParticipants != null && isParticipant()) {
+      await removeDiscussionParticipant(
+        bookClubId,
+        discussionId,
+        getCurrentUserId()
+      );
+      getDiscussionParticipants();
+    }
+  }
 
   return (
-    // show/hide buttons by clicking on the discussion card
-    <IonCard onClick={() => setShowButtons(!showButtons)}>
+    <IonCard>
       <IonGrid>
-        <IonRow>
-          <IonCol>
-            {chapter}
-            <br></br>
-            {startTime}
-            <br></br>
-            {endTime}
+        <IonRow
+          className="ion-align-items-center"
+          onClick={() => setShowButtons(!showButtons)}
+        >
+          <IonCol className="ion-text-left">{date}</IonCol>
+          <IonCol className="ion-text-center">
+            <div className="flex">
+              {!isParticipant() && (
+                <IonIcon
+                  className="participants-icon"
+                  icon={peopleOutline}
+                  size="small"
+                ></IonIcon>
+              )}
+              {isParticipant() && (
+                <IonIcon
+                  className="participants-icon"
+                  icon={people}
+                  size="small"
+                ></IonIcon>
+              )}
+              {discussionParticipants && (
+                <IonLabel className="participants">
+                  {discussionParticipants.length}
+                </IonLabel>
+              )}
+            </div>
           </IonCol>
-
-          <IonCol>
-            <IonIcon icon={peopleCircle} class="large-icon"></IonIcon>
-            {participants}
-          </IonCol>
-
-          <IonCol>
-            {location}
+          <IonCol className="ion-text-right">
+            {startTime + " - " + endTime}
           </IonCol>
         </IonRow>
-
+        <IonRow
+          className="ion-align-items-center"
+          onClick={() => setShowButtons(!showButtons)}
+        >
+          <IonCol className="ion-text-left">
+            <IonCardSubtitle>{title}</IonCardSubtitle>
+          </IonCol>
+          <IonCol className="ion-text-center">
+            {showButtons && (
+              <IonIcon icon={chevronDownOutline} size="large"></IonIcon>
+            )}
+            {!showButtons && (
+              <IonIcon icon={chevronUpOutline} size="large"></IonIcon>
+            )}
+          </IonCol>
+          <IonCol className="ion-text-right">
+            <IonCardSubtitle>{location}</IonCardSubtitle>
+          </IonCol>
+        </IonRow>
         {showButtons && (
-          <IonRow>
-            <IonCol>
-              <IonButton routerLink="/agenda">Outline </IonButton>
+          <IonRow className="ion-align-items-center">
+            <IonCol className="ion-text-center">
+              <IonButton routerLink="/agenda">
+                <IonIcon slot="icon-only" icon={clipboard}></IonIcon>
+              </IonButton>
+              <br></br>
+              <IonLabel>Agenda</IonLabel>
             </IonCol>
-            <IonCol>
-              <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments"}>Comments</IonButton>
+            <IonCol className="ion-text-center">
+              <IonButton
+                routerLink={
+                  "/clubs/" +
+                  bookClubId +
+                  "/discussions/" +
+                  discussionId +
+                  "/comments"
+                }
+              >
+                <IonIcon slot="icon-only" icon={chatbox}></IonIcon>
+              </IonButton>
+              <br></br>
+              <IonLabel>Comments</IonLabel>
             </IonCol>
-            <IonCol>
-              <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/edit"}>Edit</IonButton>
-            </IonCol>
-            <IonCol>
-              {/* {isModerator ? (
-                <IonButton>Edit</IonButton>
-              ) : (
-                <IonButton>Join</IonButton>
-              )} */}
-            </IonCol>
+            {isModerator && (
+              <IonCol className="ion-text-center">
+                <IonButton
+                  routerLink={
+                    "/clubs/" +
+                    bookClubId +
+                    "/discussions/" +
+                    discussionId +
+                    "/edit"
+                  }
+                >
+                  <IonIcon slot="icon-only" icon={pencil}></IonIcon>
+                </IonButton>
+                <br></br>
+                <IonLabel>Edit</IonLabel>
+              </IonCol>
+            )}
+            {!isModerator && (
+              <IonCol className="ion-text-center">
+                {discussionParticipants != null && !isParticipant() && (
+                  <>
+                    <IonButton onClick={joinDiscussion}>
+                      <IonIcon slot="icon-only" icon={personAdd}></IonIcon>
+                    </IonButton>
+                    <br></br>
+                    <IonLabel>Join</IonLabel>
+                  </>
+                )}
+                {discussionParticipants != null && isParticipant() && (
+                  <>
+                    <IonButton onClick={leaveDiscussion}>
+                      <IonIcon slot="icon-only" icon={personRemove}></IonIcon>
+                    </IonButton>
+                    <br></br>
+                    <IonLabel>Leave</IonLabel>
+                  </>
+                )}
+              </IonCol>
+            )}
           </IonRow>
         )}
       </IonGrid>
