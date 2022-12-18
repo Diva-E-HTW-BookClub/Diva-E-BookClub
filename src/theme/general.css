@@ -24,8 +24,6 @@
   --ion-color-favorite-tint: #3B432B;
 }
 
-
-
 .ion-color-favorite {
   --ion-color-base: var(--ion-color-favorite);
   --ion-color-base-rgb: var(--ion-color-favorite-rgb);
@@ -38,8 +36,6 @@
   background:  var(--ion-color-favorite);
   color: var(--ion-color-favorite-tint);
 }
-
-
 
 .divider {
   height: 30px;

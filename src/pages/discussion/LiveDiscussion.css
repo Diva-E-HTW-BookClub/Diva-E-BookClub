@@ -22,3 +22,16 @@ ion-progress-bar{
   --progress-background: #e7b837;
   padding:12px;
 }
+
+.button-icon {
+  color:#8bd557;
+}
+
+ion-card {
+  width: 100%;
+  margin: 2px;
+}
+
+.iten-no-padding > *{
+  padding:0 !important;
+}
