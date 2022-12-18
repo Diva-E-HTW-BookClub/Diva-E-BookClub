@@ -21,6 +21,7 @@ import RegisterPage from "./pages/identity/RegisterPage";
 import Agenda from "./pages/Agenda";
 import ClubPage from "./pages/clubs/ClubPage";
 import AddDiscussion from "./pages/discussion/CreateDiscussion";
+import LiveDiscussion from "./pages/discussion/LiveDiscussion";
 import AddResource from "./pages/resources/AddResource";
 import StartPage from "./pages/identity/StartPage";
 import Comments from "./pages/comments/Comments";
@@ -89,6 +90,9 @@ const App: React.FC = () => (
           </Route>
           <Route exact path="/clubs/:bookClubId/discussions/add">
             <AddDiscussion />
+          </Route>
+          <Route exact path="/discussions/live">
+            <LiveDiscussion />
           </Route>
           <Route exact path="/clubs/:bookClubId/discussions/:discussionId/comments">
             <Comments />
