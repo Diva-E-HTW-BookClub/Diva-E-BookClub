@@ -8,116 +8,176 @@ import {
   IonCard,
   IonRow,
   IonCol,
-  IonItem,
-  IonLabel,
-  IonInput,
   IonButton,
   IonProgressBar
 } from "@ionic/react";
+import {
+  doc,
+  setDoc,
+} from "firebase/firestore";
+import { firebaseDB } from "../../firebase/firebaseConfig";
 import io from "socket.io-client"
 import "./LiveDiscussion.css";
 import React, { useRef, useEffect, useState } from "react";
 
 const socket = io("http://localhost:3001");
+var progressTimesForServer = [0,0];
+var progressSumForServer = 0;
+var isModerator = false;
+
 
 const LiveDiscussion: React.FC = () => {
-const [message, setMessage] = useState("");
-const [messageReceived, setMessageReceived] = useState("");
-const [isPlaying, setIsPlaying] = useState(false);
-const [isPlayingReceived, setIsPlayingReceived] = useState(false);
-const [isPlaying2, setIsPlaying2] = useState(false);
-const [progress1, setProgress1] = useState(0);
-const [progress2, setProgress2] = useState(0);
-const [progress1Received, setProgress1Received] = useState(0);
-const totalTime1 = 0.10;
-const totalTime2 = 0.10;
+const totalTime1 = 1.00;
+const totalTime2 = 1.00;
 
 const [playingState, setPlayingState] = useState([false, false]);
 const [playingStateReceived, setPlayingStateReceived] = useState([false, false]);
-const [progresses, setProgresses] = useState([0,0]);
+const [progressTimes, setProgressTimes] = useState([0,0]);
+const [progressTimesReceived, setProgressTimesReceived] = useState([0,0]);
+const [progressSumReceived, setProgressSumReceived] = useState(0);
+const chapters = 2;
+var progressSum = 0;
+
+const changedPlayingState = doc(firebaseDB, "testCollection", "8hh5w2KA9koJTbyMiDuk");
 
 
+function createPlayingStatesForButton(length: number, index: number) {
+  var timeTable = []
+  for(var i = 0; i < length ;i++){
+    timeTable[i] = false;
+  }
+  if(!playingState[index]){
+    timeTable[index] = true;
+  }
+  return timeTable;
+}
 
-  const onClickH1 = () =>{ 
-  //setIsPlaying(!isPlaying)
-  setPlayingState([!playingState[0],false]);
-  //socket.emit("send_playButton", {isPlaying});
+
+  const beModerator = () => {
+    isModerator = true;
+  }
+
+  const onClickH = (buttonNumber: number) =>{ 
+  if(isModerator){
+  createPlayingStatesForButton(2,buttonNumber);
+  for (var i = 0; i < chapters ;i++){
+    playingState[i] = createPlayingStatesForButton(chapters,buttonNumber)[i]
+  }
+
+  for (var i = 0; i < chapters ;i++){
+    progressTimes[i] = progressTimesReceived[i]
+    console.log("is Received komisch? " + progressSumReceived);
+    progressSum = progressSumReceived;
+  }
+ 
+  progressSum = progressSumReceived
+  console.log("volle Summe: " + progressSum)
+  
   socket.emit("send_playButton", {playingState}); 
-  //socket.emit("send_time", {progress1});  
-  }
-
-  const onClickH2 = () =>{ 
-    setIsPlaying(!isPlaying2)
-    socket.emit("send_playButton", {isPlaying2}); 
-    socket.emit("send_time", {progress2});  
-    }
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if(isPlayingReceived){
-      setProgress1((prevProgress) => prevProgress + 1/(totalTime1*100));
-      console.log(progress1)
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [isPlayingReceived]);
-
-  useEffect(() => {
-    const interval2 = setInterval(() => {
-      if(isPlaying2){
-        setProgress2((prevProgress) => prevProgress + 1/(totalTime2*100));
-        }
-    }, 1000);
-
-    return () => clearInterval(interval2);
-  }, [isPlaying2]);
-
-  if (progress1 == totalTime1) {
-    setTimeout(() => {
-      //setProgress(0);
-    }, 1);
-  }
-
-  if (progress2 == totalTime2) {
-    setTimeout(() => {
-      //setProgress(0);
-    }, 1);
+  socket.emit("send_time", {progressTimes});
+  socket.emit("send_sum_time", {progressSum});
+  console.log(progressTimes)
+  console.log(playingState)
+  console.log(progressSum)
+  //setDoc(changedPlayingState, {playingState: playingState, progressTimes: progressTimes, progressSum: progressSum});
+}
   }
 
 
+  
   useEffect(() => {
     socket.on("receive_playButton", (data) => {
-      
       setPlayingStateReceived(data.playingState)
-      
-    });
-    socket.on("receive_message", (data) => {
-      setMessageReceived(data.message)
     });
     
     socket.on("receive_time", (data) => {
-      setProgress1Received(data.progress1)
-      
+      setProgressTimesReceived(data.progressTimes)
     });
-    /*
-    socket.on("testEmit", (data) => {
-      console.log("newUser!")
-      
+    socket.on("receive_sum_time", (data) => {
+      console.log("ist das hier weird? " + data.progressSum);
+      setProgressSumReceived(data.progressSum)
+    }); 
+
+    socket.on("progressEmit", (data) => {
+      if(data != 0){
+        console.log("Bars:" + data)
+        setProgressTimesReceived(data); 
+      }
+      else{
+        setProgressTimesReceived([0,0]); 
+      }
     });
-    */
+
+    socket.on("sumEmit", (data) => {
+      if(typeof(data) != 'undefined'){
+      console.log("Sum:" + data.progressSum)
+      setProgressSumReceived(data.progressSum)
+      }
+      else{
+        setProgressSumReceived(0)
+      }
+  });
+
+  socket.on("statesEmit", (data) => {
+    if(data != 0){
+    console.log("States:" + data)
+    setPlayingStateReceived(data)
+    }
+    else{
+      setPlayingStateReceived([false,false])
+    }
+});
+
+    
   }, [socket]);
+ 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if(playingStateReceived[0]){
+      setProgressTimesReceived(([prevProgress0, prevProgress1]) => [prevProgress0 + 1/(totalTime1*1000), prevProgress1]);
+      setProgressSumReceived((prevProgress) => prevProgress + 1/(totalTime1*1000*chapters))
+      if(isModerator){
+        progressTimesForServer[0] =  progressTimesForServer[0] + 1/(totalTime1*1000)
+        progressSumForServer = progressSumForServer + 1/(totalTime1*1000*chapters)
+        socket.emit("send_all_Data", {playingState, progressTimesForServer, progressSumForServer});
+        } 
+      }
+      
+    }, 100);
+    
+    return () => clearInterval(interval);
+  }, [playingStateReceived[0]]);
+ 
+  useEffect(() => {
+    const interval2 = setInterval(() => {
+      if(playingStateReceived[1]){
+        setProgressTimesReceived(([prevProgress0, prevProgress1]) => [prevProgress0, prevProgress1 + 1/(totalTime2*1000)]);
+        setProgressSumReceived((prevProgress) => prevProgress + 1/(totalTime2*1000*chapters))
+        if(isModerator){
+          progressTimesForServer[1] =  progressTimesForServer[1] + 1/(totalTime2*1000)
+          progressSumForServer = progressSumForServer + 1/(totalTime2*1000*chapters)
+         socket.emit("send_all_Data", {playingState, progressTimesForServer, progressSumForServer});
+          } 
+        }
+    }, 100);
+
+    return () => clearInterval(interval2);
+  }, [playingStateReceived[1]]);
+
+
+
+  
 
 const isOrange = (progress: number, totalTime: number) => {
     return +(progress*totalTime).toFixed(2) >= totalTime* 0.5
 }
 
 const isDarkOrange = (progress: number, totalTime: number) => {
-  return +(progress1*totalTime1).toFixed(2) >= totalTime1 * 0.8
+  return +(progress*totalTime).toFixed(2) >= totalTime * 0.79
 }
 
 const isRed = (progress: number, totalTime: number) => {
-  return +(progress1*totalTime1).toFixed(2) >= totalTime1 
+  return +(progress*totalTime).toFixed(2) >= totalTime 
 }
 
 
@@ -144,10 +204,11 @@ const isRed = (progress: number, totalTime: number) => {
               <IonTitle>Total speaking time:</IonTitle> 
               </IonCol>
               <IonCol size="5">
-              <IonTitle>{((progress1 * totalTime1) + (progress2 * totalTime1)).toFixed(2) } / {(totalTime1 + totalTime2).toFixed(2)}</IonTitle>  
+              <IonTitle>{((progressTimesReceived[0] * totalTime1) + (progressTimesReceived[1] * totalTime1)).toFixed(2) } / {(totalTime1 + totalTime2).toFixed(2)}</IonTitle> 
+              <IonTitle>{progressSumReceived}</IonTitle> 
               </IonCol>
             </IonRow>
-                <IonProgressBar className={` ${isRed(progress1, totalTime1) ? 'isRed' : isDarkOrange(progress1, totalTime1) ?  'isDarkOrange' : isOrange(progress1, totalTime1) ? 'isOrange' : 'blue'}`} value={progress1 + progress2}></IonProgressBar>
+                <IonProgressBar className={` ${isRed(progressSumReceived, totalTime1) ? 'isRed' : isDarkOrange(progressSumReceived, totalTime1) ?  'isDarkOrange' : isOrange(progressSumReceived, totalTime1) ? 'isOrange' : 'blue'}`} value={progressSumReceived}></IonProgressBar>
                 <div className="divider"></div>
              
               
@@ -157,12 +218,12 @@ const isRed = (progress: number, totalTime: number) => {
               <IonTitle>speaking time1:</IonTitle> 
               </IonCol>
               <IonCol size="5">
-              <IonTitle>{(progress1 * totalTime1).toFixed(2) } / {totalTime1 .toFixed(2)}</IonTitle> 
+              <IonTitle>{(progressTimesReceived[0] * totalTime1).toFixed(2)} / {totalTime1 .toFixed(2)}</IonTitle> 
               </IonCol>
             </IonRow>
-                <IonProgressBar className={` ${isRed(progress1, totalTime1) ? 'isRed' : isDarkOrange(progress1, totalTime1) ?  'isDarkOrange' : isOrange(progress1, totalTime1) ? 'isOrange' : 'blue'}`} value={progress1}></IonProgressBar>
+                <IonProgressBar className={` ${isRed(progressTimesReceived[0], totalTime1) ? 'isRed' : isDarkOrange(progressTimesReceived[0], totalTime1) ?  'isDarkOrange' : isOrange(progressTimesReceived[0], totalTime1) ? 'isOrange' : 'blue'}`} value={progressTimesReceived[0]}></IonProgressBar>
                 <div className="divider"></div>
-                <IonButton fill="outline" onClick={onClickH1}>
+                <IonButton fill="outline" onClick={() => onClickH(0)}>
                 Play / Stop
               </IonButton>
 
@@ -173,19 +234,20 @@ const isRed = (progress: number, totalTime: number) => {
               <IonTitle>speaking time2:</IonTitle> 
               </IonCol>
               <IonCol size="5">
-              <IonTitle>{(progress2 * totalTime1).toFixed(2) } / {totalTime2 .toFixed(2)}</IonTitle> 
+              <IonTitle>{(progressTimesReceived[1] * totalTime1).toFixed(2) } / {totalTime2 .toFixed(2)}</IonTitle> 
               </IonCol>
             </IonRow>
               <div className="divider"></div>
-              <IonProgressBar className={` ${isRed(progress2, totalTime2) ? 'isRed' : isDarkOrange(progress2, totalTime2) ?  'isDarkOrange' : isOrange(progress2, totalTime2) ? 'isOrange' : 'blue'}`} value={progress2}></IonProgressBar>
+              <IonProgressBar className={` ${isRed(progressTimesReceived[1], totalTime2) ? 'isRed' : isDarkOrange(progressTimesReceived[1], totalTime2) ?  'isDarkOrange' : isOrange(progressTimesReceived[1], totalTime2) ? 'isOrange' : 'blue'}`} value={progressTimesReceived[1]}></IonProgressBar>
                 <div className="divider"></div>
-                <IonButton fill="outline" onClick={onClickH2}>
+                <IonButton fill="outline" onClick={() => onClickH(1)}>
                 Play / Stop
               </IonButton>
               <div className="divider"></div>
-              <h1>Player 1 läuft?</h1>
-    {String(playingStateReceived[0])}
-              <div className="divider"></div>
+
+              <IonButton fill="outline" onClick={() => beModerator()}>
+              Moderator
+              </IonButton>
               <IonRow>
                 
                 <IonCol size="10">
