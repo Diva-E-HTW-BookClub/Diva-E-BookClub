@@ -152,7 +152,7 @@ const ClubPage: React.FC = () => {
                   bookClubId={bookClubId}
                   discussionId={discussion.id}
                   title={discussion.title}
-                  date={"15.12.2022"}
+                  date={discussion.date}
                   startTime={discussion.startTime}
                   endTime={discussion.endTime}
                   location={discussion.location}
