@@ -1,12 +1,12 @@
 import {
+  IonButton,
   IonCard,
-  IonIcon,
+  IonCardSubtitle,
   IonCol,
   IonGrid,
-  IonRow,
-  IonButton,
+  IonIcon,
   IonLabel,
-  IonCardSubtitle,
+  IonRow,
 } from "@ionic/react";
 import {
   chatbox,
@@ -27,6 +27,7 @@ import {
   getDiscussionDocument,
   removeDiscussionParticipant,
 } from "../firebase/firebaseDiscussions";
+import { format, utcToZonedTime } from "date-fns-tz";
 
 interface DiscussionCardProps {
   bookClubId: string;
@@ -90,6 +91,23 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
     }
   }
 
+  let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  function formatDate() {
+    const dateTz = utcToZonedTime(date, timezone);
+    return format(dateTz, "dd.MM.yyyy", { timeZone: timezone });
+  }
+
+  function formatStartTime() {
+    const startTz = utcToZonedTime(startTime, timezone);
+    return format(startTz, "HH:mm", { timeZone: timezone });
+  }
+
+  function formatEndTime() {
+    const endTz = utcToZonedTime(endTime, timezone);
+    return format(endTz, "HH:mm", { timeZone: timezone });
+  }
+
   return (
     <IonCard>
       <IonGrid>
@@ -97,7 +115,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
           className="ion-align-items-center"
           onClick={() => setShowButtons(!showButtons)}
         >
-          <IonCol className="ion-text-left">{date}</IonCol>
+          <IonCol className="ion-text-left">{formatDate()}</IonCol>
           <IonCol className="ion-text-center">
             <div className="flex">
               {!isParticipant() && (
@@ -122,7 +140,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
             </div>
           </IonCol>
           <IonCol className="ion-text-right">
-            {startTime + " - " + endTime}
+            {formatStartTime() + " - " + formatEndTime()}
           </IonCol>
         </IonRow>
         <IonRow
