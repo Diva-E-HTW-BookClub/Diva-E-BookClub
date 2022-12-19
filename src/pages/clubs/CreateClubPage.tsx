@@ -102,7 +102,7 @@ const CreateClubPage: React.FC = () => {
       discussions: [],
       owner: userId,
     });
-    history.push(`${bookClubId}/view`);
+    history.push(`/clubs/${bookClubId}/view`);
   }
 
   return (

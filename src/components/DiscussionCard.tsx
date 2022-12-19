@@ -8,6 +8,7 @@ import {
 } from "@ionic/react";
 import { peopleCircle } from "ionicons/icons";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 interface DiscussionCardProps {
   bookClubId: string,
@@ -18,6 +19,7 @@ interface DiscussionCardProps {
   endTime: string;
   location: string;
   agenda: string;
+  owner: string;
 }
 
 export const DiscussionCard: React.FC<DiscussionCardProps> = ({
@@ -29,8 +31,10 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
   endTime,
   location,
   agenda,
+  owner,
 }: DiscussionCardProps) => {
   const [showButtons, setShowButtons] = useState<boolean>(false);
+  const user = useSelector((state:any) => state.user.user)
 
   return (
     // show/hide buttons by clicking on the discussion card
@@ -63,9 +67,11 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
             <IonCol>
               <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments"}>Comments</IonButton>
             </IonCol>
-            <IonCol>
-              <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/edit"}>Edit</IonButton>
-            </IonCol>
+            {user.uid === owner &&
+              <IonCol>
+                <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/edit"}>Edit</IonButton>
+              </IonCol>
+            }
             <IonCol>
               {/* {isModerator ? (
                 <IonButton>Edit</IonButton>

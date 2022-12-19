@@ -12,11 +12,9 @@ const container = document.getElementById("root");
 const root = createRoot(container!);
 const store = createStore(reducer)
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <App />
+  </Provider>
 );
 
 // If you want your app to work offline and load faster, you can change

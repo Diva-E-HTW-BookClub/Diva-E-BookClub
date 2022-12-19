@@ -41,17 +41,18 @@ const ClubPage: React.FC = () => {
   const user = useSelector((state:any) => state.user.user)
   const [bookClubData, setBookClubData] = useState<BookClub>()
   const [selectedSegment, setSelectedSegment] = useState<string>("calendar");
-  const [isModerator, setIsModerator] = useState<boolean>(true);
+  const [isModerator, setIsModerator] = useState<boolean>(false);
+  const [isOwner, setIsOwner] = useState<boolean>(false);
 
   useEffect(() => {
     getBookClub();
-
   }, []);
   
   async function getBookClub() {
     let bookClub = await getBookClubDocument(bookClubId)
     // check if the current user is moderator of the club
-    setIsModerator(bookClub?.moderator === user.uid);
+    setIsModerator(bookClub?.moderator.includes(user.uid));
+    setIsOwner(bookClub?.owner === user.uid)
     setBookClubData(bookClub)
   }
 
@@ -112,7 +113,7 @@ const ClubPage: React.FC = () => {
                   <h3>
                     {clubParticipants}/{clubParticipantsMax}
                   </h3>
-                  {isModerator &&
+                  {isOwner &&
                   <IonButton routerLink={"/clubs/" + bookClubId + "/edit"}>Edit</IonButton>
                   }
                   {!isModerator && bookClubData != null && !bookClubData.participants.includes(user.uid) &&
@@ -156,6 +157,7 @@ const ClubPage: React.FC = () => {
                     endTime={discussion.endTime}
                     location={discussion.location}
                     agenda={discussion.agenda}
+                    owner={discussion.owner}
                   />
                 ) : (
                   <ResourceCard
