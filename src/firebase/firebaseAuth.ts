@@ -1,23 +1,29 @@
+import { resolve } from "dns";
 import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
   signOut,
+  User,
 } from "firebase/auth";
 
 import { firebaseApp } from "./firebaseConfig";
 
 const auth = getAuth();
 
-export var currentUser: any;
-
-function getCurrentUserId() {
-  if (currentUser == null) {
-    return "test-user";
-  } else {
-    return currentUser.uid;
-  }
+function getCurrentUser() {
+  return new Promise((resolve, reject) =>{
+    const unsubscribe = auth.onAuthStateChanged(function(user) {
+        if(user) {
+          resolve(user)
+        } else {
+          resolve(null)
+        }
+        unsubscribe()
+      })
+  })
+  
 }
 
 onAuthStateChanged(auth, (user) => {
@@ -40,7 +46,6 @@ async function registerUser(email: string, password: string) {
   return createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Registered
-      currentUser = userCredential.user;
       return "";
     })
     .catch((error) => {
@@ -55,11 +60,9 @@ async function registerUser(email: string, password: string) {
 }
 
 async function loginUser(email: string, password: string) {
-  const auth = getAuth(firebaseApp);
   return signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed in
-      currentUser = userCredential.user;
       return "";
     })
     .catch((error) => {
@@ -84,4 +87,4 @@ async function logoutUser() {
     });
 }
 
-export { registerUser, loginUser, logoutUser, getCurrentUserId };
+export { registerUser, loginUser, logoutUser, getCurrentUser };

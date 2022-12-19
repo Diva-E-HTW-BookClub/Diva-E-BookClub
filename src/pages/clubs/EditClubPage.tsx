@@ -12,8 +12,6 @@ type FormValues = {
 const EditClubPage: React.FC = () => {
     let {bookClubId}: {bookClubId: string} = useParams();
 
-    const [bookClubData, setBookClubData] = useState<BookClub>()
-
     const { register, handleSubmit, setValue, formState: { errors } } =
         useForm<FormValues>({
     });
@@ -24,7 +22,6 @@ const EditClubPage: React.FC = () => {
 
     async function getBookClub() {
         let bookClub = await getBookClubDocument(bookClubId)
-        setBookClubData(bookClub) 
         
         setValue("name", bookClub?.name)
         setValue("maxParticipantsNumber", bookClub?.maxParticipantsNumber)        
@@ -33,10 +30,7 @@ const EditClubPage: React.FC = () => {
     
 
      async function submitData(data: any) {
-        const result = await updateBookClubDocument(bookClubId, {
-            name: data.name,
-            maxParticipantsNumber: data.maxParticipantsNumber,
-        })
+        const result = await updateBookClubDocument(bookClubId, data)
     }
     async function deleteBookClub() {
         deleteBookClubDocument(bookClubId)
@@ -76,10 +70,9 @@ const EditClubPage: React.FC = () => {
                     <IonInput {...register("maxParticipantsNumber", {})}/>
 
                 </IonItem>
-                <IonButton type="submit" routerLink={"/clubs/" + bookClubId}>Update</IonButton>
+                <IonButton type="submit" routerLink={"/clubs/" + bookClubId + "/view"}>Update</IonButton>
             </form>
             <IonButton onClick={() => deleteBookClub()} color="danger" routerLink={"/clubs"}>Delete Club</IonButton>
-
         </IonContent>
     </IonPage>
     )

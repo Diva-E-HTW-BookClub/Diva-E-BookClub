@@ -20,8 +20,8 @@ import {
   personRemove,
 } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import "./DiscussionCard.css";
-import { getCurrentUserId } from "../firebase/firebaseAuth";
 import {
   addDiscussionParticipant,
   getDiscussionDocument,
@@ -52,6 +52,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
   isModerator,
 }: DiscussionCardProps) => {
   const [showButtons, setShowButtons] = useState<boolean>(false);
+  const user = useSelector((state:any) => state.user.user)
   const [discussionParticipants, setDiscussionParticipants] =
     useState<string[]>();
 
@@ -60,7 +61,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
   }, []);
 
   const isParticipant = () => {
-    return discussionParticipants?.includes(getCurrentUserId());
+    return discussionParticipants?.includes(user.uid);
   };
 
   async function getDiscussionParticipants() {
@@ -73,7 +74,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
       await addDiscussionParticipant(
         bookClubId,
         discussionId,
-        getCurrentUserId()
+        user.uid
       );
       getDiscussionParticipants();
     }
@@ -84,7 +85,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
       await removeDiscussionParticipant(
         bookClubId,
         discussionId,
-        getCurrentUserId()
+        user.uid
       );
       getDiscussionParticipants();
     }

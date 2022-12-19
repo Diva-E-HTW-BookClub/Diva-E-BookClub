@@ -19,8 +19,8 @@ import "./CreateClubPage.css";
 import React, { useState } from "react";
 import { BookCard } from "../../components/BookCard";
 import { createBookClubDocument } from "../../firebase/firebaseBookClub";
-import { getCurrentUserId } from "../../firebase/firebaseAuth";
 import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const CreateClubPage: React.FC = () => {
   const history = useHistory();
@@ -29,6 +29,7 @@ const CreateClubPage: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const [clubName, setClubName] = useState<string>("");
   const [maxParticipants, setMaxParticipants] = useState<number>(0);
+  const user = useSelector((state:any) => state.user.user)
 
   // calls HTTP API of OpenLibrary to search books by the given query and offset
   async function searchBooks(q: string, offset: number) {
@@ -86,11 +87,11 @@ const CreateClubPage: React.FC = () => {
     let book = books[selectedBookIndex];
     // for now if user is not logged in use test-user as user id
     // later only logged in users should create book clubs
-    let userId = getCurrentUserId();
+    let userId = user.uid;
     let bookClubId = await createBookClubDocument({
       id: "",
       name: clubName,
-      moderator: userId,
+      moderator: [userId],
       participants: [userId],
       maxParticipantsNumber: maxParticipants,
       book: {
@@ -98,9 +99,11 @@ const CreateClubPage: React.FC = () => {
         authors: book.author_name,
         imageUrl: book.image
       },
-      discussions: []
+      discussions: [],
+      resources: [],
+      owner: userId,
     });
-    history.push(`${bookClubId}/view`);
+    history.push(`/clubs/${bookClubId}/view`);
   }
 
   return (

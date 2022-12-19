@@ -23,13 +23,21 @@ import "./ClubsTab.css";
 import { useEffect, useState } from "react";
 import { ClubCard } from "../../components/ClubCard";
 import { searchBookClubs, BookClub } from "../../firebase/firebaseBookClub";
-import { getCurrentUserId } from "../../firebase/firebaseAuth";
+import { useSelector } from "react-redux";
 
 const ClubsTab: React.FC = () => {
   const [bookClubs, setBookClubs] = useState<BookClub[]>([]);
   const [inputText, setInputText] = useState<string>("");
   const [selectedSegment, setSelectedSegment] = useState<string>("your");
   const [selectedFilter, setSelectedFilter] = useState<string>("name");
+  const user = useSelector((state:any) => state.user.user)
+
+  function getCurrentUserId() {
+    if(user){
+      return user.uid
+    } 
+    return null
+  }
 
   // displays book clubs when the tab loads
   // using default values of selected input text, filter, and segment
