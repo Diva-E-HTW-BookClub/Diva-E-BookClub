@@ -188,7 +188,8 @@ function docToBookClub(doc: any) {
     participants: data.participants,
     maxParticipantsNumber: data.maxParticipantsNumber,
     book: data.book,
-    discussions: data.discussions
+    discussions: data.discussions,
+    owner: data.owner
   }
 }
 

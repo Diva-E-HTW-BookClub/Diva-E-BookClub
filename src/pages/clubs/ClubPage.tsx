@@ -33,7 +33,6 @@ import { ResourceCard } from "../../components/ResourceCard";
 import { BookClub, getBookClubDocument, addParticipant, removeParticipant } from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
 import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
-import { addParticipant, removeParticipant } from "../../firebase/firebaseBookClub";
 import { useSelector } from "react-redux";
 
 const ClubPage: React.FC = () => {
