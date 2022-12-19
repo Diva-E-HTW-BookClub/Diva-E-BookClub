@@ -58,19 +58,15 @@ const Comments: React.FC = () => {
     getCommentData();
   }, []);
 
-  async function submitData(data:any) {
-    let userId = user.uid;
-    const result = await createCommentDocument(bookClubId, discussionId, Object.assign(data, {owner: userId}))
 
-    setIsOpen(false)
-  }
   async function getCommentData() {
     var commentData = await getDiscussionComments(bookClubId, discussionId);
     setCommentData(commentData);
   }
   
   async function createComment(data: any) {
-    createCommentDocument(bookClubId, discussionId, data);
+    let userId = user.uid;
+    createCommentDocument(bookClubId, discussionId, Object.assign(data, {moderator: userId}));
     setIsOpen(false);
   }
 
@@ -189,6 +185,7 @@ const Comments: React.FC = () => {
               userName="PLACEHOLDER NAME"
               passage={item.passage}
               text={item.text}
+              moderator={item.moderator}
             />
           );
         })}

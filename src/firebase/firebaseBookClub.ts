@@ -41,6 +41,13 @@ type Discussion = {
   owner: string,
 }
 
+type Resource = {
+  id: string,
+  title: string,
+  content: string,
+  moderator: string,
+}
+
 type BookClub = {
   id: string,
   name: string,
@@ -49,6 +56,7 @@ type BookClub = {
   maxParticipantsNumber: number,
   book: Book,
   discussions: Discussion[],
+  resources: Resource[],
   owner: string,
 }
 
@@ -106,6 +114,25 @@ async function getBookClubDocument(bookClubId: string) {
       owner: discussionData.owner,
     })
   })
+
+  let resourceQuery = query(
+    collection(firebaseDB, "bookClubs", String(bookClubId), "resources"),
+    orderBy("title"),
+    limit(100)
+  );
+  var resourceDocuments = await getDocs(resourceQuery);
+  var resourceArray: Resource[] = []
+
+  resourceDocuments.forEach((doc) => {
+    let resourceData = doc.data()
+    resourceArray.push({
+      id: doc.id,
+      title: resourceData.title,
+      content: resourceData.content,
+      moderator: resourceData.moderator,
+    })
+  })
+
   if (bookClubData) {
     return {
       id: bookClubData.id,
@@ -115,6 +142,7 @@ async function getBookClubDocument(bookClubId: string) {
       maxParticipantsNumber: bookClubData.maxParticipantsNumber,
       book: bookClubData.book,
       discussions: discussionArray,
+      resources: resourceArray,
       owner: bookClubData.owner,
     }
   }
@@ -189,6 +217,7 @@ function docToBookClub(doc: any) {
     maxParticipantsNumber: data.maxParticipantsNumber,
     book: data.book,
     discussions: data.discussions,
+    resources: data.resources,
     owner: data.owner
   }
 }

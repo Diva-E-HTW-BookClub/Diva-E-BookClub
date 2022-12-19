@@ -49,7 +49,8 @@ async function getDiscussionComments(bookClubId:string ,discussionId: string) {
         commentId: doc.id,
         text: data.text,
         quote: data.quote,
-        passage: data.passage
+        passage: data.passage,
+        moderator: data.moderator,
     }
     });
 }

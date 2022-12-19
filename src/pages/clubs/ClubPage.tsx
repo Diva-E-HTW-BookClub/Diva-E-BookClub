@@ -143,11 +143,11 @@ const ClubPage: React.FC = () => {
             <IonIcon icon={documents}></IonIcon>
           </IonSegmentButton>
         </IonSegment>
-
+      
         {bookClubData?.discussions.map((discussion, index) => {
           return (
             <div key={index}>
-              {selectedSegment === "calendar" ? (
+              {selectedSegment === "calendar" &&
                 <DiscussionCard
                   bookClubId={bookClubId}
                   discussionId={discussion.id}
@@ -159,23 +159,34 @@ const ClubPage: React.FC = () => {
                   agenda={discussion.agenda}
                   isModerator={isModerator}
                 />
-              ) : (
-                <ResourceCard
-                  title={"Diva-E's Resource"}
-                  date={"12.12.2022"}
-                  type={"Link"}
-                />
-              )}
+              } 
             </div>
           );
         })}
+        {bookClubData?.resources.map((resource, index) => {
+          return (
+            <div key={index}>
+              {selectedSegment === "resources" &&
+                <ResourceCard
+                  resourceId={resource.id}
+                  title={resource.title}
+                  content={resource.content}
+                  moderator={resource.moderator}
+
+                  bookClubId={bookClubId}
+                />
+              } 
+            </div>
+          );
+        })}
+
         {isModerator && (
           <IonFab slot="fixed" vertical="bottom" horizontal="end">
             <IonFabButton
               routerLink={
                 selectedSegment === "calendar"
                   ? "/clubs/" + bookClubId + "/discussions/add"
-                  : "/resources/add"
+                  : "/clubs/" + bookClubId + "/resources/add"
               }
             >
               <IonIcon icon={add}></IonIcon>

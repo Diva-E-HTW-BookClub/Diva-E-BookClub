@@ -52,7 +52,7 @@ const AddDiscussion: React.FC = () => {
       participants: [],
       agenda: "",
 
-      owner: userId,
+      moderator: userId,
     })
 }
 

@@ -13,59 +13,75 @@ import {
   IonInput,
   IonButton,
 } from "@ionic/react";
-import "./AddResource.css";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useParams } from "react-router";
+import { deleteCommentDocument } from "../../firebase/firebaseComments";
+import { deleteResourceDocument, getResourceDocument, updateResourceDocument } from "../../firebase/firebaseResource";
+import "./CreateResource.css";
 
-const AddDiscussion: React.FC = () => {
+type FormValues = {
+  title: string;
+  content: string;
+
+}
+const EditResource: React.FC = () => {
+  let {bookClubId}: {bookClubId: string} = useParams();
+  let {resourceId}: {resourceId: string} = useParams();
+
+  const { register, handleSubmit, setValue, formState: { errors } } =
+        useForm<FormValues>({
+    });
+  
+  async function submitData(data: any) {
+      const result = await updateResourceDocument(bookClubId, resourceId, data)
+  }
+
+  useEffect(() => {
+    getResource()
+  }, []);
+
+  async function getResource() {
+    let resourceDoc = await getResourceDocument(bookClubId, resourceId)
+
+    setValue("title", resourceDoc?.title)
+    setValue("content", resourceDoc?.content)   
+  }
+  async function deleteResource() {
+    deleteResourceDocument(bookClubId, resourceId)
+  }
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Add Resource</IonTitle>
+          <IonTitle>Edit Resource</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonCard>
-          <IonGrid>
-            <div className="box">
-              <div className="divider"></div>
+          <IonHeader collapse="condense">
+              <IonToolbar>
+                  <IonTitle size="large">Edit Resource</IonTitle>
+              </IonToolbar>
+          </IonHeader>
+          <form onSubmit={handleSubmit(submitData)}>
               <IonItem>
-                <IonLabel position="stacked">
-                  <h1>Title</h1>
-                </IonLabel>
-                <IonInput placeholder="Enter the title"></IonInput>
+                  <IonLabel position="stacked">
+                      <h1>Title</h1>
+                  </IonLabel>
+                  <IonInput {...register("title", {})} />
               </IonItem>
-              <div className="divider"></div>
               <IonItem>
-                <IonLabel position="stacked">
-                  <h1>Add Link</h1>
-                </IonLabel>
-                <IonInput placeholder="Enter the link"></IonInput>
+                  <IonLabel position="stacked">
+                      <h1>Add a link</h1>
+                  </IonLabel>
+                  <IonInput {...register("content", {})} />
               </IonItem>
-              <div className="divider"></div>
-              <div className="divider"></div>
-              <IonRow>
-                <IonCol size="4">
-                  <IonButton
-                    routerLink="/clubs/clubId"
-                    className="cancel-button"
-                  >
-                    Cancel
-                  </IonButton>
-                </IonCol>
-                <IonCol size="4">
-                  <IonButton className="delete-button">Delete</IonButton>
-                </IonCol>
-                <IonCol size="4">
-                  <IonButton>Done</IonButton>
-                </IonCol>
-              </IonRow>
-              <div className="divider"></div>
-            </div>
-          </IonGrid>
-        </IonCard>
+              <IonButton type="submit" routerLink={"/clubs/" + bookClubId+ "/view"}>Update</IonButton>
+          </form>
+          <IonButton onClick={() => deleteResource()} color="danger" routerLink={"/clubs/" + bookClubId + "/view/"}>Delete Resource</IonButton>
       </IonContent>
     </IonPage>
   );
 };
 
-export default AddDiscussion;
+export default EditResource;

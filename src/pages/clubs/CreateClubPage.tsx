@@ -100,6 +100,7 @@ const CreateClubPage: React.FC = () => {
         imageUrl: book.image
       },
       discussions: [],
+      resources: [],
       owner: userId,
     });
     history.push(`/clubs/${bookClubId}/view`);

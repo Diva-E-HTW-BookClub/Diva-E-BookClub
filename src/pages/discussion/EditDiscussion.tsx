@@ -40,9 +40,8 @@ const EditDiscussion: React.FC = () => {
         useForm<FormValues>({
     });
   
-    async function submitData(data: any) {
+  async function submitData(data: any) {
       const result = await updateDiscussionDocument(bookClubId, discussionId, data)
-      console.log(result)
   }
     
   useEffect(() => {

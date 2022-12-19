@@ -10,14 +10,17 @@ import { documentTextOutline, peopleCircle } from "ionicons/icons";
 
 interface ResourceCardProps {
   title: string;
-  date: string;
-  type: string;
+  content: string;
+  moderator: string;
+  bookClubId: string;
+  resourceId: string;
 }
 
 export const ResourceCard: React.FC<ResourceCardProps> = ({
   title,
-  date,
-  type,
+  content,
+  bookClubId,
+  resourceId,
 }: ResourceCardProps) => {
   return (
     <IonCard>
@@ -30,13 +33,13 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({
           <IonCol size="4">{title}</IonCol>
 
           <IonCol size="4">
-            {date}
+            {title}
             <br></br>
-            Type: {type}
+            content: {content}
           </IonCol>
 
           <IonCol size="3">
-            <IonButton routerLink="/resources/edit">Edit</IonButton>
+            <IonButton routerLink={"/clubs/" + bookClubId + "/resources/" + resourceId + "/edit/"}>Edit</IonButton>
           </IonCol>
         </IonRow>
       </IonGrid>
