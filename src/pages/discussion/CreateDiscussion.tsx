@@ -14,8 +14,8 @@ import {
   IonBackButton,
   IonButtons,
 } from "@ionic/react";
-import React, { useRef, useEffect, useState } from "react";
-import { createDiscussionDocument, getDiscussionDocument } from "../../firebase/firebaseDiscussions";
+import React from "react";
+import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
 import { useParams } from "react-router";
 import "./EditDiscussion.css";
 import { useSelector } from "react-redux";
@@ -34,7 +34,7 @@ type FormValues = {
 
 const AddDiscussion: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
-  const user = useSelector((state:any) => state.user.user);
+  const user = useSelector((state: any) => state.user.user);
 
   const {
     register,
@@ -55,11 +55,6 @@ const AddDiscussion: React.FC = () => {
     const utcDatetime = zonedTimeToUtc(datetime, timezone);
     return utcDatetime.toISOString();
   }
-  let {bookClubId}: {bookClubId: string} = useParams();
-  const user = useSelector((state:any) => state.user.user)
-  const { register, handleSubmit, setValue, formState: { errors } } =
-  useForm<FormValues>({
-  });
 
   async function submitData(data: any) {
     let userId = user.uid;
@@ -167,7 +162,10 @@ const AddDiscussion: React.FC = () => {
             <IonLabel position="floating">Location</IonLabel>
             <IonInput {...register("location")} />
           </IonItem>
-          <IonButton type="submit" routerLink={"/clubs/" + bookClubId + "/view"}>
+          <IonButton
+            type="submit"
+            routerLink={"/clubs/" + bookClubId + "/view"}
+          >
             Create
           </IonButton>
         </form>
