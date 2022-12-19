@@ -17,20 +17,22 @@ import {
   IonCardContent,
   IonButton,
   IonIcon,
-  IonList,
-  IonItem,
   IonBackButton,
   IonButtons,
   IonFab,
   IonFabButton,
-  useIonViewWillEnter,
 } from "@ionic/react";
 import "./ClubPage.css";
 import { calendar, documents, add } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { DiscussionCard } from "../../components/DiscussionCard";
 import { ResourceCard } from "../../components/ResourceCard";
-import { BookClub, getBookClubDocument, addParticipant, removeParticipant } from "../../firebase/firebaseBookClub";
+import {
+  BookClub,
+  getBookClubDocument,
+  addParticipant,
+  removeParticipant,
+} from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
 import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
 import { useSelector } from "react-redux";
@@ -47,12 +49,11 @@ const ClubPage: React.FC = () => {
   useEffect(() => {
     getBookClub();
   }, []);
-  
+
   async function getBookClub() {
-    let bookClub = await getBookClubDocument(bookClubId)
+    let bookClub = await getBookClubDocument(bookClubId);
     // check if the current user is moderator of the club
     setIsModerator(bookClub?.moderator.includes(user.uid));
-    setIsOwner(bookClub?.owner === user.uid)
     setBookClubData(bookClub)
   }
 
@@ -72,13 +73,13 @@ const ClubPage: React.FC = () => {
     }
   }
 
-  let clubName = bookClubData?.name
-  let bookTitle = bookClubData?.book.title
-  let bookAuthor = bookClubData?.book.authors
-  let bookCoverImg = bookClubData?.book.imageUrl
-  let bookCurrentChapter = "?"
-  let clubParticipants = bookClubData?.participants?.length
-  let clubParticipantsMax = bookClubData?.maxParticipantsNumber
+  let clubName = bookClubData?.name;
+  let bookTitle = bookClubData?.book.title;
+  let bookAuthor = bookClubData?.book.authors;
+  let bookCoverImg = bookClubData?.book.imageUrl;
+  let bookCurrentChapter = "?";
+  let clubParticipants = bookClubData?.participants?.length;
+  let clubParticipantsMax = bookClubData?.maxParticipantsNumber;
   // console.log(bookClubId)
   // console.log(getBookClubDiscussions(bookClubId))
   return (
@@ -88,7 +89,7 @@ const ClubPage: React.FC = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/clubs" />
           </IonButtons>
-          <IonTitle>{bookClubData?.name}</IonTitle>
+          <IonTitle>{clubName}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -143,34 +144,31 @@ const ClubPage: React.FC = () => {
           </IonSegmentButton>
         </IonSegment>
 
-        <IonList lines="none">
-          {bookClubData?.discussions.map((discussion, index) => {
-            return (
-              <IonItem key={index}>
-                {selectedSegment === "calendar" ? (
-                  <DiscussionCard
-                    bookClubId={bookClubId}
-                    discussionId={discussion.id}
-                    chapter={discussion.title}
-                    participants={discussion.participants.length}
-                    startTime={discussion.startTime}
-                    endTime={discussion.endTime}
-                    location={discussion.location}
-                    agenda={discussion.agenda}
-                    owner={discussion.owner}
-                  />
-                ) : (
-                  <ResourceCard
-                    title={"Diva-E's Resource"}
-                    date={"12.12.2022"}
-                    type={"Link"}
-                  />
-                )}
-              </IonItem>
-            );
-          })}
-        </IonList>
-
+        {bookClubData?.discussions.map((discussion, index) => {
+          return (
+            <div key={index}>
+              {selectedSegment === "calendar" ? (
+                <DiscussionCard
+                  bookClubId={bookClubId}
+                  discussionId={discussion.id}
+                  title={discussion.title}
+                  date={"15.12.2022"}
+                  startTime={discussion.startTime}
+                  endTime={discussion.endTime}
+                  location={discussion.location}
+                  agenda={discussion.agenda}
+                  isModerator={isModerator}
+                />
+              ) : (
+                <ResourceCard
+                  title={"Diva-E's Resource"}
+                  date={"12.12.2022"}
+                  type={"Link"}
+                />
+              )}
+            </div>
+          );
+        })}
         {isModerator && (
           <IonFab slot="fixed" vertical="bottom" horizontal="end">
             <IonFabButton
