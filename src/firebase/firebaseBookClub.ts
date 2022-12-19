@@ -19,10 +19,11 @@ import { firebaseDB } from "./firebaseConfig";
 import { deleteDiscussionDocument } from "./firebaseDiscussions";
 
 type Comment = {
-  text: string;
-  passage: string;
-  commentId: string;
-};
+  text: string,
+  passage: string,
+  commentId: string,
+  owner: string,
+}
 type Book = {
   title: string;
   authors: string[];
@@ -38,17 +39,27 @@ type Discussion = {
   endTime: string;
   location: string;
   agenda: string;
+  owner: string;
 };
 
+type Resource = {
+  id: string,
+  title: string,
+  content: string,
+  moderator: string,
+}
+
 type BookClub = {
-  id: string;
-  name: string;
-  moderator: string;
-  participants: string[];
-  maxParticipantsNumber: number;
-  book: Book;
-  discussions: Discussion[];
-};
+  id: string,
+  name: string,
+  moderator: string[],
+  participants: string[],
+  maxParticipantsNumber: number,
+  book: Book,
+  discussions: Discussion[],
+  resources: Resource[],
+  owner: string,
+}
 
 async function createBookClubDocument(data: BookClub) {
   const doc = await addDoc(collection(firebaseDB, "bookClubs"), data);
@@ -102,8 +113,28 @@ async function getBookClubDocument(bookClubId: string) {
       endTime: discussionData.endTime,
       location: discussionData.location,
       agenda: discussionData.agenda,
+      owner: discussionData.owner,
     });
   });
+
+  let resourceQuery = query(
+    collection(firebaseDB, "bookClubs", String(bookClubId), "resources"),
+    orderBy("title"),
+    limit(100)
+  );
+  var resourceDocuments = await getDocs(resourceQuery);
+  var resourceArray: Resource[] = []
+
+  resourceDocuments.forEach((doc) => {
+    let resourceData = doc.data()
+    resourceArray.push({
+      id: doc.id,
+      title: resourceData.title,
+      content: resourceData.content,
+      moderator: resourceData.moderator,
+    })
+  })
+
   if (bookClubData) {
     return {
       id: bookClubData.id,
@@ -113,6 +144,8 @@ async function getBookClubDocument(bookClubId: string) {
       maxParticipantsNumber: bookClubData.maxParticipantsNumber,
       book: bookClubData.book,
       discussions: discussionArray,
+      resources: resourceArray,
+      owner: bookClubData.owner,
     };
   }
 }
@@ -192,7 +225,9 @@ function docToBookClub(doc: any) {
     maxParticipantsNumber: data.maxParticipantsNumber,
     book: data.book,
     discussions: data.discussions,
-  };
+    resources: data.resources,
+    owner: data.owner,
+  }
 }
 
 // https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array
@@ -203,6 +238,7 @@ async function addParticipant(bookClubId: string, participantId: string) {
     participants: arrayUnion(participantId),
   });
 }
+
 async function removeParticipant(bookClubId: string, participantId: string) {
   const bookClubDocument = doc(firebaseDB, "bookClubs", bookClubId);
   // Atomically remove a participant from the "participants" array field.

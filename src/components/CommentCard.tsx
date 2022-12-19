@@ -1,5 +1,8 @@
 import { IonButton, IonCard, IonCardSubtitle, IonCardTitle, IonIcon } from "@ionic/react";
 import { personCircleOutline } from "ionicons/icons";
+import { useSelector } from "react-redux";
+
+
 
 
 interface CommentCardProps {
@@ -9,6 +12,7 @@ interface CommentCardProps {
   commentId: string;
   bookClubId: string,
   discussionId: string,
+  moderator: string,
 }
 
 export const CommentCard: React.FC<CommentCardProps> = ({
@@ -18,8 +22,10 @@ export const CommentCard: React.FC<CommentCardProps> = ({
   commentId,
   bookClubId,
   discussionId,
+  moderator,
 
 }) => {
+  const user = useSelector((state:any) => state.user.user)
   return (
     <IonCard>
       <IonCardTitle>
@@ -28,7 +34,9 @@ export const CommentCard: React.FC<CommentCardProps> = ({
       </IonCardTitle>
       <IonCardSubtitle>{passage}</IonCardSubtitle>
       <p>{text}</p>
-      <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments/" + commentId + "/edit"} > Edit </IonButton>
+      {moderator === user.uid &&
+        <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments/" + commentId + "/edit"} > Edit </IonButton>
+      }
     </IonCard>
   );
 };

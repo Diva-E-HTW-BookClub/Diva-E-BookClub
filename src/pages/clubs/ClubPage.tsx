@@ -34,14 +34,17 @@ import {
   removeParticipant,
 } from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
-import { getCurrentUserId } from "../../firebase/firebaseAuth";
+import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
+import { useSelector } from "react-redux";
 
 const ClubPage: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
 
-  const [bookClubData, setBookClubData] = useState<BookClub>();
+  const user = useSelector((state:any) => state.user.user)
+  const [bookClubData, setBookClubData] = useState<BookClub>()
   const [selectedSegment, setSelectedSegment] = useState<string>("calendar");
-  const [isModerator, setIsModerator] = useState<boolean>(true);
+  const [isModerator, setIsModerator] = useState<boolean>(false);
+  const [isOwner, setIsOwner] = useState<boolean>(false);
 
   useEffect(() => {
     getBookClub();
@@ -50,26 +53,22 @@ const ClubPage: React.FC = () => {
   async function getBookClub() {
     let bookClub = await getBookClubDocument(bookClubId);
     // check if the current user is moderator of the club
-    setIsModerator(bookClub?.moderator === getCurrentUserId());
-    setBookClubData(bookClub);
+    setIsModerator(bookClub?.moderator.includes(user.uid));
+    setBookClubData(bookClub)
   }
 
   async function joinClub() {
-    if (
-      bookClubData != null &&
-      bookClubData.participants.length < bookClubData.maxParticipantsNumber
-    ) {
-      await addParticipant(bookClubId, getCurrentUserId());
+    if(bookClubData != null
+      && bookClubData.participants.length < bookClubData.maxParticipantsNumber){
+      await addParticipant(bookClubId, user.uid);
       getBookClub();
     }
   }
 
   async function leaveClub() {
-    if (
-      bookClubData != null &&
-      bookClubData.participants.includes(getCurrentUserId())
-    ) {
-      await removeParticipant(bookClubId, getCurrentUserId());
+    if(bookClubData != null
+      && bookClubData.participants.includes(user.uid)){
+      await removeParticipant(bookClubId, user.uid);
       getBookClub();
     }
   }
@@ -115,23 +114,15 @@ const ClubPage: React.FC = () => {
                   <h3>
                     {clubParticipants}/{clubParticipantsMax}
                   </h3>
-                  {isModerator && (
-                    <IonButton routerLink={"/clubs/" + bookClubId + "/edit"}>
-                      Edit
-                    </IonButton>
-                  )}
-                  {!isModerator &&
-                    bookClubData != null &&
-                    !bookClubData.participants.includes(getCurrentUserId()) && (
-                      <IonButton onClick={joinClub}>Join</IonButton>
-                    )}
-                  {!isModerator &&
-                    bookClubData != null &&
-                    bookClubData.participants.includes(getCurrentUserId()) && (
-                      <IonButton onClick={leaveClub} color="danger">
-                        Leave
-                      </IonButton>
-                    )}
+                  {isOwner &&
+                  <IonButton routerLink={"/clubs/" + bookClubId + "/edit"}>Edit</IonButton>
+                  }
+                  {!isModerator && bookClubData != null && !bookClubData.participants.includes(user.uid) &&
+                    <IonButton onClick={joinClub}>Join</IonButton>
+                  }
+                  {!isModerator && bookClubData != null && bookClubData.participants.includes(user.uid) &&
+                    <IonButton onClick={leaveClub} color="danger">Leave</IonButton>
+                  }
                 </IonCardContent>
               </IonCol>
             </IonRow>
@@ -152,11 +143,11 @@ const ClubPage: React.FC = () => {
             <IonIcon icon={documents}></IonIcon>
           </IonSegmentButton>
         </IonSegment>
-
+      
         {bookClubData?.discussions.map((discussion, index) => {
           return (
             <div key={index}>
-              {selectedSegment === "calendar" ? (
+              {selectedSegment === "calendar" &&
                 <DiscussionCard
                   bookClubId={bookClubId}
                   discussionId={discussion.id}
@@ -168,23 +159,34 @@ const ClubPage: React.FC = () => {
                   agenda={discussion.agenda}
                   isModerator={isModerator}
                 />
-              ) : (
-                <ResourceCard
-                  title={"Diva-E's Resource"}
-                  date={"12.12.2022"}
-                  type={"Link"}
-                />
-              )}
+              } 
             </div>
           );
         })}
+        {bookClubData?.resources.map((resource, index) => {
+          return (
+            <div key={index}>
+              {selectedSegment === "resources" &&
+                <ResourceCard
+                  resourceId={resource.id}
+                  title={resource.title}
+                  content={resource.content}
+                  moderator={resource.moderator}
+
+                  bookClubId={bookClubId}
+                />
+              } 
+            </div>
+          );
+        })}
+
         {isModerator && (
           <IonFab slot="fixed" vertical="bottom" horizontal="end">
             <IonFabButton
               routerLink={
                 selectedSegment === "calendar"
                   ? "/clubs/" + bookClubId + "/discussions/add"
-                  : "/resources/add"
+                  : "/clubs/" + bookClubId + "/resources/add"
               }
             >
               <IonIcon icon={add}></IonIcon>

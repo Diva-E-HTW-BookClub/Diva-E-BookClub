@@ -22,11 +22,7 @@ const EditComment: React.FC = () => {
     });
 
     async function submitData(data: any) {
-        const result = await updateCommentDocument(bookClubId, discussionId, commentId, {
-            passage: data.passage,
-            quote: data.quote,
-            text: data.text,
-        })
+        const result = await updateCommentDocument(bookClubId, discussionId, commentId, data)
         console.log(result)
     }
     
@@ -38,7 +34,6 @@ const EditComment: React.FC = () => {
 
 
         setValue("passage", commentDoc?.passage)
-        setValue("quote", commentDoc?.quote)
         setValue("text", commentDoc?.text)   
       }
       async function deleteComment() {
@@ -69,12 +64,6 @@ const EditComment: React.FC = () => {
                         <h1>Passage</h1>
                     </IonLabel>
                     <IonInput {...register("passage", {})} />
-                </IonItem>
-                <IonItem>
-                    <IonLabel position="stacked">
-                        <h1>Quote</h1>
-                    </IonLabel>
-                    <IonInput {...register("quote", {})} />
                 </IonItem>
                 <IonItem>
                     <IonLabel position="stacked">
