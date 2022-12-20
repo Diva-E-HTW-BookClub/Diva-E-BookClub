@@ -44,6 +44,7 @@ const ClubPage: React.FC = () => {
   const [bookClubData, setBookClubData] = useState<BookClub>()
   const [selectedSegment, setSelectedSegment] = useState<string>("calendar");
   const [isModerator, setIsModerator] = useState<boolean>(false);
+  const [isParticipant, setIsParticipant] = useState<boolean>(false);
   const [isOwner, setIsOwner] = useState<boolean>(false);
 
   useEffect(() => {
@@ -54,6 +55,7 @@ const ClubPage: React.FC = () => {
     let bookClub = await getBookClubDocument(bookClubId);
     // check if the current user is moderator of the club
     setIsModerator(bookClub?.moderator.includes(user.uid));
+    setIsParticipant(bookClub?.participants.includes(user.uid))
     setBookClubData(bookClub)
   }
 
@@ -179,20 +181,22 @@ const ClubPage: React.FC = () => {
             </div>
           );
         })}
-
-        {isModerator && (
+        {isModerator && selectedSegment === "calendar" &&
           <IonFab slot="fixed" vertical="bottom" horizontal="end">
-            <IonFabButton
-              routerLink={
-                selectedSegment === "calendar"
-                  ? "/clubs/" + bookClubId + "/discussions/add"
-                  : "/clubs/" + bookClubId + "/resources/add"
-              }
-            >
+            <IonFabButton routerLink={"/clubs/" + bookClubId + "/discussions/add"}>
               <IonIcon icon={add}></IonIcon>
             </IonFabButton>
           </IonFab>
-        )}
+        }
+        {isParticipant && selectedSegment === "resources" &&
+          <IonFab slot="fixed" vertical="bottom" horizontal="end">
+            <IonFabButton routerLink={"/clubs/" + bookClubId + "/resources/add"}>
+              <IonIcon icon={add}></IonIcon>
+            </IonFabButton>
+          </IonFab>
+        }    
+        
+        
       </IonContent>
     </IonPage>
   );
