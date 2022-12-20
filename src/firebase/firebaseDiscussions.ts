@@ -134,6 +134,27 @@ async function removeDiscussionParticipant(
   });
 }
 
+async function addDiscussionAgenda(bookClubId:string, discussionId:string, data:any) {
+  const discussionDocument = doc(firebaseDB, "bookClubs", bookClubId, "discussions", discussionId);
+  const agenda_update_data = {"agenda" : data}
+
+  updateDoc(discussionDocument, agenda_update_data);
+}
+
+async function updateDiscussionAgenda(bookClubId:string, discussionId:string, data:string) {
+  const discussionDocument = doc(firebaseDB, "bookClubs", bookClubId, "discussions", discussionId);
+  const agenda_update_data = {"agenda" : data}
+
+  updateDoc(discussionDocument, agenda_update_data);
+}
+
+async function deleteDiscussionAgenda(bookClubId:string, discussionId:string) {
+  const discussionDocument = doc(firebaseDB, "bookClubs", bookClubId, "discussions", discussionId);
+  const agenda_update_data = {"agenda" : ""}
+
+  updateDoc(discussionDocument, agenda_update_data);
+}
+
 export {
   createDiscussionDocument,
   updateDiscussionDocument,
@@ -141,4 +162,8 @@ export {
   getDiscussionDocument,
   addDiscussionParticipant,
   removeDiscussionParticipant,
+  addDiscussionAgenda,
+  updateDiscussionAgenda,
+  deleteDiscussionAgenda
+
 };
