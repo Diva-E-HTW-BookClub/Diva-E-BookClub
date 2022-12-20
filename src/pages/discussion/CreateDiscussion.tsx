@@ -13,6 +13,7 @@ import {
   IonModal,
   IonBackButton,
   IonButtons,
+  IonNote,
 } from "@ionic/react";
 import React from "react";
 import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
@@ -23,7 +24,7 @@ import { useForm, Controller } from "react-hook-form";
 import {
   datetimeToUtcISOString,
   formatToTimezonedISOString,
-  mergeISODateAndISOTime
+  mergeISODateAndISOTime,
 } from "../../helpers/datetimeFormatter";
 
 type FormValues = {
@@ -40,9 +41,9 @@ const AddDiscussion: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
   const user = useSelector((state: any) => state.user.user);
 
-  let defaultDate = formatToTimezonedISOString(new Date());
-  let defaultStartTime = formatToTimezonedISOString(new Date(), "13:00:00");
-  let defaultEndTime = formatToTimezonedISOString(new Date(), "14:00:00");
+  let today = formatToTimezonedISOString(new Date());
+  let todayStartTime = formatToTimezonedISOString(new Date(), "13:00:00");
+  let todayEndTime = formatToTimezonedISOString(new Date(), "14:00:00");
 
   const {
     register,
@@ -53,13 +54,14 @@ const AddDiscussion: React.FC = () => {
   } = useForm<FormValues>({
     defaultValues: {
       title: "",
-      date: defaultDate,
-      startTime: defaultStartTime,
-      endTime: defaultEndTime,
+      date: today,
+      startTime: todayStartTime,
+      endTime: todayEndTime,
       location: "",
       participants: [],
       agenda: "",
     },
+    mode: "all",
   });
 
   async function submitData(data: any) {
@@ -68,7 +70,9 @@ const AddDiscussion: React.FC = () => {
     let utcStartTime = datetimeToUtcISOString(
       mergeISODateAndISOTime(data.date, data.startTime)
     );
-    let utcEndTime = datetimeToUtcISOString(mergeISODateAndISOTime(data.date, data.endTime));
+    let utcEndTime = datetimeToUtcISOString(
+      mergeISODateAndISOTime(data.date, data.endTime)
+    );
     await createDiscussionDocument(bookClubId, {
       title: data.title,
       date: utcDate,
@@ -100,13 +104,17 @@ const AddDiscussion: React.FC = () => {
               return (
                 <IonDatetime
                   presentation="date"
+                  min={today}
+                  firstDayOfWeek={1}
                   value={field.value}
                   onIonChange={(e) => {
                     if (typeof e.detail.value === "string") {
                       setValue("date", e.detail.value);
                     }
                   }}
-                ></IonDatetime>
+                >
+                  <span slot="title">Select a Discussion Date</span>
+                </IonDatetime>
               );
             }}
           />
@@ -161,19 +169,34 @@ const AddDiscussion: React.FC = () => {
             />
           </IonItem>
           <IonItem>
-            <IonLabel position="floating">Title</IonLabel>
-            <IonInput {...register("title")} />
+            <IonLabel position="stacked">Title</IonLabel>
+            <IonInput
+              placeholder="Enter a Title"
+              {...register("title", { required: "Title is required" })}
+            />
           </IonItem>
+          {errors.title && (
+            <IonNote slot="error" color={"danger"}>
+              {errors.title.message}
+            </IonNote>
+          )}
           <IonItem>
-            <IonLabel position="floating">Location</IonLabel>
-            <IonInput {...register("location")} />
+            <IonLabel position="stacked">Location</IonLabel>
+            <IonInput
+              placeholder="Enter a Location"
+              {...register("location", { required: "Location is required" })}
+            />
           </IonItem>
-          <IonButton
-            type="submit"
-            routerLink={"/clubs/" + bookClubId + "/view"}
-          >
-            Create
-          </IonButton>
+          {errors.location && (
+            <IonNote slot="error" color={"danger"}>
+              {errors.location.message}
+            </IonNote>
+          )}
+          <IonItem>
+            <IonButton size="default" type="submit">
+              Create
+            </IonButton>
+          </IonItem>
         </form>
       </IonContent>
     </IonPage>
