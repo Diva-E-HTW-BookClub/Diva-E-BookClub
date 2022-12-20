@@ -156,7 +156,6 @@ const ClubPage: React.FC = () => {
                   startTime={discussion.startTime}
                   endTime={discussion.endTime}
                   location={discussion.location}
-                  agenda={discussion.agenda}
                   isModerator={isModerator}
                 />
               } 

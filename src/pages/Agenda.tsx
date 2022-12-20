@@ -16,9 +16,11 @@ import {
   IonToolbar,
   useIonPicker,
 } from "@ionic/react";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
 import { addOutline, removeOutline } from "ionicons/icons";
+import { addDiscussionAgenda, getDiscussionAgenda } from "../firebase/firebaseDiscussions";
+import {useParams} from "react-router";
 
 type FormValues = {
   chapters: {
@@ -31,7 +33,9 @@ const Agenda: React.FC = () => {
   //replace isModerator by an API call for a users roll
   const [isModerator, setIsModerator] = useState<boolean>(true);
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
-  const [data, setData] = useState();
+
+  let { bookClubId }: { bookClubId: string } = useParams();
+  let { discussionId }: { discussionId: string } = useParams();
 
   const { register, control, handleSubmit, reset, setValue } =
     useForm<FormValues>({
@@ -44,6 +48,22 @@ const Agenda: React.FC = () => {
     name: "chapters",
     control,
   });
+
+  useEffect(() => {
+    getAgenda()
+  }, [])
+
+  async function getAgenda() {
+    let agendaArray = await getDiscussionAgenda(bookClubId, discussionId);
+    setValue(`chapters.0.min`, agendaArray[0].min);
+    setValue(`chapters.0.name`, agendaArray[0].name);
+    for(let i = 1; i < agendaArray.length; i++){
+      append({
+        name: agendaArray[i].name,
+        min: agendaArray[i].min,
+      })
+    }
+  }
 
   const [present] = useIonPicker();
 
@@ -111,14 +131,13 @@ const Agenda: React.FC = () => {
     });
   };
 
-  const submitData = handleSubmit((data: any) => {
-    setData(data);
-    console.log(data);
+  async function submitData(data: any){
+    await addDiscussionAgenda(bookClubId, discussionId, data.chapters);
     setIsReadOnly(true);
-  });
+  }
 
   const cancelEdit = () => {
-    fields.forEach(() =>
+    fields.forEach(() =>{
       reset({
         chapters: [
           {
@@ -127,7 +146,9 @@ const Agenda: React.FC = () => {
           },
         ],
       })
+    }
     );
+    getAgenda();
     setIsReadOnly(true);
   };
 
@@ -152,7 +173,7 @@ const Agenda: React.FC = () => {
             <IonTitle size="large">Agenda</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <form onSubmit={(data) => submitData(data)}>
+        <form onSubmit={handleSubmit(submitData)}>
           <IonList>
             <IonListHeader>
               <IonLabel>
@@ -223,6 +244,7 @@ const Agenda: React.FC = () => {
         {isModerator && isReadOnly && (
           <IonButton onClick={() => setIsReadOnly(!isReadOnly)}>Edit</IonButton>
         )}
+        <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/live"}>Live</IonButton>
       </IonContent>
     </IonPage>
   );

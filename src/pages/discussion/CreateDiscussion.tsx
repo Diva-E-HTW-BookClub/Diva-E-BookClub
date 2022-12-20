@@ -34,7 +34,7 @@ type FormValues = {
   endTime: string;
   location: string;
   participants: [];
-  agenda: string;
+  agenda: [];
 };
 
 const AddDiscussion: React.FC = () => {
@@ -59,7 +59,7 @@ const AddDiscussion: React.FC = () => {
       endTime: todayEndTime,
       location: "",
       participants: [],
-      agenda: "",
+      agenda: [],
     },
     mode: "all",
   });
@@ -80,7 +80,7 @@ const AddDiscussion: React.FC = () => {
       endTime: utcEndTime,
       location: data.location,
       participants: [],
-      agenda: "",
+      agenda: [],
       moderator: userId,
     });
   }
