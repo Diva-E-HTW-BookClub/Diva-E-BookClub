@@ -45,7 +45,6 @@ const ClubPage: React.FC = () => {
   const [selectedSegment, setSelectedSegment] = useState<string>("calendar");
   const [isModerator, setIsModerator] = useState<boolean>(false);
   const [isParticipant, setIsParticipant] = useState<boolean>(false);
-  const [isOwner, setIsOwner] = useState<boolean>(false);
 
   useEffect(() => {
     getBookClub();
@@ -116,7 +115,7 @@ const ClubPage: React.FC = () => {
                   <h3>
                     {clubParticipants}/{clubParticipantsMax}
                   </h3>
-                  {isOwner &&
+                  {isModerator &&
                   <IonButton routerLink={"/clubs/" + bookClubId + "/edit"}>Edit</IonButton>
                   }
                   {!isModerator && bookClubData != null && !bookClubData.participants.includes(user.uid) &&
