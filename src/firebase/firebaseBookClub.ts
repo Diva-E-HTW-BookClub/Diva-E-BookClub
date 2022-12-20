@@ -17,6 +17,7 @@ import {
 } from "firebase/firestore";
 import { firebaseDB } from "./firebaseConfig";
 import { deleteDiscussionDocument } from "./firebaseDiscussions";
+import { deleteResourceDocument } from "./firebaseResource";
 
 type Comment = {
   text: string,
@@ -85,8 +86,17 @@ async function deleteBookClubDocument(bookClubId: string) {
 
   var discussionDocuments = await getDocs(discussionQuery);
   discussionDocuments.forEach((doc) => {
-    deleteDiscussionDocument(bookClubId, doc.id);
-  });
+    deleteDiscussionDocument(bookClubId, doc.id)
+  })
+
+  let resourceQuery = query(
+    collection(firebaseDB, "bookClubs", String(bookClubId), "resources"),
+  )
+
+  var resourceDocuments = await getDocs(resourceQuery);
+  resourceDocuments.forEach((doc) => {
+    deleteResourceDocument(bookClubId, doc.id)
+  })
 }
 
 async function getBookClubDocument(bookClubId: string) {
