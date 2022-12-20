@@ -20,7 +20,11 @@ import { useParams } from "react-router";
 import "./EditDiscussion.css";
 import { useSelector } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
-import { zonedTimeToUtc } from "date-fns-tz";
+import {
+  datetimeToUtcISOString,
+  formatToTimezonedISOString,
+  mergeISODateAndISOTime
+} from "../../helpers/datetimeFormatter";
 
 type FormValues = {
   title: string;
@@ -36,33 +40,35 @@ const AddDiscussion: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
   const user = useSelector((state: any) => state.user.user);
 
+  let defaultDate = formatToTimezonedISOString(new Date());
+  let defaultStartTime = formatToTimezonedISOString(new Date(), "13:00:00");
+  let defaultEndTime = formatToTimezonedISOString(new Date(), "14:00:00");
+
   const {
     register,
     handleSubmit,
     control,
     setValue,
     formState: { errors },
-  } = useForm<FormValues>({});
-
-  function mergeDateAndTime(date: string, time: string) {
-    let datePart = date.substring(0, 10);
-    let timePart = time.substring(10);
-    return datePart + timePart;
-  }
-
-  function datetimeToUtc(datetime: string) {
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const utcDatetime = zonedTimeToUtc(datetime, timezone);
-    return utcDatetime.toISOString();
-  }
+  } = useForm<FormValues>({
+    defaultValues: {
+      title: "",
+      date: defaultDate,
+      startTime: defaultStartTime,
+      endTime: defaultEndTime,
+      location: "",
+      participants: [],
+      agenda: "",
+    },
+  });
 
   async function submitData(data: any) {
     let userId = user.uid;
-    let utcDate = datetimeToUtc(data.date);
-    let utcStartTime = datetimeToUtc(
-      mergeDateAndTime(data.date, data.startTime)
+    let utcDate = datetimeToUtcISOString(data.date);
+    let utcStartTime = datetimeToUtcISOString(
+      mergeISODateAndISOTime(data.date, data.startTime)
     );
-    let utcEndTime = datetimeToUtc(mergeDateAndTime(data.date, data.endTime));
+    let utcEndTime = datetimeToUtcISOString(mergeISODateAndISOTime(data.date, data.endTime));
     await createDiscussionDocument(bookClubId, {
       title: data.title,
       date: utcDate,
