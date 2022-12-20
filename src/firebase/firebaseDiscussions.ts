@@ -8,11 +8,9 @@ import {
   getDoc,
   getDocs,
   query,
-  setDoc,
   updateDoc,
 } from "firebase/firestore";
 
-import {  updateBookClubDocument } from "./firebaseBookClub";
 import { firebaseDB } from "./firebaseConfig";
 
 // Expected data format
@@ -141,6 +139,17 @@ async function addDiscussionAgenda(bookClubId:string, discussionId:string, data:
   updateDoc(discussionDocument, agenda_update_data);
 }
 
+async function getDiscussionAgenda(bookClubId: string, discussionId: string){
+  const discussionDocument = doc(firebaseDB, "bookClubs", bookClubId, "discussions", discussionId);
+
+  let discussionDocResult = await getDoc(discussionDocument);
+  let discussionData = discussionDocResult.data();
+
+  if(discussionData){
+    return discussionData.agenda;
+  }
+}
+
 async function updateDiscussionAgenda(bookClubId:string, discussionId:string, data:string) {
   const discussionDocument = doc(firebaseDB, "bookClubs", bookClubId, "discussions", discussionId);
   const agenda_update_data = {"agenda" : data}
@@ -163,6 +172,7 @@ export {
   addDiscussionParticipant,
   removeDiscussionParticipant,
   addDiscussionAgenda,
+    getDiscussionAgenda,
   updateDiscussionAgenda,
   deleteDiscussionAgenda
 

@@ -3,7 +3,6 @@ import {
   IonApp,
   IonIcon,
   IonLabel,
-  IonNav,
   IonRouterOutlet,
   IonSpinner,
   IonTabBar,
@@ -100,7 +99,8 @@ return <IonApp>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments" component={Comments} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/edit" component={EditDiscussion} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments/:commentId/edit" component={EditComment} exact/>
-              <PrivateRoute path="/agenda" component={Agenda} exact/>
+              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/agenda" component={Agenda} exact/>
+              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/live" component={LiveDiscussion}  exact/>
 
             </IonRouterOutlet>
             <IonTabBar slot="bottom">

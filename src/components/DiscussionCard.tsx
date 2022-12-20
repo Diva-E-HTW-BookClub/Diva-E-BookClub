@@ -37,7 +37,6 @@ interface DiscussionCardProps {
   startTime: string;
   endTime: string;
   location: string;
-  agenda: string;
   isModerator: boolean;
 }
 
@@ -48,7 +47,6 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
   startTime,
   endTime,
   location,
-  agenda,
   date,
   isModerator,
 }: DiscussionCardProps) => {
@@ -149,7 +147,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
         {showButtons && (
           <IonRow className="ion-align-items-center">
             <IonCol className="ion-text-center">
-              <IonButton routerLink="/agenda">
+              <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/agenda"}>
                 <IonIcon slot="icon-only" icon={clipboard}></IonIcon>
               </IonButton>
               <br></br>
