@@ -50,3 +50,7 @@
   --background: #b81313;
   --color: #ffffff;
 }
+
+.item-native{
+  padding:0 !important;
+}

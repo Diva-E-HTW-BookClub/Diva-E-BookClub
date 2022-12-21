@@ -35,3 +35,14 @@ ion-card {
 .iten-no-padding > *{
   padding:0 !important;
 }
+
+.item-native{
+  --padding:0 !important;
+}
+
+ion-item {
+  --padding-end: 0px;
+  --padding-start: 0px;
+  --inner-padding-end: 0px;
+  --inner-padding-start: 0px;
+}
