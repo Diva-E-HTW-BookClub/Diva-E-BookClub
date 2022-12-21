@@ -34,9 +34,10 @@ import {
 } from "../helpers/datetimeFormatter";
 
 type FormValues = {
-  chapters: {
+  agenda: {
     name: string;
-    min: number;
+    timeLimit: number;
+    elapsedTime: number;
   }[];
 };
 
@@ -63,14 +64,14 @@ const Agenda: React.FC = () => {
   });
 
   const { fields, remove, append } = useFieldArray({
-    name: "chapters",
+    name: "agenda",
     control,
   });
 
   const resetFields = () => {
     fields.forEach(() => {
       reset({
-        chapters: [],
+        agenda: [],
       });
     });
   };
@@ -93,17 +94,15 @@ const Agenda: React.FC = () => {
     for (let i = 0; i < agendaArray.length; i++) {
       append({
         name: agendaArray[i].name,
-        min: agendaArray[i].min,
+        timeLimit: agendaArray[i].timeLimit,
+        elapsedTime: agendaArray[i].elapsedTime
       });
     }
   }
 
   function calcTotalTime() {
-    let time = 0;
-    let fieldValues = getValues().chapters;
-    fieldValues.forEach((field) => {
-      time = time + field.min;
-    });
+    // convert agenda parts to timeLimit and sum the values
+    let time = getValues().agenda.map(e => e.timeLimit).reduce((a, b) => a + b, 0) / 60;
     setTotalTime(time);
   }
 
@@ -134,7 +133,7 @@ const Agenda: React.FC = () => {
         {
           text: "Confirm",
           handler: (value) => {
-            setValue(`chapters.${index}.min`, value.minutes.value);
+            setValue(`agenda.${index}.timeLimit`, value.minutes.value * 60);
             //recalculate total time if a time value was changed
             calcTotalTime();
           },
@@ -163,31 +162,31 @@ const Agenda: React.FC = () => {
               <IonInput
                 placeholder={"Subchapter " + (index + 1)}
                 readonly={isReadOnly}
-                {...register(`chapters.${index}.name`, {
+                {...register(`agenda.${index}.name`, {
                   required: "Enter Title",
                 })}
               ></IonInput>
-              {errors.chapters?.[index]?.name && (
+              {errors.agenda?.[index]?.name && (
                 <IonNote color="danger" slot="helper">
-                  {errors.chapters?.[index]?.name?.message}
+                  {errors.agenda?.[index]?.name?.message}
                 </IonNote>
               )}
               <Controller
-                name={`chapters.${index}.min`}
+                name={`agenda.${index}.timeLimit`}
                 control={control}
                 render={({ field }) => (
                   <>
                     {!isReadOnly && (
                       <IonButton {...field} onClick={() => openPicker(index)}>
-                        {field.value + " min"}
+                        {(field.value / 60) + " min"}
                       </IonButton>
                     )}
-                    {isReadOnly && <IonText>{field.value + " min"}</IonText>}
+                    {isReadOnly && <IonText>{(field.value / 60) + " min"}</IonText>}
                   </>
                 )}
                 rules={{ required: true, min: 1 }}
               />
-              {errors.chapters?.[index]?.min && (
+              {errors.agenda?.[index]?.timeLimit && (
                 <IonNote color="danger" slot="helper">
                   Select a Time
                 </IonNote>
@@ -200,7 +199,7 @@ const Agenda: React.FC = () => {
   };
 
   async function submitData(data: any) {
-    await addDiscussionAgenda(bookClubId, discussionId, data.chapters);
+    await addDiscussionAgenda(bookClubId, discussionId, data.agenda);
     setIsReadOnly(true);
   }
 
@@ -252,7 +251,8 @@ const Agenda: React.FC = () => {
                 onClick={() => {
                   append({
                     name: "",
-                    min: 5,
+                    timeLimit: 5 * 60,
+                    elapsedTime: 0
                   });
                   calcTotalTime();
                 }}
