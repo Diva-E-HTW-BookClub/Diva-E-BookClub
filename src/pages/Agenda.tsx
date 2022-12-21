@@ -15,12 +15,23 @@ import {
   IonTitle,
   IonToolbar,
   useIonPicker,
+  IonSpinner,
+  IonNote,
 } from "@ionic/react";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
 import { addOutline, removeOutline } from "ionicons/icons";
-import { addDiscussionAgenda, getDiscussionAgenda } from "../firebase/firebaseDiscussions";
-import {useParams} from "react-router";
+import {
+  addDiscussionAgenda,
+  getDiscussionDocument,
+} from "../firebase/firebaseDiscussions";
+import { useParams } from "react-router";
+import { Discussion } from "../firebase/firebaseBookClub";
+import {
+  getDistanceInMinutes,
+  getTimeSlotString,
+  getTimezonedDate,
+} from "../helpers/datetimeFormatter";
 
 type FormValues = {
   chapters: {
@@ -33,87 +44,86 @@ const Agenda: React.FC = () => {
   //replace isModerator by an API call for a users roll
   const [isModerator, setIsModerator] = useState<boolean>(true);
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
+  const [discussionData, setDiscussionData] = useState<Discussion>();
+  const [totalTime, setTotalTime] = useState<number>(0);
 
   let { bookClubId }: { bookClubId: string } = useParams();
   let { discussionId }: { discussionId: string } = useParams();
 
-  const { register, control, handleSubmit, reset, setValue } =
-    useForm<FormValues>({
-      defaultValues: {
-        chapters: [{ name: "", min: 5 }],
-      },
-    });
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useForm<FormValues>({
+    mode: "all",
+  });
 
   const { fields, remove, append } = useFieldArray({
     name: "chapters",
     control,
   });
 
-  useEffect(() => {
-    getAgenda()
-  }, [])
+  const resetFields = () => {
+    fields.forEach(() => {
+      reset({
+        chapters: [],
+      });
+    });
+  };
 
-  async function getAgenda() {
-    let agendaArray = await getDiscussionAgenda(bookClubId, discussionId);
-    setValue(`chapters.0.min`, agendaArray[0].min);
-    setValue(`chapters.0.name`, agendaArray[0].name);
-    for(let i = 1; i < agendaArray.length; i++){
+  useEffect(() => {
+    getDiscussion();
+  }, []);
+
+  async function getDiscussion() {
+    let discussionData = await getDiscussionDocument(bookClubId, discussionId);
+    setDiscussionData(discussionData);
+    insertAgendaIntoFields(discussionData);
+    calcTotalTime();
+  }
+
+  function insertAgendaIntoFields(data: any) {
+    //reset Fields before appending values to avoid multiple appending
+    resetFields();
+    let agendaArray = data.agenda;
+    for (let i = 0; i < agendaArray.length; i++) {
       append({
         name: agendaArray[i].name,
         min: agendaArray[i].min,
-      })
+      });
     }
   }
 
+  function calcTotalTime() {
+    let time = 0;
+    let fieldValues = getValues().chapters;
+    fieldValues.forEach((field) => {
+      time = time + field.min;
+    });
+    setTotalTime(time);
+  }
+
   const [present] = useIonPicker();
+
+  const pickerOptions = () => {
+    let options = [];
+    for (let i = 0; i <= 60; i++) {
+      let textLabel = i + " min";
+      options.push({ text: textLabel, value: i });
+    }
+    return options;
+  };
 
   const openPicker = async (index: number) => {
     await present({
       columns: [
         {
           name: "minutes",
-          options: [
-            {
-              text: "5 min",
-              value: 5,
-            },
-            {
-              text: "10 min",
-              value: 10,
-            },
-            {
-              text: "15 min",
-              value: 15,
-            },
-            {
-              text: "20 min",
-              value: 20,
-            },
-            {
-              text: "25 min",
-              value: 25,
-            },
-            {
-              text: "30 min",
-              value: 30,
-            },
-            {
-              text: "35 min",
-              value: 35,
-            },
-            {
-              text: "40 min",
-              value: 40,
-            },
-            {
-              text: "45 min",
-              value: 45,
-            },
-            {
-              text: "10 min",
-              value: 10,
-            },
-          ],
+          options: pickerOptions(),
         },
       ],
       buttons: [
@@ -125,44 +135,90 @@ const Agenda: React.FC = () => {
           text: "Confirm",
           handler: (value) => {
             setValue(`chapters.${index}.min`, value.minutes.value);
+            //recalculate total time if a time value was changed
+            calcTotalTime();
           },
         },
       ],
     });
   };
 
-  async function submitData(data: any){
+  const inputFields = () => {
+    return (
+      <>
+        {fields.map((field, index) => {
+          return (
+            <IonItem key={field.id}>
+              {!isReadOnly && (
+                <IonButton
+                  fill="clear"
+                  onClick={() => {
+                    remove(index);
+                    calcTotalTime();
+                  }}
+                >
+                  <IonIcon slot="icon-only" icon={removeOutline}></IonIcon>
+                </IonButton>
+              )}
+              <IonInput
+                placeholder={"Subchapter " + (index + 1)}
+                readonly={isReadOnly}
+                {...register(`chapters.${index}.name`, {
+                  required: "Enter Title",
+                })}
+              ></IonInput>
+              {errors.chapters?.[index]?.name && (
+                <IonNote color="danger" slot="helper">
+                  {errors.chapters?.[index]?.name?.message}
+                </IonNote>
+              )}
+              <Controller
+                name={`chapters.${index}.min`}
+                control={control}
+                render={({ field }) => (
+                  <>
+                    {!isReadOnly && (
+                      <IonButton {...field} onClick={() => openPicker(index)}>
+                        {field.value + " min"}
+                      </IonButton>
+                    )}
+                    {isReadOnly && <IonText>{field.value + " min"}</IonText>}
+                  </>
+                )}
+                rules={{ required: true, min: 1 }}
+              />
+              {errors.chapters?.[index]?.min && (
+                <IonNote color="danger" slot="helper">
+                  Select a Time
+                </IonNote>
+              )}
+            </IonItem>
+          );
+        })}
+      </>
+    );
+  };
+
+  async function submitData(data: any) {
     await addDiscussionAgenda(bookClubId, discussionId, data.chapters);
     setIsReadOnly(true);
   }
 
-  const cancelEdit = () => {
-    fields.forEach(() =>{
-      reset({
-        chapters: [
-          {
-            name: "",
-            min: 5,
-          },
-        ],
-      })
-    }
-    );
-    getAgenda();
+  const cancelEdit = async () => {
+    await getDiscussion();
     setIsReadOnly(true);
   };
 
-  const getPlaceholder = (index: number) => {
-    let number = index + 1;
-    return "Subchapter " + number;
-  };
+  if (!discussionData) {
+    return <IonSpinner></IonSpinner>;
+  }
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/clubs/clubid" />
+            <IonBackButton defaultHref={"/clubs/" + bookClubId + "/view"} />
           </IonButtons>
           <IonTitle>Agenda</IonTitle>
         </IonToolbar>
@@ -177,61 +233,61 @@ const Agenda: React.FC = () => {
           <IonList>
             <IonListHeader>
               <IonLabel>
-                <h1>Chapter 7</h1>
-                <p>17. November 2022</p>
+                <h1>{discussionData.title}</h1>
+                <h2>{getTimezonedDate(discussionData.date)}</h2>
+                <p>
+                  {getTimeSlotString(
+                    discussionData.startTime,
+                    discussionData.endTime
+                  )}
+                </p>
               </IonLabel>
             </IonListHeader>
-            {fields.map((field, index) => {
-              return (
-                <IonItem key={field.id}>
-                  {!isReadOnly && (
-                    <IonButton fill="clear" onClick={() => remove(index)}>
-                      <IonIcon slot="icon-only" icon={removeOutline}></IonIcon>
-                    </IonButton>
-                  )}
-                  <IonInput
-                    placeholder={getPlaceholder(index)}
-                    readonly={isReadOnly}
-                    {...register(`chapters.${index}.name`)}
-                  ></IonInput>
-                  <Controller
-                    name={`chapters.${index}.min`}
-                    control={control}
-                    render={({ field }) => (
-                      <>
-                        {!isReadOnly && (
-                          <IonButton
-                            {...field}
-                            onClick={() => openPicker(index)}
-                          >
-                            {field.value + " min"}
-                          </IonButton>
-                        )}
-                        {isReadOnly && (
-                          <IonText>{field.value + " min"}</IonText>
-                        )}
-                      </>
-                    )}
-                  />
-                </IonItem>
-              );
-            })}
+            {inputFields()}
           </IonList>
           <IonItem lines="none">
             {!isReadOnly && (
               <IonButton
                 fill="clear"
-                onClick={() =>
+                onClick={() => {
                   append({
                     name: "",
                     min: 5,
-                  })
-                }
+                  });
+                  calcTotalTime();
+                }}
               >
                 <IonIcon slot="icon-only" icon={addOutline}></IonIcon>
               </IonButton>
             )}
           </IonItem>
+          <IonItem>
+            <IonInput readonly>Total</IonInput>
+            <IonText>{totalTime + " min"}</IonText>
+            {totalTime >
+              getDistanceInMinutes(
+                discussionData.startTime,
+                discussionData.endTime
+              ) && (
+              <IonNote color="danger" slot="helper">
+                Total Time exceeds Planned Time
+              </IonNote>
+            )}
+          </IonItem>
+          <IonItem lines="none">
+            <IonInput readonly>Planned</IonInput>
+            <IonText>
+              {getDistanceInMinutes(
+                discussionData.startTime,
+                discussionData.endTime
+              ) + " min"}
+            </IonText>
+          </IonItem>
+          {isModerator && isReadOnly && (
+            <IonButton onClick={() => setIsReadOnly(!isReadOnly)}>
+              Edit
+            </IonButton>
+          )}
           {!isReadOnly && (
             <>
               <IonButton fill="outline" onClick={cancelEdit}>
@@ -241,10 +297,15 @@ const Agenda: React.FC = () => {
             </>
           )}
         </form>
-        {isModerator && isReadOnly && (
-          <IonButton onClick={() => setIsReadOnly(!isReadOnly)}>Edit</IonButton>
+        {isReadOnly && (
+          <IonButton
+            routerLink={
+              "/clubs/" + bookClubId + "/discussions/" + discussionId + "/live"
+            }
+          >
+            Live
+          </IonButton>
         )}
-        <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/live"}>Live</IonButton>
       </IonContent>
     </IonPage>
   );
