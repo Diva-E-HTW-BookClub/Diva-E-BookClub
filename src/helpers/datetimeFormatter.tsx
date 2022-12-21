@@ -1,3 +1,4 @@
+import { intervalToDuration } from "date-fns";
 import { format, utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -35,10 +36,35 @@ function datetimeToUtcISOString(datetime: string) {
   return utcDatetime.toISOString();
 }
 
+function getDistanceInterval(firstDate: string, lastDate: string) {
+  let first = new Date(firstDate);
+  let last = new Date(lastDate);
+  return intervalToDuration({ start: first, end: last });
+  // => { years: y, months: M, days: d, hours: H, minutes: m, seconds: s }
+}
+
+function getDistanceInMinutes(firstDate: string, lastDate: string) {
+  let interval = getDistanceInterval(firstDate, lastDate);
+  var distance = interval.minutes || 0;
+  if (interval.hours) {
+    distance = distance + interval.hours * 60;
+  }
+  return distance;
+}
+
+function getTimeSlotString(firstDate: string, lastDate: string) {
+  let startTime = getTimezonedTime(firstDate);
+  let endTime = getTimezonedTime(lastDate);
+  return startTime + " - " + endTime;
+}
+
 export {
   getTimezonedDate,
   getTimezonedTime,
   formatToTimezonedISOString,
   mergeISODateAndISOTime,
   datetimeToUtcISOString,
+  getDistanceInterval,
+  getDistanceInMinutes,
+  getTimeSlotString,
 };
