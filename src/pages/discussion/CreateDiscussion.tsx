@@ -82,7 +82,7 @@ const AddDiscussion: React.FC = () => {
       location: data.location,
       participants: [],
       agenda: [],
-      owner: userId,
+      moderator: userId,
     }).then(() => {history.push("/clubs/" + bookClubId + "/view")});
   }
 

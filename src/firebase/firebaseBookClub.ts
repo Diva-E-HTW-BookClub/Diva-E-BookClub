@@ -40,7 +40,7 @@ type Discussion = {
   endTime: string;
   location: string;
   agenda: [];
-  owner: string;
+  moderator: string;
 };
 
 type Resource = {
@@ -123,7 +123,7 @@ async function getBookClubDocument(bookClubId: string) {
       endTime: discussionData.endTime,
       location: discussionData.location,
       agenda: discussionData.agenda,
-      owner: discussionData.owner,
+      moderator: discussionData.moderator,
     });
   });
 

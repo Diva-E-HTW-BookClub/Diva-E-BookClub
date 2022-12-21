@@ -64,7 +64,7 @@ async function getDiscussionDocument(bookClubId: string, discussionId: string) {
       location: discussionData.location,
       participants: discussionData.participants,
       agenda: discussionData.agenda,
-      owner: discussionData.owner,
+      moderator: discussionData.moderator,
     };
   }
 }
