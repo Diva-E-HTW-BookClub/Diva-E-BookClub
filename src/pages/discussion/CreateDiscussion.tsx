@@ -81,7 +81,7 @@ const AddDiscussion: React.FC = () => {
       location: data.location,
       participants: [],
       agenda: [],
-      moderator: userId,
+      owner: userId,
     });
   }
 

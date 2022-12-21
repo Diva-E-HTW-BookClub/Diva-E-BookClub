@@ -27,7 +27,10 @@ import {
   getDiscussionDocument,
   removeDiscussionParticipant,
 } from "../firebase/firebaseDiscussions";
-import {getTimezonedDate, getTimezonedTime} from "../helpers/datetimeFormatter";
+import {
+  getTimeSlotString,
+  getTimezonedDate,
+} from "../helpers/datetimeFormatter";
 
 interface DiscussionCardProps {
   bookClubId: string;
@@ -51,7 +54,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
   isModerator,
 }: DiscussionCardProps) => {
   const [showButtons, setShowButtons] = useState<boolean>(false);
-  const user = useSelector((state:any) => state.user.user)
+  const user = useSelector((state: any) => state.user.user);
   const [discussionParticipants, setDiscussionParticipants] =
     useState<string[]>();
 
@@ -70,22 +73,14 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
 
   async function joinDiscussion() {
     if (discussionParticipants != null) {
-      await addDiscussionParticipant(
-        bookClubId,
-        discussionId,
-        user.uid
-      );
+      await addDiscussionParticipant(bookClubId, discussionId, user.uid);
       getDiscussionParticipants();
     }
   }
 
   async function leaveDiscussion() {
     if (discussionParticipants != null && isParticipant()) {
-      await removeDiscussionParticipant(
-        bookClubId,
-        discussionId,
-        user.uid
-      );
+      await removeDiscussionParticipant(bookClubId, discussionId, user.uid);
       getDiscussionParticipants();
     }
   }
@@ -122,7 +117,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
             </div>
           </IonCol>
           <IonCol className="ion-text-right">
-            {getTimezonedTime(startTime) + " - " + getTimezonedTime(endTime)}
+            {getTimeSlotString(startTime, endTime)}
           </IonCol>
         </IonRow>
         <IonRow
@@ -147,7 +142,15 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
         {showButtons && (
           <IonRow className="ion-align-items-center">
             <IonCol className="ion-text-center">
-              <IonButton routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/agenda"}>
+              <IonButton
+                routerLink={
+                  "/clubs/" +
+                  bookClubId +
+                  "/discussions/" +
+                  discussionId +
+                  "/agenda"
+                }
+              >
                 <IonIcon slot="icon-only" icon={clipboard}></IonIcon>
               </IonButton>
               <br></br>
