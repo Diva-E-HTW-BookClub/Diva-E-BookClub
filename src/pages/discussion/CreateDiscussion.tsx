@@ -17,7 +17,7 @@ import {
 } from "@ionic/react";
 import React from "react";
 import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
-import { useParams } from "react-router";
+import { useParams, useHistory } from "react-router";
 import "./EditDiscussion.css";
 import { useSelector } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
@@ -39,6 +39,7 @@ type FormValues = {
 
 const AddDiscussion: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
+  const history = useHistory();
   const user = useSelector((state: any) => state.user.user);
 
   let today = formatToTimezonedISOString(new Date());
@@ -82,7 +83,7 @@ const AddDiscussion: React.FC = () => {
       participants: [],
       agenda: [],
       owner: userId,
-    });
+    }).then(() => {history.push("/clubs/" + bookClubId + "/view")});
   }
 
   return (
