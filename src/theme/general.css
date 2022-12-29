@@ -51,8 +51,7 @@
   --background: #b81313;
   --color: #ffffff;
 }
-
-.DiscussionCard {
-  text-align: center;
-  width: 100%;
+.item-native{
+  padding:0 !important;
 }
+

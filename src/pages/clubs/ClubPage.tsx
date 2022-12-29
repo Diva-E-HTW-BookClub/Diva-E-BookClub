@@ -34,7 +34,6 @@ import {
   removeParticipant,
 } from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
-import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
 import { useSelector } from "react-redux";
 
 const ClubPage: React.FC = () => {
@@ -157,7 +156,6 @@ const ClubPage: React.FC = () => {
                   startTime={discussion.startTime}
                   endTime={discussion.endTime}
                   location={discussion.location}
-                  agenda={discussion.agenda}
                   isModerator={isModerator}
                 />
               } 
@@ -173,7 +171,6 @@ const ClubPage: React.FC = () => {
                   title={resource.title}
                   content={resource.content}
                   moderator={resource.moderator}
-
                   bookClubId={bookClubId}
                 />
               } 

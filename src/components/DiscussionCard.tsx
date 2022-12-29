@@ -27,7 +27,10 @@ import {
   getDiscussionDocument,
   removeDiscussionParticipant,
 } from "../firebase/firebaseDiscussions";
-import { format, utcToZonedTime } from "date-fns-tz";
+import {
+  getTimeSlotString,
+  getTimezonedDate,
+} from "../helpers/datetimeFormatter";
 
 interface DiscussionCardProps {
   bookClubId: string;
@@ -37,7 +40,6 @@ interface DiscussionCardProps {
   startTime: string;
   endTime: string;
   location: string;
-  agenda: string;
   isModerator: boolean;
 }
 
@@ -48,12 +50,11 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
   startTime,
   endTime,
   location,
-  agenda,
   date,
   isModerator,
 }: DiscussionCardProps) => {
   const [showButtons, setShowButtons] = useState<boolean>(false);
-  const user = useSelector((state:any) => state.user.user)
+  const user = useSelector((state: any) => state.user.user);
   const [discussionParticipants, setDiscussionParticipants] =
     useState<string[]>();
 
@@ -72,41 +73,16 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
 
   async function joinDiscussion() {
     if (discussionParticipants != null) {
-      await addDiscussionParticipant(
-        bookClubId,
-        discussionId,
-        user.uid
-      );
+      await addDiscussionParticipant(bookClubId, discussionId, user.uid);
       getDiscussionParticipants();
     }
   }
 
   async function leaveDiscussion() {
     if (discussionParticipants != null && isParticipant()) {
-      await removeDiscussionParticipant(
-        bookClubId,
-        discussionId,
-        user.uid
-      );
+      await removeDiscussionParticipant(bookClubId, discussionId, user.uid);
       getDiscussionParticipants();
     }
-  }
-
-  let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-  function formatDate() {
-    const dateTz = utcToZonedTime(date, timezone);
-    return format(dateTz, "dd.MM.yyyy", { timeZone: timezone });
-  }
-
-  function formatStartTime() {
-    const startTz = utcToZonedTime(startTime, timezone);
-    return format(startTz, "HH:mm", { timeZone: timezone });
-  }
-
-  function formatEndTime() {
-    const endTz = utcToZonedTime(endTime, timezone);
-    return format(endTz, "HH:mm", { timeZone: timezone });
   }
 
   return (
@@ -116,7 +92,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
           className="ion-align-items-center"
           onClick={() => setShowButtons(!showButtons)}
         >
-          <IonCol className="ion-text-left">{formatDate()}</IonCol>
+          <IonCol className="ion-text-left">{getTimezonedDate(date)}</IonCol>
           <IonCol className="ion-text-center">
             <div className="flex">
               {!isParticipant() && (
@@ -141,7 +117,7 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
             </div>
           </IonCol>
           <IonCol className="ion-text-right">
-            {formatStartTime() + " - " + formatEndTime()}
+            {getTimeSlotString(startTime, endTime)}
           </IonCol>
         </IonRow>
         <IonRow
@@ -166,7 +142,15 @@ export const DiscussionCard: React.FC<DiscussionCardProps> = ({
         {showButtons && (
           <IonRow className="ion-align-items-center">
             <IonCol className="ion-text-center">
-              <IonButton routerLink="/agenda">
+              <IonButton
+                routerLink={
+                  "/clubs/" +
+                  bookClubId +
+                  "/discussions/" +
+                  discussionId +
+                  "/agenda"
+                }
+              >
                 <IonIcon slot="icon-only" icon={clipboard}></IonIcon>
               </IonButton>
               <br></br>

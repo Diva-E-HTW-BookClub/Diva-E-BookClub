@@ -27,7 +27,15 @@ import { firebaseDB } from "../../firebase/firebaseConfig";
 import "./LiveDiscussion.css";
 import React, { useRef, useEffect, useState } from "react";
 import { pause, play } from "ionicons/icons";
-import { AgendaPartCard } from "../../components/AgendaPartCard";
+import { getDiscussionAgenda } from "../../firebase/firebaseDiscussions";
+import { useParams } from "react-router";
+
+interface AgendaPartProps {
+  id: number,
+  name: string
+  elapsedTime: number,
+  timeLimit: number
+}
 
 // const socket = io("http://localhost:3001");
 var progressTimesForServer = [0, 0];
@@ -40,13 +48,15 @@ const LiveDiscussion: React.FC = () => {
   const totalTime2 = 1.00;
 
   const [agendaParts, setAgendaParts] = useState<any[]>([]);
+  let { bookClubId }: { bookClubId: string } = useParams();
+  let { discussionId }: { discussionId: string } = useParams();
 
   const [playingState, setPlayingState] = useState([false, false]);
   const [playingStateReceived, setPlayingStateReceived] = useState([false, false]);
   const [progressTimes, setProgressTimes] = useState([0, 0]);
   const [progressTimesReceived, setProgressTimesReceived] = useState([0, 0]);
   const [progressSumReceived, setProgressSumReceived] = useState(0);
-  const chapters = 2;
+  const [isStarted, setIsStarted] = useState<boolean>(false);
   var progressSum = 0;
 
   const changedPlayingState = doc(firebaseDB, "testCollection", "8hh5w2KA9koJTbyMiDuk");
@@ -70,25 +80,25 @@ const LiveDiscussion: React.FC = () => {
   const onClickH = (buttonNumber: number) => {
     if (isModerator) {
       createPlayingStatesForButton(2, buttonNumber);
-      for (var i = 0; i < chapters; i++) {
-        playingState[i] = createPlayingStatesForButton(chapters, buttonNumber)[i]
+      for (var i = 0; i < agendaParts.length; i++) {
+        playingState[i] = createPlayingStatesForButton(agendaParts.length, buttonNumber)[i]
       }
 
-      for (var i = 0; i < chapters; i++) {
+      for (var i = 0; i < agendaParts.length; i++) {
         progressTimes[i] = progressTimesReceived[i]
         console.log("is Received komisch? " + progressSumReceived);
         progressSum = progressSumReceived;
       }
 
       progressSum = progressSumReceived
-      console.log("volle Summe: " + progressSum)
+      //console.log("volle Summe: " + progressSum)
 
       // socket.emit("send_playButton", { playingState });
       // socket.emit("send_time", { progressTimes });
       // socket.emit("send_sum_time", { progressSum });
-      console.log(progressTimes)
-      console.log(playingState)
-      console.log(progressSum)
+      //console.log(progressTimes)
+      //console.log(playingState)
+      //console.log(progressSum)
       //setDoc(changedPlayingState, {playingState: playingState, progressTimes: progressTimes, progressSum: progressSum});
     }
   }
@@ -187,31 +197,18 @@ const LiveDiscussion: React.FC = () => {
   }, []);
 
   async function getAgendaParts() {
-    let agendaParts = [
-      {
-        id: "1",
-        title: "Don’t Return Null (S. 109)",
-        elapsedTime: 3 * 60,
-        maxTime: 5 * 60
-      },
-      {
-        id: "2",
-        title: "Unchecked Exceptions (S. 105)",
-        elapsedTime: 3 * 60,
-        maxTime: 5 * 60
-      },
-      {
-        id: "3",
-        title: "Try - Catch (S. 108)",
-        elapsedTime: 3 * 60,
-        maxTime: 5 * 60
-      }
-    ]
+    let agendaParts = await getDiscussionAgenda(bookClubId, discussionId);
     setAgendaParts(agendaParts)
+    console.log(getDiscussionAgenda(bookClubId, discussionId))
+    console.log(agendaParts.length)
   }
-
+  // convert agenda parts to elapsedTime and timeLimit and sum the values
   let totalElapsedTime = agendaParts.map(e => e.elapsedTime).reduce((a, b) => a + b, 0);
-  let totalMaxTime = agendaParts.map(e => e.maxTime).reduce((a, b) => a + b, 0);
+  let totalTimeLimit = agendaParts.map(e => e.timeLimit).reduce((a, b) => a + b, 0);
+
+  function formatTime(seconds: number) {
+    return new Date(seconds * 1000).toISOString().substring(14, 19)
+  }
 
   return (
     <IonPage>
@@ -221,31 +218,51 @@ const LiveDiscussion: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-      <IonCard>
-      <IonCardHeader>
-        <IonCardTitle>Total discussion time</IonCardTitle>
-      </IonCardHeader>
-      <IonCardContent>
-        <IonRow>
-          <IonCol size="8.5">
-            <IonProgressBar value={totalElapsedTime / totalMaxTime}></IonProgressBar>
-          </IonCol>
-          <IonCol size="3.5">
-            {totalElapsedTime} / {totalMaxTime}
-          </IonCol>
-        </IonRow>
-      </IonCardContent>
-    </IonCard>
+        <IonCard>
+          <IonCardHeader>
+            <IonCardTitle>Total discussion time</IonCardTitle>
+          </IonCardHeader>
+          <IonCardContent>
+            <IonRow>
+              <IonCol size="8">
+                <IonProgressBar value={totalElapsedTime / totalTimeLimit}></IonProgressBar>
+              </IonCol>
+              <IonCol size="4">
+                {`${formatTime(totalElapsedTime)}/${formatTime(totalTimeLimit)}`}
+              </IonCol>
+            </IonRow>
+          </IonCardContent>
+        </IonCard>
         <IonList lines="none">
           {agendaParts.map((agendaPart, index) => {
             return (
-              <IonItem className="iten-no-padding" key={agendaPart.id}>
-                <AgendaPartCard
-                id={agendaPart.id}
-                title={agendaPart.title}
-                elapsedTime={agendaPart.elapsedTime}
-                maxTime={agendaPart.maxTime}
-                />
+              <IonItem className="iten-no-padding" key={index}>
+                <IonCard>
+                  <IonCardHeader>
+                    <IonButton fill="outline" onClick={() => setIsStarted(!isStarted)}>
+                      {!isStarted &&
+                        <IonIcon className="button-icon" icon={play}></IonIcon>
+                      }
+                      {isStarted &&
+                        <IonIcon className="button-icon" icon={pause}></IonIcon>
+                      }
+                    </IonButton>
+                    {/* <IonButton fill="outline" onClick={() => onClickH(0)}></IonButton> */}
+                    <IonCardTitle>{agendaPart.name}</IonCardTitle>
+                  </IonCardHeader>
+                  <IonCardContent>
+                    <IonGrid>
+                      <IonRow>
+                        <IonCol size="8">
+                          <IonProgressBar value={agendaPart.elapsedTime / agendaPart.timeLimit}></IonProgressBar>
+                        </IonCol>
+                        <IonCol size="4">
+                          {`${formatTime(agendaPart.elapsedTime)}/${formatTime(agendaPart.timeLimit)}`}
+                        </IonCol>
+                      </IonRow>
+                    </IonGrid>
+                  </IonCardContent>
+                </IonCard>
               </IonItem>
             );
           })}
