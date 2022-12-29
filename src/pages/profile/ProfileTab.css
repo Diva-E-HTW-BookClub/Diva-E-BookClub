@@ -1,3 +1,22 @@
 .picture {
   font-size: 128px;
+  margin: auto;
+  margin-top: 10%;
+  text-align: center;
+}
+.notLogged {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+
+  color: brown;
+}
+
+.editButton {
+  margin: auto;
+  margin-top: 10%;
+  margin-bottom: 10%;
+  text-align: center;
 }

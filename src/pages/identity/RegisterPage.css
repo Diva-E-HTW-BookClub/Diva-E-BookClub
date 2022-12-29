@@ -1,0 +1,8 @@
+.registerDiv {
+  margin: auto;
+  padding-left: 7%;
+  text-align: center;
+}
+#logInRouter {
+  color: var(--ion-color-favorite);
+}

@@ -16,10 +16,9 @@ import "./ProfileTab.css";
 import { logoutUser } from "../../firebase/firebaseAuth";
 import { useSelector } from "react-redux";
 
-
 const ProfileTab: React.FC = () => {
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
-  const user = useSelector((state:any) => state.user.user)
+  const user = useSelector((state: any) => state.user.user);
 
   return (
     <IonPage>
@@ -41,9 +40,8 @@ const ProfileTab: React.FC = () => {
             icon={personCircleOutline}
           ></IonIcon>
         </IonItem>
-        {!user && (
-          "You are not logged in!"
-        )}
+
+        <div className="notLogged">{!user && "You are not logged in!"}</div>
         {isReadOnly && user && (
           <>
             <IonItem>
@@ -58,16 +56,16 @@ const ProfileTab: React.FC = () => {
               <h4>{user.email}</h4>
             </IonItem>
             <IonItem lines="none">
-              <IonButton
-                size="default"
-                onClick={() => setIsReadOnly(!isReadOnly)}
-              >
-                Edit Profile
-              </IonButton>
-              <IonButton
-                size="default" 
-                onClick={logoutUser}>
-                   logout
+              <div className="editButton">
+                <IonButton
+                  size="default"
+                  onClick={() => setIsReadOnly(!isReadOnly)}
+                >
+                  Edit Profile
+                </IonButton>
+              </div>
+              <IonButton size="default" onClick={logoutUser}>
+                logout
               </IonButton>
             </IonItem>
           </>
@@ -97,12 +95,14 @@ const ProfileTab: React.FC = () => {
               <p>*Mandatory Fields</p>
             </IonItem>
             <IonItem lines="none">
-              <IonButton
-                size="default"
-                onClick={() => setIsReadOnly(!isReadOnly)}
-              >
-                Save
-              </IonButton>
+              <div className="editButton">
+                <IonButton
+                  size="default"
+                  onClick={() => setIsReadOnly(!isReadOnly)}
+                >
+                  Save
+                </IonButton>
+              </div>
             </IonItem>
           </>
         )}
