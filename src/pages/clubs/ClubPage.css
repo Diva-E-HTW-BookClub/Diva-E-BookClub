@@ -5,3 +5,32 @@
 .large-icon {
   font-size: 28px;
 }
+
+.chipIsMember {
+  --background: var(--ion-color-primary);
+  --color: #ffffff;
+}
+
+.clubMembersSpacing {
+  text-align: center;
+  min-width: 38px;
+}
+
+.column {
+  padding-right: 10px;
+  min-height: 8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.img-column {
+  padding-top: 10px;
+  padding-bottom: 5px;
+  min-height: 8rem;
+}
+
+.bookCover {
+  max-width: 110px;
+  filter: drop-shadow(0.0rem 0.3rem 0.3rem rgba(0, 0, 0, 0.65));
+}

@@ -10,23 +10,20 @@ import {
   IonImg,
   IonSegment,
   IonSegmentButton,
-  IonCard,
-  IonCardHeader,
   IonCardTitle,
   IonCardSubtitle,
-  IonCardContent,
   IonButton,
   IonIcon,
   IonBackButton,
   IonButtons,
-  IonFab,
-  IonFabButton,
+  IonLabel,
+  IonItem,
+  IonChip,
+  IonSpinner,
 } from "@ionic/react";
 import "./ClubPage.css";
-import { calendar, documents, add } from "ionicons/icons";
+import { calendar, documents, fileTray, people } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
-import { DiscussionCard } from "../../components/DiscussionCard";
-import { ResourceCard } from "../../components/ResourceCard";
 import {
   BookClub,
   getBookClubDocument,
@@ -35,15 +32,18 @@ import {
 } from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
 import { useSelector } from "react-redux";
+import { ArchiveSegment } from "../../components/clubPage/ArchiveSegment";
+import { UpcomingDiscussionsSegment } from "../../components/clubPage/UpcomingDiscussionsSegment";
+import { ResourcesSegment } from "../../components/clubPage/ResourcesSegment";
 
 const ClubPage: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
 
-  const user = useSelector((state:any) => state.user.user)
-  const [bookClubData, setBookClubData] = useState<BookClub>()
+  const user = useSelector((state: any) => state.user.user);
+  const [bookClubData, setBookClubData] = useState<BookClub>();
   const [selectedSegment, setSelectedSegment] = useState<string>("calendar");
   const [isModerator, setIsModerator] = useState<boolean>(false);
-  const [isParticipant, setIsParticipant] = useState<boolean>(false);
+  const [isMember, setIsMember] = useState<boolean>(false);
 
   useEffect(() => {
     getBookClub();
@@ -53,35 +53,32 @@ const ClubPage: React.FC = () => {
     let bookClub = await getBookClubDocument(bookClubId);
     // check if the current user is moderator of the club
     setIsModerator(bookClub?.moderator.includes(user.uid));
-    setIsParticipant(bookClub?.participants.includes(user.uid))
-    setBookClubData(bookClub)
+    setIsMember(bookClub?.participants.includes(user.uid));
+    setBookClubData(bookClub);
   }
 
-  async function joinClub() {
-    if(bookClubData != null
-      && bookClubData.participants.length < bookClubData.maxParticipantsNumber){
-      await addParticipant(bookClubId, user.uid);
-      getBookClub();
+  const handleJoinLeave = async () => {
+    if (bookClubData != null && !isModerator) {
+      if (
+        bookClubData.participants.length < bookClubData.maxParticipantsNumber
+      ) {
+        await addParticipant(bookClubId, user.uid);
+        getBookClub();
+      }
+      if (bookClubData.participants.includes(user.uid)) {
+        await removeParticipant(bookClubId, user.uid);
+        getBookClub();
+      }
     }
-  }
-
-  async function leaveClub() {
-    if(bookClubData != null
-      && bookClubData.participants.includes(user.uid)){
-      await removeParticipant(bookClubId, user.uid);
-      getBookClub();
-    }
-  }
+  };
 
   let clubName = bookClubData?.name;
   let bookTitle = bookClubData?.book.title;
   let bookAuthor = bookClubData?.book.authors;
   let bookCoverImg = bookClubData?.book.imageUrl;
-  let bookCurrentChapter = "?";
   let clubParticipants = bookClubData?.participants?.length;
   let clubParticipantsMax = bookClubData?.maxParticipantsNumber;
-  // console.log(bookClubId)
-  // console.log(getBookClubDiscussions(bookClubId))
+
   return (
     <IonPage>
       <IonHeader>
@@ -90,109 +87,96 @@ const ClubPage: React.FC = () => {
             <IonBackButton defaultHref="/clubs" />
           </IonButtons>
           <IonTitle>{clubName}</IonTitle>
+          {isModerator && (
+            <IonButtons slot="end">
+              <IonButton routerLink={"/clubs/" + bookClubId + "/edit"}>
+                Edit
+              </IonButton>
+            </IonButtons>
+          )}
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">{clubName}</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonCard class="hidden-border">
+      <IonContent fullscreen class="ion-no-padding ion-padding-vertical">
+        <div className="ion-padding-horizontal">
           <IonGrid>
-            <IonRow>
-              <IonCol size="4">
-                <IonImg alt={bookTitle} src={bookCoverImg} />
-              </IonCol>
-              <IonCol size="6">
-                <IonCardHeader>
+            <IonRow class="ion-align-items-center ion-padding-bottom">
+              <IonCol sizeMd="10" size="9" className="column">
+                <IonLabel>
                   <IonCardTitle>{bookTitle}</IonCardTitle>
                   <IonCardSubtitle>{bookAuthor}</IonCardSubtitle>
-                </IonCardHeader>
-                <IonCardContent>
-                  <h3>{bookCurrentChapter}</h3>
-                  <h3>
-                    {clubParticipants}/{clubParticipantsMax}
-                  </h3>
-                  {isModerator &&
-                  <IonButton routerLink={"/clubs/" + bookClubId + "/edit"}>Edit</IonButton>
-                  }
-                  {!isModerator && bookClubData != null && !bookClubData.participants.includes(user.uid) &&
-                    <IonButton onClick={joinClub}>Join</IonButton>
-                  }
-                  {!isModerator && bookClubData != null && bookClubData.participants.includes(user.uid) &&
-                    <IonButton onClick={leaveClub} color="danger">Leave</IonButton>
-                  }
-                </IonCardContent>
+                </IonLabel>
+                <IonItem lines="none">
+                  <IonChip
+                    onClick={() => handleJoinLeave()}
+                    className={isMember || isModerator ? "chipIsMember" : ""}
+                  >
+                    <IonIcon
+                      color={isMember || isModerator ? "white" : ""}
+                      icon={people}
+                    ></IonIcon>
+                    {!clubParticipants || !clubParticipantsMax ? (
+                      <IonSpinner name="dots"></IonSpinner>
+                    ) : (
+                      <p className="clubMembersSpacing">
+                        {clubParticipants + " / " + clubParticipantsMax}
+                      </p>
+                    )}
+                  </IonChip>
+                </IonItem>
+              </IonCol>
+              <IonCol sizeMd="2" size="3" className="img-column">
+                <IonImg
+                  className="bookCover"
+                  alt={bookTitle}
+                  src={bookCoverImg}
+                />
               </IonCol>
             </IonRow>
           </IonGrid>
-        </IonCard>
-
-        <IonSegment value={selectedSegment}>
-          <IonSegmentButton
-            value="calendar"
-            onClick={() => setSelectedSegment("calendar")}
-          >
-            <IonIcon icon={calendar}></IonIcon>
-          </IonSegmentButton>
-          <IonSegmentButton
-            value="resources"
-            onClick={() => setSelectedSegment("resources")}
-          >
-            <IonIcon icon={documents}></IonIcon>
-          </IonSegmentButton>
-        </IonSegment>
-      
-        {bookClubData?.discussions.map((discussion, index) => {
-          return (
-            <div key={index}>
-              {selectedSegment === "calendar" &&
-                <DiscussionCard
-                  bookClubId={bookClubId}
-                  discussionId={discussion.id}
-                  title={discussion.title}
-                  date={discussion.date}
-                  startTime={discussion.startTime}
-                  endTime={discussion.endTime}
-                  location={discussion.location}
-                  isModerator={isModerator}
-                />
-              } 
-            </div>
-          );
-        })}
-        {bookClubData?.resources.map((resource, index) => {
-          return (
-            <div key={index}>
-              {selectedSegment === "resources" &&
-                <ResourceCard
-                  resourceId={resource.id}
-                  title={resource.title}
-                  content={resource.content}
-                  moderator={resource.moderator}
-                  bookClubId={bookClubId}
-                />
-              } 
-            </div>
-          );
-        })}
-        {isModerator && selectedSegment === "calendar" &&
-          <IonFab slot="fixed" vertical="bottom" horizontal="end">
-            <IonFabButton routerLink={"/clubs/" + bookClubId + "/discussions/add"}>
-              <IonIcon icon={add}></IonIcon>
-            </IonFabButton>
-          </IonFab>
-        }
-        {isParticipant && selectedSegment === "resources" &&
-          <IonFab slot="fixed" vertical="bottom" horizontal="end">
-            <IonFabButton routerLink={"/clubs/" + bookClubId + "/resources/add"}>
-              <IonIcon icon={add}></IonIcon>
-            </IonFabButton>
-          </IonFab>
-        }    
-        
-        
+          <IonSegment value={selectedSegment}>
+            <IonSegmentButton
+              value="calendar"
+              onClick={() => setSelectedSegment("calendar")}
+            >
+              <IonIcon icon={calendar}></IonIcon>
+            </IonSegmentButton>
+            <IonSegmentButton
+              value="resources"
+              onClick={() => setSelectedSegment("resources")}
+            >
+              <IonIcon icon={documents}></IonIcon>
+            </IonSegmentButton>
+            <IonSegmentButton
+              value="archive"
+              onClick={() => setSelectedSegment("archive")}
+            >
+              <IonIcon icon={fileTray}></IonIcon>
+            </IonSegmentButton>
+          </IonSegment>
+        </div>
+        {selectedSegment === "calendar" && (
+          <UpcomingDiscussionsSegment
+            bookClubId={bookClubId}
+            isModerator={isModerator}
+            isMember={isMember}
+            bookClubData={bookClubData}
+          />
+        )}
+        {selectedSegment === "resources" && (
+          <ResourcesSegment
+            bookClubId={bookClubId}
+            isModerator={isModerator}
+            isMember={isMember}
+            bookClubData={bookClubData}
+          />
+        )}
+        {selectedSegment === "archive" && (
+          <ArchiveSegment
+            bookClubId={bookClubId}
+            isModerator={isModerator}
+            bookClubData={bookClubData}
+          />
+        )}
       </IonContent>
     </IonPage>
   );
