@@ -27,8 +27,8 @@ import React, { useEffect, useState } from "react";
 import {
   BookClub,
   getBookClubDocument,
-  addParticipant,
-  removeParticipant,
+  addMember,
+  removeMember,
 } from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
 import { useSelector } from "react-redux";
@@ -53,20 +53,20 @@ const ClubPage: React.FC = () => {
     let bookClub = await getBookClubDocument(bookClubId);
     // check if the current user is moderator of the club
     setIsModerator(bookClub?.moderator.includes(user.uid));
-    setIsMember(bookClub?.participants.includes(user.uid));
+    setIsMember(bookClub?.members.includes(user.uid));
     setBookClubData(bookClub);
   }
 
   const handleJoinLeave = async () => {
     if (bookClubData != null && !isModerator) {
       if (
-        bookClubData.participants.length < bookClubData.maxParticipantsNumber
+        bookClubData.members.length < bookClubData.maxMemberNumber
       ) {
-        await addParticipant(bookClubId, user.uid);
+        await addMember(bookClubId, user.uid);
         getBookClub();
       }
-      if (bookClubData.participants.includes(user.uid)) {
-        await removeParticipant(bookClubId, user.uid);
+      if (bookClubData.members.includes(user.uid)) {
+        await removeMember(bookClubId, user.uid);
         getBookClub();
       }
     }
@@ -76,8 +76,8 @@ const ClubPage: React.FC = () => {
   let bookTitle = bookClubData?.book.title;
   let bookAuthor = bookClubData?.book.authors;
   let bookCoverImg = bookClubData?.book.imageUrl;
-  let clubParticipants = bookClubData?.participants?.length;
-  let clubParticipantsMax = bookClubData?.maxParticipantsNumber;
+  let clubMembers = bookClubData?.members?.length;
+  let clubMemberMax = bookClubData?.maxMemberNumber;
 
   return (
     <IonPage>
@@ -114,11 +114,11 @@ const ClubPage: React.FC = () => {
                       color={isMember || isModerator ? "white" : ""}
                       icon={people}
                     ></IonIcon>
-                    {!clubParticipants || !clubParticipantsMax ? (
+                    {!clubMembers || !clubMemberMax ? (
                       <IonSpinner name="dots"></IonSpinner>
                     ) : (
                       <p className="clubMembersSpacing">
-                        {clubParticipants + " / " + clubParticipantsMax}
+                        {clubMembers + " / " + clubMemberMax}
                       </p>
                     )}
                   </IonChip>

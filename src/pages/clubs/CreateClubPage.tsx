@@ -28,7 +28,7 @@ const CreateClubPage: React.FC = () => {
   const [selectedBookIndex, setSelectedBookIndex] = useState<number>(0);
   const [query, setQuery] = useState<string>("");
   const [clubName, setClubName] = useState<string>("");
-  const [maxParticipants, setMaxParticipants] = useState<number>(0);
+  const [maxMember, setMaxMember] = useState<number>(0);
   const user = useSelector((state:any) => state.user.user)
 
   // calls HTTP API of OpenLibrary to search books by the given query and offset
@@ -92,8 +92,8 @@ const CreateClubPage: React.FC = () => {
       id: "",
       name: clubName,
       moderator: [userId],
-      participants: [userId],
-      maxParticipantsNumber: maxParticipants,
+      members: [userId],
+      maxMemberNumber: maxMember,
       book: {
         title: book.title,
         authors: book.author_name,
@@ -135,9 +135,9 @@ const CreateClubPage: React.FC = () => {
         </IonItem>
         <IonItem>
           <IonLabel position="stacked">
-            <h1>Max number of participants</h1>
+            <h1>Max number of members</h1>
           </IonLabel>
-          <IonInput required placeholder="Enter a number (max 50)" onIonInput={(e: any) => setMaxParticipants(e.target.value)}></IonInput>
+          <IonInput required placeholder="Enter a number (max 50)" onIonInput={(e: any) => setMaxMember(e.target.value)}></IonInput>
         </IonItem>
         <IonSearchbar placeholder="Find a book" debounce={1000} onIonInput={search}></IonSearchbar>
 
