@@ -1,4 +1,4 @@
-import { intervalToDuration } from "date-fns";
+import { compareAsc, intervalToDuration } from "date-fns";
 import { format, utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -45,7 +45,7 @@ function getDistanceInterval(firstDate: string, lastDate: string) {
 
 function getDistanceInMinutes(firstDate: string, lastDate: string) {
   let interval = getDistanceInterval(firstDate, lastDate);
-  var distance = interval.minutes || 0;
+  let distance = interval.minutes || 0;
   if (interval.hours) {
     distance = distance + interval.hours * 60;
   }
@@ -58,6 +58,40 @@ function getTimeSlotString(firstDate: string, lastDate: string) {
   return startTime + " - " + endTime;
 }
 
+function getMonthName(datetime: string) {
+  const date = utcToZonedTime(datetime, timezone);
+  return format(date, "MMM", { timeZone: timezone });
+}
+
+function getDayValue(datetime: string) {
+  const date = utcToZonedTime(datetime, timezone);
+  return format(date, "d", { timeZone: timezone });
+}
+
+function getYearValue(datetime: string) {
+  const date = utcToZonedTime(datetime, timezone);
+  return format(date, "y", { timeZone: timezone });
+}
+
+function compareDatesAscending(firstDate: string, lastDate?: string) {
+  let result: number;
+  if (lastDate) {
+    result = compareAsc(new Date(firstDate), new Date(lastDate));
+  } else {
+    result = compareAsc(new Date(firstDate), new Date());
+  }
+
+  if (result === 1) {
+    return true;
+  }
+  if (result === 0) {
+    return true;
+  }
+  if (result === -1) {
+    return false;
+  }
+}
+
 export {
   getTimezonedDate,
   getTimezonedTime,
@@ -67,4 +101,8 @@ export {
   getDistanceInterval,
   getDistanceInMinutes,
   getTimeSlotString,
+  getMonthName,
+  getDayValue,
+  getYearValue,
+  compareDatesAscending,
 };

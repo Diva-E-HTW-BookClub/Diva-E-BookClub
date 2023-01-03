@@ -1,0 +1,71 @@
+.calendarDate {
+  text-align: center;
+  border: 1px solid #0d0d0d;
+  border-radius: 15px;
+  width: 51px;
+}
+
+.date {
+  font-size: 25px;
+}
+
+.flexBetween {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 5px;
+}
+
+.flexStart {
+  display: flex;
+  justify-content: start;
+  gap: 10px;
+}
+
+.flexbox {
+  align-self: center;
+}
+
+ion-col {
+  --ion-grid-column-padding: 0px;
+}
+
+.locationBox {
+  align-self: center;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.title {
+  font-size: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spacing {
+  width: 10px;
+}
+
+.time {
+  font-size: 14px;
+  color: grey;
+  font-weight: bold;
+}
+
+.chipIsParticipant {
+  --background: var(--ion-color-primary);
+  --color: #ffffff;
+}
+
+.discussionMembersSpacing {
+  text-align: center;
+  min-width: 18px;
+}

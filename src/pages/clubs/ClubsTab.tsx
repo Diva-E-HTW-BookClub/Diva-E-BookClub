@@ -123,7 +123,7 @@ const ClubsTab: React.FC = () => {
                 <ClubCard
                   id={bookClub.id}
                   name={bookClub.name}
-                  member={bookClub.participants.length}
+                  member={bookClub.members.length}
                   image={bookClub.book.imageUrl}
                   date={""}
                   time={""}

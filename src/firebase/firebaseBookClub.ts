@@ -54,8 +54,8 @@ type BookClub = {
   id: string;
   name: string;
   moderator: string[];
-  participants: string[];
-  maxParticipantsNumber: number;
+  members: string[];
+  maxMemberNumber: number;
   book: Book;
   discussions: Discussion[];
   resources: Resource[];
@@ -150,8 +150,8 @@ async function getBookClubDocument(bookClubId: string) {
       id: bookClubData.id,
       name: bookClubData.name,
       moderator: bookClubData.moderator,
-      participants: bookClubData.participants,
-      maxParticipantsNumber: bookClubData.maxParticipantsNumber,
+      members: bookClubData.members,
+      maxMemberNumber: bookClubData.maxMemberNumber,
       book: bookClubData.book,
       discussions: discussionArray,
       resources: resourceArray,
@@ -161,13 +161,13 @@ async function getBookClubDocument(bookClubId: string) {
 }
 
 // serch book clubs by their name, book title
-// and where participants contains and not contains given participant id
-// (needed to find clubs where user is a participant and where not)
+// and where members contains and not contains given member id
+// (needed to find clubs where user is a member and where not)
 async function searchBookClubs(
   filter: string,
   inputText: string,
-  participantId: string,
-  includeParticipant: boolean,
+  memberId: string,
+  includeMember: boolean,
   resultsLimit: number,
   lastBookClubId?: string
 ) {
@@ -199,12 +199,12 @@ async function searchBookClubs(
     let lastBookClubDocumentResult = await getDoc(lastBookClubDocument);
     queryConstraints.push(startAfter(lastBookClubDocumentResult));
   }
-  if (includeParticipant) {
-    // find documents where user is in the list of participants
-    // to search by participants and club name/book title a corresponding index is needed
+  if (includeMember) {
+    // find documents where user is in the list of members
+    // to search by members and club name/book title a corresponding index is needed
     // https://console.firebase.google.com/project/diva-e-htw-bookclub/firestore/indexes
     queryConstraints.push(
-      where("participants", "array-contains", participantId)
+      where("members", "array-contains", memberId)
     );
     let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
     // returns documents from bookClubs collection matching all query constraints
@@ -212,14 +212,14 @@ async function searchBookClubs(
     return results.docs.map(docToBookClub);
   } else {
     // find all documents from bookClubs collection matching the search query
-    // regardles of their participants
+    // regardles of their members
     let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
     var results = await getDocs(q);
     return (
       results.docs
         .map(docToBookClub)
-        // remove clubs where our user is a participant
-        .filter((bookClub) => !bookClub.participants.includes(participantId))
+        // remove clubs where our user is a member
+        .filter((bookClub) => !bookClub.members.includes(memberId))
     );
   }
 }
@@ -231,8 +231,8 @@ function docToBookClub(doc: any) {
     id: doc.id,
     name: data.name,
     moderator: data.moderator,
-    participants: data.participants,
-    maxParticipantsNumber: data.maxParticipantsNumber,
+    members: data.members,
+    maxMemberNumber: data.maxMemberNumber,
     book: data.book,
     discussions: data.discussions,
     resources: data.resources,
@@ -241,19 +241,19 @@ function docToBookClub(doc: any) {
 }
 
 // https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array
-async function addParticipant(bookClubId: string, participantId: string) {
+async function addMember(bookClubId: string, memberId: string) {
   const bookClubDocument = doc(firebaseDB, "bookClubs", bookClubId);
-  // Atomically add a new participant to the "participants" array field.
+  // Atomically add a new member to the "members" array field.
   await updateDoc(bookClubDocument, {
-    participants: arrayUnion(participantId),
+    members: arrayUnion(memberId),
   });
 }
 
-async function removeParticipant(bookClubId: string, participantId: string) {
+async function removeMember(bookClubId: string, memberId: string) {
   const bookClubDocument = doc(firebaseDB, "bookClubs", bookClubId);
-  // Atomically remove a participant from the "participants" array field.
+  // Atomically remove a member from the "members" array field.
   await updateDoc(bookClubDocument, {
-    participants: arrayRemove(participantId),
+    members: arrayRemove(memberId),
   });
 }
 
@@ -263,8 +263,8 @@ export {
   deleteBookClubDocument,
   getBookClubDocument,
   searchBookClubs,
-  addParticipant,
-  removeParticipant,
+  addMember,
+  removeMember,
 };
 
 export type { BookClub, Discussion, Comment };

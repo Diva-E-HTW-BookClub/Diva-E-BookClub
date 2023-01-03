@@ -7,7 +7,7 @@ import { BookClub, deleteBookClubDocument, getBookClubDocument, updateBookClubDo
 
 type FormValues = {
     name: string;
-    maxParticipantsNumber: number;
+    maxMemberNumber: number;
 }
 const EditClubPage: React.FC = () => {
     let {bookClubId}: {bookClubId: string} = useParams();
@@ -24,7 +24,7 @@ const EditClubPage: React.FC = () => {
         let bookClub = await getBookClubDocument(bookClubId)
         
         setValue("name", bookClub?.name)
-        setValue("maxParticipantsNumber", bookClub?.maxParticipantsNumber)        
+        setValue("maxMemberNumber", bookClub?.maxMemberNumber)
       }
     
     
@@ -65,9 +65,9 @@ const EditClubPage: React.FC = () => {
                 </IonItem>
                 <IonItem>
                     <IonLabel position="stacked">
-                        <h1>Max number of participants</h1>
+                        <h1>Max number of members</h1>
                     </IonLabel>
-                    <IonInput {...register("maxParticipantsNumber", {})}/>
+                    <IonInput {...register("maxMemberNumber", {})}/>
 
                 </IonItem>
                 <IonButton type="submit" routerLink={"/clubs/" + bookClubId + "/view"}>Update</IonButton>
