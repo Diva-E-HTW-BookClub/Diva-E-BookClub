@@ -16,16 +16,16 @@ import {
   IonCardContent,
   IonItem,
   IonIcon
-
 } from "@ionic/react";
 import {
   doc,
   setDoc,
 } from "firebase/firestore";
 import { firebaseDB } from "../../firebase/firebaseConfig";
-// import io from "socket.io-client"
+import io from "socket.io-client"
 import "./LiveDiscussion.css";
 import React, { useRef, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { pause, play } from "ionicons/icons";
 import { getDiscussionAgenda } from "../../firebase/firebaseDiscussions";
 import { useParams } from "react-router";
@@ -37,29 +37,42 @@ interface AgendaPartProps {
   timeLimit: number
 }
 
-// const socket = io("http://localhost:3001");
-var progressTimesForServer = [0, 0];
-var progressSumForServer = 0;
+const socket = io("http://localhost:3001");
 var isModerator = false;
-
+var emitTimes:number[] = []
+var emitSum = 0;
+var emitStates:boolean[] = []
 
 const LiveDiscussion: React.FC = () => {
-  const totalTime1 = 1.00;
-  const totalTime2 = 1.00;
 
+  // Information zu der Agenda
+  const user = useSelector((state: any) => state.user.user);
   const [agendaParts, setAgendaParts] = useState<any[]>([]);
   let { bookClubId }: { bookClubId: string } = useParams();
   let { discussionId }: { discussionId: string } = useParams();
 
-  const [playingState, setPlayingState] = useState([false, false]);
-  const [playingStateReceived, setPlayingStateReceived] = useState([false, false]);
-  const [progressTimes, setProgressTimes] = useState([0, 0]);
-  const [progressTimesReceived, setProgressTimesReceived] = useState([0, 0]);
+  // Liva-Ansicht-Variablen
+  const [playingState, setPlayingState] = useState<boolean[]>([]);
+  const [playingStateReceived, setPlayingStateReceived] = useState([false]);
+  const [progressTimesReceived, setProgressTimesReceived] = useState<number[]>([]);
   const [progressSumReceived, setProgressSumReceived] = useState(0);
-  const [isStarted, setIsStarted] = useState<boolean>(false);
-  var progressSum = 0;
+
+  // Discusscion Room
+  // const [discussionRoom, setDiscussionRoom] = useState("")
+
+
+  const joinDiscussionRoom = () => {
+    if (discussionId !== "") {
+      socket.emit("join_discussion_room", discussionId)
+    }
+  }
+
 
   const changedPlayingState = doc(firebaseDB, "testCollection", "8hh5w2KA9koJTbyMiDuk");
+
+  const beModerator = () => {
+    isModerator = true;
+  }
 
   function createPlayingStatesForButton(length: number, index: number) {
     var timeTable = []
@@ -69,145 +82,163 @@ const LiveDiscussion: React.FC = () => {
     if (!playingState[index]) {
       timeTable[index] = true;
     }
+    
     return timeTable;
   }
 
+  const setButtons = (buttonNumber: number) => {
+    if(isModerator){
+    emitStates =  createPlayingStatesForButton(agendaParts.length, buttonNumber);
+    emitTimes = progressTimesReceived;
+    emitSum = progressSumReceived;
+    
+    setPlayingState(createPlayingStatesForButton(agendaParts.length,buttonNumber))
 
-  const beModerator = () => {
-    isModerator = true;
-  }
-
-  const onClickH = (buttonNumber: number) => {
-    if (isModerator) {
-      createPlayingStatesForButton(2, buttonNumber);
-      for (var i = 0; i < agendaParts.length; i++) {
-        playingState[i] = createPlayingStatesForButton(agendaParts.length, buttonNumber)[i]
-      }
-
-      for (var i = 0; i < agendaParts.length; i++) {
-        progressTimes[i] = progressTimesReceived[i]
-        console.log("is Received komisch? " + progressSumReceived);
-        progressSum = progressSumReceived;
-      }
-
-      progressSum = progressSumReceived
-      //console.log("volle Summe: " + progressSum)
-
-      // socket.emit("send_playButton", { playingState });
-      // socket.emit("send_time", { progressTimes });
-      // socket.emit("send_sum_time", { progressSum });
-      //console.log(progressTimes)
-      //console.log(playingState)
-      //console.log(progressSum)
-      //setDoc(changedPlayingState, {playingState: playingState, progressTimes: progressTimes, progressSum: progressSum});
+    // Send data to server
+    socket.emit("send_playButton", { emitStates, discussionId });
+    socket.emit("send_time", { emitTimes, discussionId });
+    socket.emit("send_sum_time", { emitSum, discussionId });
     }
   }
 
-  // useEffect(() => {
-  //   socket.on("receive_playButton", (data) => {
-  //     setPlayingStateReceived(data.playingState)
-  //   });
-
-  //   socket.on("receive_time", (data) => {
-  //     setProgressTimesReceived(data.progressTimes)
-  //   });
-  //   socket.on("receive_sum_time", (data) => {
-  //     console.log("ist das hier weird? " + data.progressSum);
-  //     setProgressSumReceived(data.progressSum)
-  //   });
-
-  //   socket.on("progressEmit", (data) => {
-  //     if (data != 0) {
-  //       console.log("Bars:" + data)
-  //       setProgressTimesReceived(data);
-  //     }
-  //     else {
-  //       setProgressTimesReceived([0, 0]);
-  //     }
-  //   });
-
-  //   socket.on("sumEmit", (data) => {
-  //     if (typeof (data) != 'undefined') {
-  //       console.log("Sum:" + data.progressSum)
-  //       setProgressSumReceived(data.progressSum)
-  //     }
-  //     else {
-  //       setProgressSumReceived(0)
-  //     }
-  //   });
-
-  //   socket.on("statesEmit", (data) => {
-  //     if (data != 0) {
-  //       console.log("States:" + data)
-  //       setPlayingStateReceived(data)
-  //     }
-  //     else {
-  //       setPlayingStateReceived([false, false])
-  //     }
-  //   });
-  // }, [socket]);
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     if (playingStateReceived[0]) {
-  //       setProgressTimesReceived(([prevProgress0, prevProgress1]) => [prevProgress0 + 1 / (totalTime1 * 1000), prevProgress1]);
-  //       setProgressSumReceived((prevProgress) => prevProgress + 1 / (totalTime1 * 1000 * chapters))
-  //       if (isModerator) {
-  //         progressTimesForServer[0] = progressTimesForServer[0] + 1 / (totalTime1 * 1000)
-  //         progressSumForServer = progressSumForServer + 1 / (totalTime1 * 1000 * chapters)
-  //         socket.emit("send_all_Data", { playingState, progressTimesForServer, progressSumForServer });
-  //       }
-  //     }
-
-  //   }, 100);
-
-  //   return () => clearInterval(interval);
-  // }, [playingStateReceived[0]]);
-
-  // useEffect(() => {
-  //   const interval2 = setInterval(() => {
-  //     if (playingStateReceived[1]) {
-  //       setProgressTimesReceived(([prevProgress0, prevProgress1]) => [prevProgress0, prevProgress1 + 1 / (totalTime2 * 1000)]);
-  //       setProgressSumReceived((prevProgress) => prevProgress + 1 / (totalTime2 * 1000 * chapters))
-  //       if (isModerator) {
-  //         progressTimesForServer[1] = progressTimesForServer[1] + 1 / (totalTime2 * 1000)
-  //         progressSumForServer = progressSumForServer + 1 / (totalTime2 * 1000 * chapters)
-  //         socket.emit("send_all_Data", { playingState, progressTimesForServer, progressSumForServer });
-  //       }
-  //     }
-  //   }, 100);
-
-  //   return () => clearInterval(interval2);
-  // }, [playingStateReceived[1]]);
-
-
-  // const isOrange = (progress: number, totalTime: number) => {
-  //   return +(progress * totalTime).toFixed(2) >= totalTime * 0.5
-  // }
-
-  // const isDarkOrange = (progress: number, totalTime: number) => {
-  //   return +(progress * totalTime).toFixed(2) >= totalTime * 0.79
-  // }
-
-  // const isRed = (progress: number, totalTime: number) => {
-  //   return +(progress * totalTime).toFixed(2) >= totalTime
-  // }
+  
   useEffect(() => {
     getAgendaParts()
+    joinDiscussionRoom();
+    socket.emit("request_data", { emitSum, discussionId});
+    console.log("ID: " + discussionId)
   }, []);
+
+  
+  useEffect(() => {
+
+    socket.on("receive_playButtonStart", (data) => {
+     console.log(data)
+    });
+
+    socket.on("receive_timeStart", (data) => {
+      if(data[0] == -1 || typeof data[0] == 'undefined'){
+        var arrayForTimes= [0,0];
+        for(var i = 0; i < agendaParts.length; i++){
+        arrayForTimes[i] = 0;
+        }
+        getAgendaParts()
+        console.log("Kreirtes Ding: " + arrayForTimes)
+      }
+      else{
+        setProgressTimesReceived(data[0])
+      }
+      console.log("All times: " + progressTimesReceived)
+    });
+
+    socket.on("receive_sum_timeStart", (data) => {
+      console.log("Darf nur ein Wert sein: " + data[0])
+      if(data[0] == -1 || typeof data[0] == 'undefined'){
+        setProgressSumReceived(0)
+      }
+      else{
+        setProgressSumReceived(data[0])
+      }
+    });
+    
+    
+    socket.on("receive_playButton", (data) => {
+      if(typeof data.emitStates !== "undefined"){
+        setPlayingStateReceived(data.emitStates)
+      }
+      else{
+      setPlayingStateReceived(data)
+      }
+    });
+
+    socket.on("receive_time", (data) => {
+      if(typeof data.emitTimes !== "undefined"){
+        setProgressTimesReceived(data.emitTimes)
+      }
+      else{
+      setProgressTimesReceived(data)
+      }
+    });
+
+    socket.on("receive_sum_time", (data) => {
+      if(typeof data.emitSum !== "undefined"){
+        setProgressSumReceived(data.emitSum)
+      }
+      else{
+        setProgressSumReceived(data)
+      }
+    });    
+  }, [socket]);
+
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+        setProgressTimesReceived((progressTimesReceived) =>{
+          for(var i = 0; i < agendaParts.length; i++){
+            if(playingStateReceived[i] == true){
+            progressTimesReceived[i] = progressTimesReceived[i] + 1/(10*maxTimes[i])
+            setProgressSumReceived((prevProgress) => prevProgress + 1/(10*totalTimeLimit)) 
+            emitTimes[i] = emitTimes[i]+ 1/(10*maxTimes[i]); 
+            emitSum = emitSum + 1/(10*totalTimeLimit)
+            }
+          }
+          return progressTimesReceived} )
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [playingStateReceived]);
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    for(var i = 0; i < agendaParts.length; i++){
+      if(playingStateReceived[i] == true){
+        if(isModerator ){
+          socket.emit("send_all_Data", {emitStates, emitTimes, emitSum, discussionId})
+        }
+      }
+    }
+},1000);
+
+return () => clearInterval(interval);
+},[playingStateReceived]);
+
+
+  // Colors for Progress
+   const isOrange = (progress: number, totalTime: number) => {
+     return +(progress * totalTime).toFixed(2) >= totalTime * 0.5
+   }
+
+   const isDarkOrange = (progress: number, totalTime: number) => {
+     return +(progress * totalTime).toFixed(2) >= totalTime * 0.79
+   }
+
+   const isRed = (progress: number, totalTime: number) => {
+     return +(progress * totalTime).toFixed(2) >= totalTime
+   }
+
+
+
 
   async function getAgendaParts() {
     let agendaParts = await getDiscussionAgenda(bookClubId, discussionId);
     setAgendaParts(agendaParts)
-    console.log(getDiscussionAgenda(bookClubId, discussionId))
-    console.log(agendaParts.length)
+    for(var i = 0; i < agendaParts.length; i++){
+      progressTimesReceived[i] = 0;
+      playingStateReceived[i] = false;
+      emitTimes[i] = 0
+    }
   }
   // convert agenda parts to elapsedTime and timeLimit and sum the values
-  let totalElapsedTime = agendaParts.map(e => e.elapsedTime).reduce((a, b) => a + b, 0);
+  // let totalElapsedTime = agendaParts.map(e => e.elapsedTime).reduce((a, b) => a + b, 0);
   let totalTimeLimit = agendaParts.map(e => e.timeLimit).reduce((a, b) => a + b, 0);
+  let maxTimes = agendaParts.map(e => e.timeLimit)
 
-  function formatTime(seconds: number) {
-    return new Date(seconds * 1000).toISOString().substring(14, 19)
+  function doubleDigits(number:number){
+    var minutes = Math.floor(number/60);
+    var seconds = Math.floor(number%60);
+    var secondsString = (seconds < 10) ? '0' + seconds.toString() : seconds.toString()
+    var finalOutput = minutes.toString() + "." + secondsString;
+    return finalOutput
   }
 
   return (
@@ -220,15 +251,16 @@ const LiveDiscussion: React.FC = () => {
       <IonContent fullscreen>
         <IonCard>
           <IonCardHeader>
+          <IonCardTitle> {`${isModerator}`}</IonCardTitle>
             <IonCardTitle>Total discussion time</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
             <IonRow>
               <IonCol size="8">
-                <IonProgressBar value={totalElapsedTime / totalTimeLimit}></IonProgressBar>
+                <IonProgressBar className={` ${isRed(progressSumReceived, totalTimeLimit) ? 'isRed' : isDarkOrange(progressSumReceived, totalTimeLimit) ?  'isDarkOrange' : isOrange(progressSumReceived, totalTimeLimit) ? 'isOrange' : 'blue'}`} value={progressSumReceived}></IonProgressBar>
               </IonCol>
-              <IonCol size="4">
-                {`${formatTime(totalElapsedTime)}/${formatTime(totalTimeLimit)}`}
+              <IonCol className="timeDisplay" size="4">
+                {`${doubleDigits(progressSumReceived * totalTimeLimit)} / ${doubleDigits(totalTimeLimit)}`}
               </IonCol>
             </IonRow>
           </IonCardContent>
@@ -239,26 +271,25 @@ const LiveDiscussion: React.FC = () => {
               <IonItem className="iten-no-padding" key={index}>
                 <IonCard>
                   <IonCardHeader>
-                    <IonButton fill="outline" onClick={() => setIsStarted(!isStarted)}>
-                      {!isStarted &&
+                    <IonButton className="playButton" fill="outline" onClick={() => setButtons(index)}>
+                      {!playingStateReceived[index] &&
                         <IonIcon className="button-icon" icon={play}></IonIcon>
                       }
-                      {isStarted &&
+                      {playingStateReceived[index] &&
                         <IonIcon className="button-icon" icon={pause}></IonIcon>
                       }
                     </IonButton>
-                    {/* <IonButton fill="outline" onClick={() => onClickH(0)}></IonButton> */}
-                    <IonCardTitle>{agendaPart.name}</IonCardTitle>
+                    <IonCardTitle className="playTitle">{agendaPart.name}</IonCardTitle>
                   </IonCardHeader>
                   <IonCardContent>
                     <IonGrid>
                       <IonRow>
                         <IonCol size="8">
-                          <IonProgressBar value={agendaPart.elapsedTime / agendaPart.timeLimit}></IonProgressBar>
+                        <IonProgressBar className={` ${isRed(progressTimesReceived[index], agendaPart.timeLimit) ? 'isRed' : isDarkOrange(progressTimesReceived[index], agendaPart.timeLimit) ?  'isDarkOrange' : isOrange(progressTimesReceived[index], agendaPart.timeLimit) ? 'isOrange' : 'blue'}`} value={progressTimesReceived[index]}></IonProgressBar>
                         </IonCol>
-                        <IonCol size="4">
-                          {`${formatTime(agendaPart.elapsedTime)}/${formatTime(agendaPart.timeLimit)}`}
-                        </IonCol>
+                        <IonCol className="timeDisplay" size="4">
+                          {`${doubleDigits(progressTimesReceived[index] * agendaPart.timeLimit)} / ${doubleDigits(agendaPart.timeLimit)}`}
+                           </IonCol>
                       </IonRow>
                     </IonGrid>
                   </IonCardContent>
@@ -267,72 +298,10 @@ const LiveDiscussion: React.FC = () => {
             );
           })}
         </IonList>
-
-        {/* <IonCard>
-          <IonGrid>
-            
-            <div className="box">
-              
-              <div className="divider"></div>
-              <IonRow>
-              <IonCol size="5">
-              <IonTitle>Total speaking time:</IonTitle> 
-              </IonCol>
-              <IonCol size="5">
-              <IonTitle>{((progressTimesReceived[0] * totalTime1) + (progressTimesReceived[1] * totalTime1)).toFixed(2) } / {(totalTime1 + totalTime2).toFixed(2)}</IonTitle> 
-              <IonTitle>{progressSumReceived}</IonTitle> 
-              </IonCol>
-            </IonRow>
-                <IonProgressBar className={` ${isRed(progressSumReceived, totalTime1) ? 'isRed' : isDarkOrange(progressSumReceived, totalTime1) ?  'isDarkOrange' : isOrange(progressSumReceived, totalTime1) ? 'isOrange' : 'blue'}`} value={progressSumReceived}></IonProgressBar>
-                <div className="divider"></div>
-             
-              
-              <div className="divider"></div>
-              <IonRow>
-              <IonCol size="5">
-              <IonTitle>speaking time1:</IonTitle> 
-              </IonCol>
-              <IonCol size="5">
-              <IonTitle>{(progressTimesReceived[0] * totalTime1).toFixed(2)} / {totalTime1 .toFixed(2)}</IonTitle> 
-              </IonCol>
-            </IonRow>
-                <IonProgressBar className={` ${isRed(progressTimesReceived[0], totalTime1) ? 'isRed' : isDarkOrange(progressTimesReceived[0], totalTime1) ?  'isDarkOrange' : isOrange(progressTimesReceived[0], totalTime1) ? 'isOrange' : 'blue'}`} value={progressTimesReceived[0]}></IonProgressBar>
-                <div className="divider"></div>
-                <IonButton fill="outline" onClick={() => onClickH(0)}>
-                Play / Stop
-              </IonButton>
-
-
-              <div className="divider"></div>
-              <IonRow>
-              <IonCol size="5">
-              <IonTitle>speaking time2:</IonTitle> 
-              </IonCol>
-              <IonCol size="5">
-              <IonTitle>{(progressTimesReceived[1] * totalTime1).toFixed(2) } / {totalTime2 .toFixed(2)}</IonTitle> 
-              </IonCol>
-            </IonRow>
-              <div className="divider"></div>
-              <IonProgressBar className={` ${isRed(progressTimesReceived[1], totalTime2) ? 'isRed' : isDarkOrange(progressTimesReceived[1], totalTime2) ?  'isDarkOrange' : isOrange(progressTimesReceived[1], totalTime2) ? 'isOrange' : 'blue'}`} value={progressTimesReceived[1]}></IonProgressBar>
-                <div className="divider"></div>
-                <IonButton fill="outline" onClick={() => onClickH(1)}>
-                Play / Stop
-              </IonButton>
-              <div className="divider"></div>
-
-              <IonButton fill="outline" onClick={() => beModerator()}>
+        <IonButton fill="outline" onClick={() => beModerator()}>
               Moderator
               </IonButton>
-              <IonRow>
-                
-                <IonCol size="10">
-                  <IonButton>Done</IonButton>
-                </IonCol>
-              </IonRow>
-              <div className="divider"></div>
-            </div>
-          </IonGrid>
-        </IonCard> */}
+        
       </IonContent>
     </IonPage>
   );
