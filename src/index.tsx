@@ -7,6 +7,10 @@ import { Provider } from 'react-redux'
 import { createStore } from "redux";
 import reducer from "./reducers/reducer";
 
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
+
+// Call the element loader after the app has been rendered the first time
+defineCustomElements(window);
 
 const container = document.getElementById("root");
 const root = createRoot(container!);

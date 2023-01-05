@@ -2,15 +2,19 @@ import {
   IonBackButton,
   IonButton,
   IonButtons,
+  IonCol,
   IonContent,
   IonFab,
   IonFabButton,
+  IonGrid,
   IonHeader,
   IonIcon,
+  IonImg,
   IonItem,
   IonLabel,
   IonModal,
   IonPage,
+  IonRow,
   IonTextarea,
   IonTitle,
   IonToolbar, useIonActionSheet,
@@ -28,7 +32,8 @@ import { useParams } from "react-router";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 
-import {OverlayEventDetail} from "@ionic/react/dist/types/components/react-component-lib/interfaces";
+import { OverlayEventDetail } from "@ionic/react/dist/types/components/react-component-lib/interfaces";
+import { usePhotoGallery, base64FromPath } from '../../hooks/usePhotoGallery';
 
 type CommentValues = {
   passage: string;
@@ -36,15 +41,17 @@ type CommentValues = {
 };
 
 const Comments: React.FC = () => {
+  const { takePhoto } = usePhotoGallery();
+  const [photo, setPhoto] = useState<string>();
   let { bookClubId }: { bookClubId: string } = useParams();
   let { discussionId }: { discussionId: string } = useParams();
-  const user = useSelector((state:any) => state.user.user)
+  const user = useSelector((state: any) => state.user.user)
   const [commentData, setCommentData] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  
+
   const [present] = useIonActionSheet();
   const [result, setResult] = useState<OverlayEventDetail>();
-  
+
   const { register, handleSubmit, reset } = useForm<CommentValues>({
     mode: "onChange",
     defaultValues: {
@@ -52,7 +59,7 @@ const Comments: React.FC = () => {
       text: "",
     },
   });
-  
+
 
   useEffect(() => {
     getCommentData();
@@ -63,10 +70,13 @@ const Comments: React.FC = () => {
     var commentData = await getDiscussionComments(bookClubId, discussionId);
     setCommentData(commentData);
   }
-  
+
   async function createComment(data: any) {
     let userId = user.uid;
-    createCommentDocument(bookClubId, discussionId, Object.assign(data, {moderator: userId}));
+    if (photo != null) {
+      data.photo = await base64FromPath(photo);
+    }
+    createCommentDocument(bookClubId, discussionId, Object.assign(data, { moderator: userId }));
     setIsOpen(false);
   }
 
@@ -78,31 +88,9 @@ const Comments: React.FC = () => {
     setIsOpen(false);
   };
 
-  const actionSheet = () => {
-    present({
-      buttons: [
-        {
-          text: 'Take Photo',
-          data: {
-            action: 'take photo',
-          },
-        },
-        {
-          text: 'Choose Photo from Gallery',
-          data: {
-            action: 'choose photo',
-          },
-        },
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          data: {
-            action: 'cancel',
-          },
-        },
-      ],
-      onDidDismiss: ({ detail }) => setResult(detail),
-    })
+  async function makePhoto(){
+    let newPhoto = await takePhoto();
+    setPhoto(newPhoto);
   }
 
   const addCommentModal = () => {
@@ -120,7 +108,7 @@ const Comments: React.FC = () => {
             </IonItem>
             <IonItem lines="none">
               <div>
-                <IonButton onClick={actionSheet} size="default">
+                <IonButton onClick={() => makePhoto()} size="default">
                   <IonIcon slot="icon-only" icon={camera}></IonIcon>
                 </IonButton>
                 <IonLabel>Add Photo</IonLabel>
@@ -153,11 +141,13 @@ const Comments: React.FC = () => {
               Create
             </IonButton>
           </form>
+          {photo && (
+            <IonImg src={photo} />
+          )}
         </IonContent>
       </IonModal>
     );
   };
-
 
   return (
     <IonPage>
