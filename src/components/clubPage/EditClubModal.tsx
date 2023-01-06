@@ -135,7 +135,6 @@ export const EditClubModal: React.FC<EditClubModalProps> = ({
     <>
       <IonButton onClick={() => setIsOpen(true)}>Edit</IonButton>
       <IonModal
-        swipeToClose
         onDidDismiss={() => setIsOpen(false)}
         isOpen={isOpen}
       >

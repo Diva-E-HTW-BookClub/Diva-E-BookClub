@@ -129,7 +129,6 @@ export const CreateDiscussionModal: React.FC<CreateDiscussionModalProps> = ({
         <IonIcon slot="icon-only" icon={add}></IonIcon>
       </IonButton>
       <IonModal
-        swipeToClose
         isOpen={isOpen}
         onDidDismiss={() => setIsOpen(false)}
       >
