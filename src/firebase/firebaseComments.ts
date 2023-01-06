@@ -34,6 +34,7 @@ async function getCommentDocument(bookClubId:string, discussionId:string, commen
       passage: commentData.passage,
       quote: commentData.quote,
       text: commentData.text,
+      photo: commentData.photo
     }
   }
 }
