@@ -55,3 +55,17 @@
   padding:0 !important;
 }
 
+.playButton{
+  float:left;
+}
+
+.playTitle{
+  margin-left:10px;
+  display: inline;
+  line-height: 34px;
+
+}
+
+.timeDisplay{
+  padding-left:10px;
+}
