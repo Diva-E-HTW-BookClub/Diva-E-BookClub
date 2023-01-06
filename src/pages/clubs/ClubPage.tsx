@@ -21,8 +21,8 @@ import {
   IonSpinner,
 } from "@ionic/react";
 import "./ClubPage.css";
-import {calendar, documents, fileTray, people} from "ionicons/icons";
-import React, {useEffect, useState} from "react";
+import { calendar, documents, fileTray, people } from "ionicons/icons";
+import React, { useEffect, useState } from "react";
 import {
   BookClub,
   getBookClubDocument,
@@ -34,9 +34,9 @@ import { useSelector } from "react-redux";
 import { ArchiveSegment } from "../../components/clubPage/ArchiveSegment";
 import { UpcomingDiscussionsSegment } from "../../components/clubPage/UpcomingDiscussionsSegment";
 import { ResourcesSegment } from "../../components/clubPage/ResourcesSegment";
-import {EditClubModal} from "../../components/clubPage/EditClubModal";
-import {useHistory} from "react-router-dom";
-import {CreateDiscussionModal} from "../../components/clubPage/CreateDiscussionModal";
+import { EditClubModal } from "../../components/clubPage/EditClubModal";
+import { useHistory } from "react-router-dom";
+import { CreateDiscussionModal } from "../../components/clubPage/CreateDiscussionModal";
 
 const ClubPage: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
@@ -62,9 +62,7 @@ const ClubPage: React.FC = () => {
 
   const handleJoinLeave = async () => {
     if (bookClubData != null && !isModerator) {
-      if (
-        bookClubData.members.length < bookClubData.maxMemberNumber
-      ) {
+      if (bookClubData.members.length < bookClubData.maxMemberNumber) {
         await addMember(bookClubId, user.uid);
         getBookClub();
       }
@@ -92,7 +90,11 @@ const ClubPage: React.FC = () => {
           <IonTitle>{clubName}</IonTitle>
           {isModerator && (
             <IonButtons slot="end">
-              <EditClubModal bookClubId={bookClubId} bookClubData={bookClubData} onDismiss={getBookClub}/>
+              <EditClubModal
+                bookClubId={bookClubId}
+                bookClubData={bookClubData}
+                onDismiss={getBookClub}
+              />
             </IonButtons>
           )}
         </IonToolbar>
@@ -122,9 +124,15 @@ const ClubPage: React.FC = () => {
                       </IonLabel>
                     )}
                   </IonChip>
-                  {bookClubData && !isModerator && <IonChip outline color={isMember ? "danger" : ""} onClick={() => handleJoinLeave()}>
-                    {!isMember ? "Join" : "Leave"}
-                  </IonChip>}
+                  {bookClubData && !isModerator && (
+                    <IonChip
+                      outline
+                      color={isMember ? "danger" : ""}
+                      onClick={() => handleJoinLeave()}
+                    >
+                      {!isMember ? "Join" : "Leave"}
+                    </IonChip>
+                  )}
                 </IonItem>
               </IonCol>
               <IonCol sizeMd="2" size="3" className="img-column">
@@ -158,20 +166,25 @@ const ClubPage: React.FC = () => {
           </IonSegment>
         </div>
         {selectedSegment === "calendar" && (
-            <>
+          <>
             <div className="ion-padding-horizontal">
               <IonItem lines="none">
                 <IonLabel>Upcoming Discussions</IonLabel>
-                {isModerator && <CreateDiscussionModal bookClubId={bookClubId} onDismiss={getBookClub}/>}
+                {isModerator && (
+                  <CreateDiscussionModal
+                    bookClubId={bookClubId}
+                    onDismiss={getBookClub}
+                  />
+                )}
               </IonItem>
             </div>
-          <UpcomingDiscussionsSegment
-            bookClubId={bookClubId}
-            isModerator={isModerator}
-            isMember={isMember}
-            bookClubData={bookClubData}
-          />
-            </>
+            <UpcomingDiscussionsSegment
+              bookClubId={bookClubId}
+              isModerator={isModerator}
+              isMember={isMember}
+              bookClubData={bookClubData}
+            />
+          </>
         )}
         {selectedSegment === "resources" && (
           <ResourcesSegment

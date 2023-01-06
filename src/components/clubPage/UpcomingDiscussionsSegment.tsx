@@ -29,53 +29,52 @@ export const UpcomingDiscussionsSegment: React.FC<
   isModerator,
   isMember,
 }: UpcomingDiscussionsSegmentProps) => {
+  if (!bookClubData) {
+    return <IonSpinner></IonSpinner>;
+  }
 
-    if(!bookClubData){
-      return <IonSpinner></IonSpinner>
-    }
+  let discussions = bookClubData?.discussions;
 
-    let discussions = bookClubData?.discussions;
+  let upcomingDiscussions = getUpcomingDiscussions(discussions);
+  let discussionYears = getYearArrayOfDiscussions(upcomingDiscussions);
 
-      let upcomingDiscussions = getUpcomingDiscussions(discussions);
-      let discussionYears = getYearArrayOfDiscussions(upcomingDiscussions);
-
-      return (
-        <>
-          {upcomingDiscussions.length === 0 && (
-            <div className="ion-padding-horizontal">
-              <IonItem lines="none">
-                <IonLabel>
-                  <p>There are no discussions planned</p>
-                </IonLabel>
-              </IonItem>
-            </div>
-          )}
-          {discussionYears.map((year, index) => {
-            return (
-              <IonItemGroup key={index}>
-                <IonItemDivider>{year}</IonItemDivider>
-                {getDiscussionsByYear(year, upcomingDiscussions).map(
-                  (discussion, index) => {
-                    return (
-                      <IonItem class="ion-no-padding" key={index}>
-                        <NewDiscussionCard
-                          bookClubId={bookClubId}
-                          discussionId={discussion.id}
-                          title={discussion.title}
-                          date={discussion.date}
-                          startTime={discussion.startTime}
-                          endTime={discussion.endTime}
-                          discussionLocation={discussion.location}
-                          isMember={isMember}
-                          isModerator={isModerator}
-                        />
-                      </IonItem>
-                    );
-                  }
-                )}
-              </IonItemGroup>
-            );
-          })}
-        </>
-      );
+  return (
+    <>
+      {upcomingDiscussions.length === 0 && (
+        <div className="ion-padding-horizontal">
+          <IonItem lines="none">
+            <IonLabel>
+              <p>There are no discussions planned</p>
+            </IonLabel>
+          </IonItem>
+        </div>
+      )}
+      {discussionYears.map((year, index) => {
+        return (
+          <IonItemGroup key={index}>
+            <IonItemDivider>{year}</IonItemDivider>
+            {getDiscussionsByYear(year, upcomingDiscussions).map(
+              (discussion, index) => {
+                return (
+                  <IonItem class="ion-no-padding" key={index}>
+                    <NewDiscussionCard
+                      bookClubId={bookClubId}
+                      discussionId={discussion.id}
+                      title={discussion.title}
+                      date={discussion.date}
+                      startTime={discussion.startTime}
+                      endTime={discussion.endTime}
+                      discussionLocation={discussion.location}
+                      isMember={isMember}
+                      isModerator={isModerator}
+                    />
+                  </IonItem>
+                );
+              }
+            )}
+          </IonItemGroup>
+        );
+      })}
+    </>
+  );
 };
