@@ -6,15 +6,12 @@ import {
   getYearArrayOfDiscussions,
 } from "../../helpers/discussionSort";
 import {
-  IonButton,
-  IonIcon,
   IonItem,
   IonItemDivider,
   IonItemGroup,
   IonLabel,
   IonSpinner,
 } from "@ionic/react";
-import { add } from "ionicons/icons";
 import { NewDiscussionCard } from "../NewDiscussionCard";
 
 interface UpcomingDiscussionsSegmentProps {
@@ -32,10 +29,13 @@ export const UpcomingDiscussionsSegment: React.FC<
   isModerator,
   isMember,
 }: UpcomingDiscussionsSegmentProps) => {
-  const content = () => {
+
+    if(!bookClubData){
+      return <IonSpinner></IonSpinner>
+    }
+
     let discussions = bookClubData?.discussions;
 
-    if (discussions) {
       let upcomingDiscussions = getUpcomingDiscussions(discussions);
       let discussionYears = getYearArrayOfDiscussions(upcomingDiscussions);
 
@@ -78,27 +78,4 @@ export const UpcomingDiscussionsSegment: React.FC<
           })}
         </>
       );
-    }
-  };
-
-  return (
-    <>
-      <div className="ion-padding-horizontal">
-        <IonItem lines="none">
-          <IonLabel>Upcoming Discussions</IonLabel>
-          {isModerator && (
-            <IonButton
-              fill="clear"
-              slot="end"
-              routerLink={"/clubs/" + bookClubId + "/discussions/add"}
-            >
-              <IonIcon slot="icon-only" icon={add}></IonIcon>
-            </IonButton>
-          )}
-        </IonItem>
-      </div>
-      {!bookClubData && <IonSpinner></IonSpinner>}
-      {bookClubData && content()}
-    </>
-  );
 };

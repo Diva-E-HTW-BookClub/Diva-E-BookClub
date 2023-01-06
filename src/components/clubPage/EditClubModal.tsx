@@ -13,6 +13,7 @@ import {useForm} from "react-hook-form";
 import {BookClub, deleteBookClubDocument, updateBookClubDocument} from "../../firebase/firebaseBookClub";
 import {trashOutline} from "ionicons/icons";
 import "../../pages/clubs/ClubPage.css";
+import {useHistory} from "react-router-dom";
 
 type FormValues = {
     name: string;
@@ -28,6 +29,7 @@ interface EditClubModalProps {
 export const EditClubModal: React.FC<EditClubModalProps> = ({bookClubId, bookClubData, onDismiss}: EditClubModalProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [maxMember, setMaxMember] = useState<number>();
+    const history = useHistory();
 
     const { register, handleSubmit, setValue, reset, formState: {errors} } = useForm<FormValues>({
         mode: "all",
@@ -55,10 +57,10 @@ export const EditClubModal: React.FC<EditClubModalProps> = ({bookClubId, bookClu
     }
 
     async function submitData(data: any) {
-        await updateBookClubDocument(bookClubId, data).then(() => {setIsOpen(false)}).then(onDismiss());
+        await updateBookClubDocument(bookClubId, data).then(() => {setIsOpen(false); onDismiss()});
     }
     async function deleteBookClub() {
-        await deleteBookClubDocument(bookClubId).then(() => {setIsOpen(false)}).then(onDismiss());
+        await deleteBookClubDocument(bookClubId).then(() => {setIsOpen(false); setTimeout(() => history.push("/clubs"), 300)});
     }
 
     const [present] = useIonPicker();
@@ -103,7 +105,7 @@ export const EditClubModal: React.FC<EditClubModalProps> = ({bookClubId, bookClu
     return (
         <>
             <IonButton onClick={() => setIsOpen(true)}>Edit</IonButton>
-        <IonModal isOpen={isOpen}>
+        <IonModal swipeToClose onDidDismiss={() => setIsOpen(false)} isOpen={isOpen}>
             <IonHeader>
                 <IonToolbar>
                     <IonButtons slot="start">

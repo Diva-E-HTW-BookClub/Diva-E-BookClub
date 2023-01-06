@@ -22,7 +22,7 @@ import {
 } from "@ionic/react";
 import "./ClubPage.css";
 import {calendar, documents, fileTray, people} from "ionicons/icons";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   BookClub,
   getBookClubDocument,
@@ -36,6 +36,7 @@ import { UpcomingDiscussionsSegment } from "../../components/clubPage/UpcomingDi
 import { ResourcesSegment } from "../../components/clubPage/ResourcesSegment";
 import {EditClubModal} from "../../components/clubPage/EditClubModal";
 import {useHistory} from "react-router-dom";
+import {CreateDiscussionModal} from "../../components/clubPage/CreateDiscussionModal";
 
 const ClubPage: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
@@ -157,12 +158,20 @@ const ClubPage: React.FC = () => {
           </IonSegment>
         </div>
         {selectedSegment === "calendar" && (
+            <>
+            <div className="ion-padding-horizontal">
+              <IonItem lines="none">
+                <IonLabel>Upcoming Discussions</IonLabel>
+                {isModerator && <CreateDiscussionModal bookClubId={bookClubId} onDismiss={getBookClub}/>}
+              </IonItem>
+            </div>
           <UpcomingDiscussionsSegment
             bookClubId={bookClubId}
             isModerator={isModerator}
             isMember={isMember}
             bookClubData={bookClubData}
           />
+            </>
         )}
         {selectedSegment === "resources" && (
           <ResourcesSegment
