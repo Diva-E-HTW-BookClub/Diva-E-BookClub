@@ -20,14 +20,12 @@ import LoginPage from "./pages/identity/LoginPage";
 import RegisterPage from "./pages/identity/RegisterPage";
 import Agenda from "./pages/Agenda";
 import ClubPage from "./pages/clubs/ClubPage";
-import AddDiscussion from "./pages/discussion/CreateDiscussion";
 import LiveDiscussion from "./pages/discussion/LiveDiscussion";
 import CreateResource from "./pages/resources/CreateResource";
 import StartPage from "./pages/identity/StartPage";
 import Comments from "./pages/comments/Comments";
 
 import EditResource from "./pages/resources/EditResource";
-import EditClubPage from "./pages/clubs/EditClubPage";
 import EditDiscussion from "./pages/discussion/EditDiscussion";
 import EditComment from "./pages/comments/EditComment";
 
@@ -92,10 +90,8 @@ return <IonApp>
 
               <PrivateRoute path="/create_club" component={CreateClubPage} exact/>
               <PrivateRoute path="/clubs/:bookClubId/view" component={ClubPage} exact/>
-              <PrivateRoute path="/clubs/:bookClubId/edit" component={EditClubPage} exact/>
               <PrivateRoute path="/clubs/:bookClubId/resources/add" component={CreateResource} exact/>
               <PrivateRoute path="/clubs/:bookClubId/resources/:resourceId/edit" component={EditResource} exact/>
-              <PrivateRoute path="/clubs/:bookClubId/discussions/add" component={AddDiscussion} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments" component={Comments} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/edit" component={EditDiscussion} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments/:commentId/edit" component={EditComment} exact/>
