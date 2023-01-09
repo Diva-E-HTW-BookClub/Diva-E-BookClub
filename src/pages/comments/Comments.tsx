@@ -12,6 +12,7 @@ import {
   IonImg,
   IonItem,
   IonLabel,
+  IonList,
   IonModal,
   IonPage,
   IonRow,
@@ -23,7 +24,7 @@ import "./Comments.css";
 import React, { useEffect, useState } from "react";
 import { CommentCard } from "../../components/CommentCard";
 
-import { add, camera, document } from "ionicons/icons";
+import { add, camera, document, trashOutline } from "ionicons/icons";
 import {
   createCommentDocument,
   getDiscussionComments,
@@ -73,7 +74,7 @@ const Comments: React.FC = () => {
 
   async function createComment(data: any) {
     let userId = user.uid;
-    if (photo != null) {
+    if (photo != null && photo !== "") {
       data.photo = await base64FromPath(photo);
     }
     createCommentDocument(bookClubId, discussionId, Object.assign(data, { moderator: userId }));
@@ -88,9 +89,13 @@ const Comments: React.FC = () => {
     setIsOpen(false);
   };
 
-  async function makePhoto(){
+  async function makePhoto() {
     let newPhoto = await takePhoto();
     setPhoto(newPhoto);
+  }
+
+  async function deletePhoto() {
+    setPhoto("");
   }
 
   const addCommentModal = () => {
@@ -107,18 +112,22 @@ const Comments: React.FC = () => {
               <h1>Write a Comment</h1>
             </IonItem>
             <IonItem lines="none">
-              <div>
-                <IonButton onClick={() => makePhoto()} size="default">
-                  <IonIcon slot="icon-only" icon={camera}></IonIcon>
-                </IonButton>
-                <IonLabel>Add Photo</IonLabel>
-              </div>
-              <div>
-                <IonButton size="default">
-                  <IonIcon slot="icon-only" icon={document}></IonIcon>
-                </IonButton>
-                <IonLabel>Add Document</IonLabel>
-              </div>
+              {!photo && (
+                <div>
+                  <IonButton onClick={() => makePhoto()} size="default">
+                    <IonIcon slot="icon-only" icon={camera}></IonIcon>
+                  </IonButton>
+                  <IonLabel>Add Photo</IonLabel>
+                </div>
+              )}
+              {photo && (
+                <div className="wrapPhoto">
+                  <IonImg src={photo} />
+                  <IonButton onClick={() => deletePhoto()} color="light" class="deletePhoto">
+                    <IonIcon slot="icon-only" color="danger" icon={trashOutline}></IonIcon>
+                  </IonButton>
+                </div>
+              )}
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">Text Passage</IonLabel>
@@ -165,20 +174,25 @@ const Comments: React.FC = () => {
             <IonTitle size="large">Comments</IonTitle>
           </IonToolbar>
         </IonHeader>
-        {commentData.map((item, index) => {
-          return (
-            <CommentCard
-              commentId={item.commentId}
-              discussionId={discussionId}
-              bookClubId={bookClubId}
-              key={index}
-              userName="PLACEHOLDER NAME"
-              passage={item.passage}
-              text={item.text}
-              moderator={item.moderator}
-            />
-          );
-        })}
+        <IonList>
+          {commentData.map((item, index) => {
+            return (
+              <IonItem class="ion-no-padding" key={index}>
+                <CommentCard
+                  commentId={item.commentId}
+                  discussionId={discussionId}
+                  bookClubId={bookClubId}
+                  key={index}
+                  userName="username"
+                  passage={item.passage}
+                  text={item.text}
+                  moderator={item.moderator}
+                  photo={item.photo}
+                />
+              </IonItem>
+            );
+          })}
+        </IonList>
         <IonFab slot="fixed" vertical="bottom" horizontal="end">
           <IonFabButton onClick={() => setIsOpen(true)}>
             <IonIcon icon={add}></IonIcon>
