@@ -26,7 +26,6 @@ import StartPage from "./pages/identity/StartPage";
 import Comments from "./pages/comments/Comments";
 
 import EditResource from "./pages/resources/EditResource";
-import EditDiscussion from "./pages/discussion/EditDiscussion";
 import EditComment from "./pages/comments/EditComment";
 
 /* Core CSS required for Ionic components to work properly */
@@ -93,7 +92,6 @@ return <IonApp>
               <PrivateRoute path="/clubs/:bookClubId/resources/add" component={CreateResource} exact/>
               <PrivateRoute path="/clubs/:bookClubId/resources/:resourceId/edit" component={EditResource} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments" component={Comments} exact/>
-              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/edit" component={EditDiscussion} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments/:commentId/edit" component={EditComment} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/agenda" component={Agenda} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/live" component={LiveDiscussion}  exact/>
