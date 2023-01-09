@@ -19,6 +19,7 @@ interface UpcomingDiscussionsSegmentProps {
   bookClubData?: BookClub;
   isModerator: boolean;
   isMember: boolean;
+  updatePage: () => void;
 }
 
 export const UpcomingDiscussionsSegment: React.FC<
@@ -28,6 +29,7 @@ export const UpcomingDiscussionsSegment: React.FC<
   bookClubData,
   isModerator,
   isMember,
+  updatePage,
 }: UpcomingDiscussionsSegmentProps) => {
   if (!bookClubData) {
     return <IonSpinner></IonSpinner>;
@@ -65,6 +67,7 @@ export const UpcomingDiscussionsSegment: React.FC<
                       startTime={discussion.startTime}
                       endTime={discussion.endTime}
                       discussionLocation={discussion.location}
+                      updatePage={updatePage}
                       isMember={isMember}
                       isModerator={isModerator}
                     />

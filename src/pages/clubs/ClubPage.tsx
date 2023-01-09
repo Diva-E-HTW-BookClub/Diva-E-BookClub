@@ -19,9 +19,10 @@ import {
   IonItem,
   IonChip,
   IonSpinner,
+  IonButton,
 } from "@ionic/react";
 import "./ClubPage.css";
-import { calendar, documents, fileTray, people } from "ionicons/icons";
+import { add, calendar, documents, fileTray, people } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import {
   BookClub,
@@ -183,23 +184,47 @@ const ClubPage: React.FC = () => {
               isModerator={isModerator}
               isMember={isMember}
               bookClubData={bookClubData}
+              updatePage={getBookClub}
             />
           </>
         )}
         {selectedSegment === "resources" && (
-          <ResourcesSegment
-            bookClubId={bookClubId}
-            isModerator={isModerator}
-            isMember={isMember}
-            bookClubData={bookClubData}
-          />
+          <>
+            <div className="ion-padding-horizontal">
+              <IonItem lines="none">
+                <IonLabel>Resources</IonLabel>
+                {(isMember || isModerator) && (
+                  <IonButton
+                    fill="clear"
+                    slot="end"
+                    routerLink={"/clubs/" + bookClubId + "/resources/add"}
+                  >
+                    <IonIcon slot="icon-only" icon={add}></IonIcon>
+                  </IonButton>
+                )}
+              </IonItem>
+            </div>
+            <ResourcesSegment
+              bookClubId={bookClubId}
+              isModerator={isModerator}
+              isMember={isMember}
+              bookClubData={bookClubData}
+              updatePage={getBookClub}
+            />
+          </>
         )}
         {selectedSegment === "archive" && (
-          <ArchiveSegment
-            bookClubId={bookClubId}
-            isModerator={isModerator}
-            bookClubData={bookClubData}
-          />
+          <>
+            <div className="ion-padding-horizontal">
+              <IonItem lines="none">Past Discussions</IonItem>
+            </div>
+            <ArchiveSegment
+              bookClubId={bookClubId}
+              isModerator={isModerator}
+              bookClubData={bookClubData}
+              updatePage={getBookClub}
+            />
+          </>
         )}
       </IonContent>
     </IonPage>
