@@ -1,12 +1,11 @@
 import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonPage, IonTitle, IonToolbar } from "@ionic/react";
-import { camera } from "ionicons/icons";
-import { stringify } from "querystring";
+import { camera, trashOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
-import { BookClub, Comment, getBookClubDocument, updateBookClubDocument } from "../../firebase/firebaseBookClub";
 import { deleteCommentDocument, getCommentDocument, updateCommentDocument } from "../../firebase/firebaseComments";
 import { usePhotoGallery, base64FromPath } from '../../hooks/usePhotoGallery';
+import "./EditComment.css";
 
 type FormValues = {
     passage: string;
@@ -24,11 +23,12 @@ const EditComment: React.FC = () => {
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormValues>({});
 
     async function submitData(data: any) {
-        if (photo != null) {
+        if (photo === "") {
+            data.photo = null;
+        } else if (photo != null) {
             data.photo = await base64FromPath(photo!);
         }
-        const result = await updateCommentDocument(bookClubId, discussionId, commentId, data)
-        console.log(result)
+        await updateCommentDocument(bookClubId, discussionId, commentId, data);
     }
 
     useEffect(() => {
@@ -51,6 +51,10 @@ const EditComment: React.FC = () => {
         setPhoto(newPhoto);
     }
 
+    async function deletePhoto() {
+        setPhoto("");
+    }
+
     return (
         <IonPage>
             <IonHeader>
@@ -71,12 +75,22 @@ const EditComment: React.FC = () => {
                 </IonHeader>
                 <form onSubmit={handleSubmit(submitData)}>
                     <IonItem lines="none">
-                        <div>
-                            <IonButton onClick={() => makePhoto()} size="default">
-                                <IonIcon slot="icon-only" icon={camera}></IonIcon>
-                            </IonButton>
-                            <IonLabel>Add Photo</IonLabel>
-                        </div>
+                        {!photo && (
+                            <div>
+                                <IonButton onClick={() => makePhoto()} size="default">
+                                    <IonIcon slot="icon-only" icon={camera}></IonIcon>
+                                </IonButton>
+                                <IonLabel>Add Photo</IonLabel>
+                            </div>
+                        )}
+                        {photo && (
+                            <div className="wrapPhoto">
+                                <IonImg src={photo} />
+                                <IonButton onClick={() => deletePhoto()} color="light" class="deletePhoto">
+                                    <IonIcon slot="icon-only" color="danger" icon={trashOutline}></IonIcon>
+                                </IonButton>
+                            </div>
+                        )}
                     </IonItem>
                     <IonItem>
                         <IonLabel position="stacked">
@@ -91,11 +105,8 @@ const EditComment: React.FC = () => {
                         <IonInput {...register("text", {})} />
                     </IonItem>
                     <IonButton type="submit" routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments"}>Update</IonButton>
+                    <IonButton onClick={() => deleteComment()} color="danger" routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments"}>Delete</IonButton>
                 </form>
-                <IonButton onClick={() => deleteComment()} color="danger" routerLink={"/clubs/" + bookClubId + "/discussions/" + discussionId + "/comments"}>Delete</IonButton>
-                {photo && (
-                    <IonImg src={photo} />
-                )}
             </IonContent>
         </IonPage>
     )
