@@ -13,6 +13,7 @@ import {
   IonNote,
   IonTitle,
   IonToolbar,
+  useIonActionSheet,
   useIonPicker,
 } from "@ionic/react";
 import { useForm } from "react-hook-form";
@@ -85,11 +86,11 @@ export const EditClubModal: React.FC<EditClubModalProps> = ({
   async function deleteBookClub() {
     await deleteBookClubDocument(bookClubId).then(() => {
       setIsOpen(false);
-      setTimeout(() => history.push("/clubs"), 300);
+      setTimeout(() => history.push("/clubs"), 200);
     });
   }
 
-  const [present] = useIonPicker();
+  const [presentPicker] = useIonPicker();
 
   const pickerOptions = () => {
     let options = [];
@@ -101,7 +102,7 @@ export const EditClubModal: React.FC<EditClubModalProps> = ({
   };
 
   const openPicker = async () => {
-    await present({
+    await presentPicker({
       columns: [
         {
           name: "maxMember",
@@ -131,13 +132,40 @@ export const EditClubModal: React.FC<EditClubModalProps> = ({
     });
   };
 
+  const [presentActionSheet] = useIonActionSheet();
+
+  const actionSheet = () =>
+    presentActionSheet({
+      header: "Delete Club",
+      subHeader: bookClubData?.name || "",
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: "Delete",
+          role: "destructive",
+          data: {
+            action: "delete",
+          },
+        },
+        {
+          text: "Cancel",
+          role: "cancel",
+          data: {
+            action: "cancel",
+          },
+        },
+      ],
+      onDidDismiss: ({ detail }) => {
+        if (detail.data.action === "delete") {
+          deleteBookClub();
+        }
+      },
+    });
+
   return (
     <>
       <IonButton onClick={() => setIsOpen(true)}>Edit</IonButton>
-      <IonModal
-        onDidDismiss={() => setIsOpen(false)}
-        isOpen={isOpen}
-      >
+      <IonModal onDidDismiss={() => setIsOpen(false)} isOpen={isOpen}>
         <IonHeader>
           <IonToolbar>
             <IonButtons slot="start">
@@ -180,7 +208,7 @@ export const EditClubModal: React.FC<EditClubModalProps> = ({
               <IonButton
                 slot="start"
                 fill="clear"
-                onClick={() => deleteBookClub()}
+                onClick={actionSheet}
                 color="danger"
               >
                 <IonIcon slot="icon-only" icon={trashOutline}></IonIcon>

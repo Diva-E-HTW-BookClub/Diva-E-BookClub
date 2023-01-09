@@ -1,30 +1,36 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonDatetime,
+  IonItem,
+  IonLabel,
+  IonInput,
+  IonButton,
+  IonButtons,
+  IonDatetimeButton,
+  IonModal,
+  IonNote,
+} from "@ionic/react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
+  getDiscussionDocument,
+  updateDiscussionDocument,
+} from "../firebase/firebaseDiscussions";
 import {
   compareDatesAscending,
   datetimeToUtcISOString,
   formatToTimezonedISOString,
   mergeISODateAndISOTime,
-} from "../../helpers/datetimeFormatter";
-import { Controller, useForm } from "react-hook-form";
-import { createDiscussionDocument } from "../../firebase/firebaseDiscussions";
-import {
-  IonButton,
-  IonButtons,
-  IonContent,
-  IonDatetime,
-  IonDatetimeButton,
-  IonHeader,
-  IonIcon,
-  IonInput,
-  IonItem,
-  IonLabel,
-  IonModal,
-  IonNote,
-  IonTitle,
-  IonToolbar,
-} from "@ionic/react";
-import { add } from "ionicons/icons";
+} from "../helpers/datetimeFormatter";
+import { Discussion } from "../firebase/firebaseBookClub";
 
 type FormValues = {
   title: string;
@@ -32,111 +38,125 @@ type FormValues = {
   startTime: string;
   endTime: string;
   location: string;
-  participants: [];
-  agenda: [];
 };
 
-interface CreateDiscussionModalProps {
+interface EditDiscussionModalProps {
   bookClubId: string;
+  discussionId: string;
   onDismiss: () => void;
 }
 
-export const CreateDiscussionModal: React.FC<CreateDiscussionModalProps> = ({
-  bookClubId,
-  onDismiss,
-}: CreateDiscussionModalProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const user = useSelector((state: any) => state.user.user);
+export type ModalHandle = {
+  open: () => void;
+};
 
-  let today = formatToTimezonedISOString(new Date());
-  let todayStartTime = formatToTimezonedISOString(new Date(), "13:00:00");
-  let todayEndTime = formatToTimezonedISOString(new Date(), "14:00:00");
+const EditDiscussionModal = forwardRef<ModalHandle, EditDiscussionModalProps>(
+  ({ bookClubId, discussionId, onDismiss }: EditDiscussionModalProps, ref) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [discussion, setDiscussion] = useState<Discussion>();
 
-  const [minEndTime, setMinEndTime] = useState<string>(todayStartTime);
+    let today = formatToTimezonedISOString(new Date());
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    setValue,
-    getValues,
-    formState: { errors },
-  } = useForm<FormValues>({
-    defaultValues: {
-      title: "",
-      date: today,
-      startTime: todayStartTime,
-      endTime: todayEndTime,
-      location: "",
-      participants: [],
-      agenda: [],
-    },
-    mode: "all",
-  });
+    const [minEndTime, setMinEndTime] = useState<string>();
 
-  function cancelModal() {
-    reset({
-      title: "",
-      date: today,
-      startTime: todayStartTime,
-      endTime: todayEndTime,
-      location: "",
-      participants: [],
-      agenda: [],
+    const {
+      register,
+      handleSubmit,
+      control,
+      setValue,
+      reset,
+      getValues,
+      formState: { errors },
+    } = useForm<FormValues>({
+      mode: "all",
     });
-    setIsOpen(false);
-  }
 
-  async function submitData(data: any) {
-    let userId = user.uid;
-    let utcStartTime = datetimeToUtcISOString(
-      mergeISODateAndISOTime(data.date, data.startTime)
-    );
-    let utcEndTime = datetimeToUtcISOString(
-      mergeISODateAndISOTime(data.date, data.endTime)
-    );
-    //date & startTime have to contain the same exact time point.
-    //it is only used for the merge above. ISO Strings contain date & time anyway
-    await createDiscussionDocument(bookClubId, {
-      title: data.title,
-      date: utcStartTime,
-      startTime: utcStartTime,
-      endTime: utcEndTime,
-      location: data.location,
-      participants: [],
-      agenda: [],
-      moderator: userId,
-    }).then(() => {
+    useEffect(() => {
+      getDiscussion();
+    }, []);
+
+    useImperativeHandle(ref, () => ({
+      open() {
+        setIsOpen(true);
+      },
+    }));
+
+    async function getDiscussion() {
+      let discussionDoc = await getDiscussionDocument(bookClubId, discussionId);
+      setDiscussion(discussionDoc);
+      setMinEndTime(
+        formatToTimezonedISOString(new Date(discussionDoc?.startTime))
+      );
+      setValue("title", discussionDoc?.title);
+      setValue(
+        "date",
+        formatToTimezonedISOString(new Date(discussionDoc?.startTime))
+      );
+      setValue(
+        "startTime",
+        formatToTimezonedISOString(new Date(discussionDoc?.startTime))
+      );
+      setValue(
+        "endTime",
+        formatToTimezonedISOString(new Date(discussionDoc?.endTime))
+      );
+      setValue("location", discussionDoc?.location);
+    }
+
+    function cancelModal() {
+      if (discussion) {
+        reset({
+          title: discussion?.title,
+          date: formatToTimezonedISOString(new Date(discussion.startTime)),
+          startTime: formatToTimezonedISOString(new Date(discussion.startTime)),
+          endTime: formatToTimezonedISOString(new Date(discussion.endTime)),
+          location: discussion.location,
+        });
+      }
       setIsOpen(false);
-      onDismiss();
-    });
-  }
+    }
 
-  const checkIfDateIsPast = (value: string) => {
-    let date = mergeISODateAndISOTime(getValues("date"), value);
-    return compareDatesAscending(date);
-  };
+    async function submitData(data: any) {
+      let utcStartTime = datetimeToUtcISOString(
+        mergeISODateAndISOTime(data.date, data.startTime)
+      );
+      let utcEndTime = datetimeToUtcISOString(
+        mergeISODateAndISOTime(data.date, data.endTime)
+      );
+      //date & startTime have to contain the same exact time point.
+      //it is only used for the merge above. ISO Strings contain date & time anyway
+      await updateDiscussionDocument(bookClubId, discussionId, {
+        title: data.title,
+        date: utcStartTime,
+        startTime: utcStartTime,
+        endTime: utcEndTime,
+        location: data.location,
+      }).then(() => {
+        onDismiss();
+        setIsOpen(false);
+      });
+    }
 
-  const checkIfTimeMismatch = (firstValue: string, secondValue: string) => {
-    return compareDatesAscending(firstValue, secondValue);
-  };
+    const checkIfDateIsPast = (value: string) => {
+      let date = mergeISODateAndISOTime(getValues("date"), value);
+      return compareDatesAscending(date);
+    };
 
-  return (
-    <>
-      <IonButton fill="clear" slot="end" onClick={() => setIsOpen(true)}>
-        <IonIcon slot="icon-only" icon={add}></IonIcon>
-      </IonButton>
-      <IonModal isOpen={isOpen} onDidDismiss={cancelModal}>
+    const checkIfTimeMismatch = (firstValue: string, secondValue: string) => {
+      return compareDatesAscending(firstValue, secondValue);
+    };
+
+    return (
+      <IonModal isOpen={isOpen}>
         <IonHeader>
           <IonToolbar>
             <IonButtons slot="start">
               <IonButton onClick={cancelModal}>Cancel</IonButton>
             </IonButtons>
-            <IonTitle>Add Discussion</IonTitle>
+            <IonTitle>Edit Discussion</IonTitle>
             <IonButtons slot="end">
               <IonButton type="submit" form="createDiscussion">
-                Create
+                Save
               </IonButton>
             </IonButtons>
           </IonToolbar>
@@ -278,6 +298,8 @@ export const CreateDiscussionModal: React.FC<CreateDiscussionModalProps> = ({
           </form>
         </IonContent>
       </IonModal>
-    </>
-  );
-};
+    );
+  }
+);
+
+export default EditDiscussionModal;

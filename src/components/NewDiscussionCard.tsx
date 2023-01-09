@@ -11,6 +11,7 @@ import {
   IonPopover,
   IonRow,
   IonText,
+  useIonActionSheet,
 } from "@ionic/react";
 import {
   getDayValue,
@@ -30,9 +31,11 @@ import "./NewDiscussionCard.css";
 import { useSelector } from "react-redux";
 import {
   addDiscussionParticipant,
+  deleteDiscussionDocument,
   getDiscussionDocument,
   removeDiscussionParticipant,
 } from "../firebase/firebaseDiscussions";
+import EditDiscussionModal, { ModalHandle } from "./EditDiscussionModal";
 
 interface NewDiscussionCardProps {
   bookClubId: string;
@@ -43,6 +46,7 @@ interface NewDiscussionCardProps {
   endTime: string;
   discussionLocation: string;
   isModerator: boolean;
+  updatePage?: () => void;
   isMember?: boolean;
   isDone?: boolean;
 }
@@ -56,6 +60,7 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
   discussionLocation,
   date,
   isModerator,
+  updatePage,
   isMember,
   isDone,
 }: NewDiscussionCardProps) => {
@@ -64,6 +69,8 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
     useState<string[]>();
   const [popoverOpen, setPopoverOpen] = useState(false);
   const popover = useRef<HTMLIonPopoverElement>(null);
+  const editModal = useRef<ModalHandle>(null);
+  const [present] = useIonActionSheet();
 
   useEffect(() => {
     getDiscussionParticipants();
@@ -100,10 +107,42 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
     }
   }
 
+  async function deleteDiscussion() {
+    await deleteDiscussionDocument(bookClubId, discussionId).then(updatePage);
+  }
+
   const openPopover = (e: any) => {
     popover.current!.event = e;
     setPopoverOpen(true);
   };
+
+  const actionSheet = () =>
+    present({
+      header: "Delete Discussion",
+      subHeader: title,
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: "Delete",
+          role: "destructive",
+          data: {
+            action: "delete",
+          },
+        },
+        {
+          text: "Cancel",
+          role: "cancel",
+          data: {
+            action: "cancel",
+          },
+        },
+      ],
+      onDidDismiss: ({ detail }) => {
+        if (detail.data.action === "delete") {
+          deleteDiscussion();
+        }
+      },
+    });
 
   const moderatorPopover = () => {
     return (
@@ -117,15 +156,12 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
           <IonItem
             button
             detail={false}
-            routerLink={
-              "/clubs/" + bookClubId + "/discussions/" + discussionId + "/edit"
-            }
+            onClick={() => editModal.current?.open()}
           >
             <IonLabel class="ion-padding-start">Edit</IonLabel>
             <IonIcon class="ion-padding-end" slot="end" icon={pencil}></IonIcon>
           </IonItem>
-          {/*The Delete Button here does not work yet. Use the Button on the EditDiscussionPage*/}
-          <IonItem button detail={false} lines="none">
+          <IonItem button detail={false} onClick={actionSheet} lines="none">
             <IonLabel class="ion-padding-start" color="danger">
               Delete
             </IonLabel>
@@ -171,6 +207,14 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
                   <IonIcon slot="icon-only" icon={ellipsisVertical}></IonIcon>
                 </IonButton>
                 {moderatorPopover()}
+                {updatePage && (
+                  <EditDiscussionModal
+                    bookClubId={bookClubId}
+                    discussionId={discussionId}
+                    onDismiss={updatePage}
+                    ref={editModal}
+                  />
+                )}
               </>
             )}
           </IonItem>
