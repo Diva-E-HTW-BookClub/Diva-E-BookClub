@@ -119,7 +119,6 @@ export const CreateDiscussionModal: React.FC<CreateDiscussionModalProps> = ({
   };
 
   const checkIfTimeMismatch = (firstValue: string, secondValue: string) => {
-    console.log(compareDatesAscending(firstValue, secondValue));
     return compareDatesAscending(firstValue, secondValue);
   };
 
@@ -128,10 +127,7 @@ export const CreateDiscussionModal: React.FC<CreateDiscussionModalProps> = ({
       <IonButton fill="clear" slot="end" onClick={() => setIsOpen(true)}>
         <IonIcon slot="icon-only" icon={add}></IonIcon>
       </IonButton>
-      <IonModal
-        isOpen={isOpen}
-        onDidDismiss={() => setIsOpen(false)}
-      >
+      <IonModal isOpen={isOpen} onDidDismiss={cancelModal}>
         <IonHeader>
           <IonToolbar>
             <IonButtons slot="start">
