@@ -150,9 +150,6 @@ const Comments: React.FC = () => {
               Create
             </IonButton>
           </form>
-          {photo && (
-            <IonImg src={photo} />
-          )}
         </IonContent>
       </IonModal>
     );
