@@ -1,17 +1,18 @@
 import {
-    IonIcon,
-    IonButton,
-    IonItem,
-    IonLabel,
-    IonPopover,
-    IonList,
-    useIonActionSheet, useIonAlert
+  IonIcon,
+  IonButton,
+  IonItem,
+  IonLabel,
+  IonPopover,
+  IonList,
+  useIonActionSheet,
+  useIonAlert,
 } from "@ionic/react";
 import "./ResourceCard.css";
 import { ellipsisVertical, link, pencil, trashOutline } from "ionicons/icons";
 import React, { useRef, useState } from "react";
 import { deleteResourceDocument } from "../../firebase/firebaseResource";
-import EditResourceModal, {ModalHandle} from "./EditResourceModal";
+import EditResourceModal, { ModalHandle } from "./EditResourceModal";
 
 interface ResourceCardProps {
   title: string;
@@ -67,23 +68,24 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({
       },
     });
 
-  const alert = () => presentAlert({
-    header: "Open this Link?",
+  const alert = () =>
+    presentAlert({
+      header: "Open this Link?",
       message: content,
       buttons: [
-          {
-              text: "Cancel",
-              role: "cancel",
+        {
+          text: "Cancel",
+          role: "cancel",
+        },
+        {
+          text: "Open",
+          role: "confirm",
+          handler: () => {
+            window.open(content);
           },
-          {
-              text: "Open",
-              role: "confirm",
-              handler: () => {
-                  window.open(content);
-              }
-          }
+        },
       ],
-      })
+    });
 
   const openPopover = (e: any) => {
     popover.current!.event = e;
@@ -125,9 +127,9 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({
 
   const linkIcon = () => {
     return (
-        <div className="linkIcon" onClick={alert}>
-          <IonIcon size="large" icon={link}></IonIcon>
-        </div>
+      <div className="linkIcon" onClick={alert}>
+        <IonIcon size="large" icon={link}></IonIcon>
+      </div>
     );
   };
 
@@ -149,14 +151,14 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({
           <IonIcon slot="icon-only" icon={ellipsisVertical}></IonIcon>
         </IonButton>
         {moderatorPopover()}
-          {updatePage && (
-              <EditResourceModal
-                  bookClubId={bookClubId}
-                  resourceId={resourceId}
-                  onDismiss={updatePage}
-                  ref={editModal}
-              />
-          )}
+        {updatePage && (
+          <EditResourceModal
+            bookClubId={bookClubId}
+            resourceId={resourceId}
+            onDismiss={updatePage}
+            ref={editModal}
+          />
+        )}
       </div>
     </IonItem>
   );

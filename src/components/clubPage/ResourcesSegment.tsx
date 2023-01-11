@@ -2,7 +2,8 @@ import {
   IonItem,
   IonItemDivider,
   IonItemGroup,
-  IonLabel, IonList,
+  IonLabel,
+  IonList,
   IonSpinner,
 } from "@ionic/react";
 import { BookClub } from "../../firebase/firebaseBookClub";
@@ -40,19 +41,19 @@ export const ResourcesSegment: React.FC<ResourcesSegmentProps> = ({
         <IonItemGroup>
           <IonItemDivider>Links</IonItemDivider>
           <IonList>
-          {resources.map((resource, index) => {
-            return (
-              <ResourceCard
-                key={index}
-                resourceId={resource.id}
-                title={resource.title}
-                content={resource.content}
-                moderator={resource.moderator}
-                bookClubId={bookClubId}
-                updatePage={updatePage}
-              />
-            );
-          })}
+            {resources.map((resource, index) => {
+              return (
+                <ResourceCard
+                  key={index}
+                  resourceId={resource.id}
+                  title={resource.title}
+                  content={resource.content}
+                  moderator={resource.moderator}
+                  bookClubId={bookClubId}
+                  updatePage={updatePage}
+                />
+              );
+            })}
           </IonList>
         </IonItemGroup>
       )}
