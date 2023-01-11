@@ -1,21 +1,22 @@
-import { IonItem, IonLabel, IonSpinner } from "@ionic/react";
-import React from "react";
+import {
+  IonItem,
+  IonItemDivider,
+  IonItemGroup,
+  IonLabel, IonList,
+  IonSpinner,
+} from "@ionic/react";
 import { BookClub } from "../../firebase/firebaseBookClub";
-import { ResourceCard } from "../ResourceCard";
+import { ResourceCard } from "../resources/ResourceCard";
 
 interface ResourcesSegmentProps {
   bookClubId: string;
   bookClubData?: BookClub;
-  isModerator: boolean;
-  isMember: boolean;
   updatePage: () => void;
 }
 
 export const ResourcesSegment: React.FC<ResourcesSegmentProps> = ({
   bookClubId,
   bookClubData,
-  isModerator,
-  isMember,
   updatePage,
 }: ResourcesSegmentProps) => {
   if (!bookClubData) {
@@ -23,6 +24,7 @@ export const ResourcesSegment: React.FC<ResourcesSegmentProps> = ({
   }
 
   let resources = bookClubData?.resources;
+
   return (
     <>
       {resources.length === 0 && (
@@ -34,18 +36,26 @@ export const ResourcesSegment: React.FC<ResourcesSegmentProps> = ({
           </IonItem>
         </div>
       )}
-      {resources.map((resource, index) => {
-        return (
-            <ResourceCard
+      {resources.length > 0 && (
+        <IonItemGroup>
+          <IonItemDivider>Links</IonItemDivider>
+          <IonList>
+          {resources.map((resource, index) => {
+            return (
+              <ResourceCard
                 key={index}
-              resourceId={resource.id}
-              title={resource.title}
-              content={resource.content}
-              moderator={resource.moderator}
-              bookClubId={bookClubId}
-            />
-        );
-      })}
+                resourceId={resource.id}
+                title={resource.title}
+                content={resource.content}
+                moderator={resource.moderator}
+                bookClubId={bookClubId}
+                updatePage={updatePage}
+              />
+            );
+          })}
+          </IonList>
+        </IonItemGroup>
+      )}
     </>
   );
 };
