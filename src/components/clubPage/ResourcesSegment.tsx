@@ -36,15 +36,14 @@ export const ResourcesSegment: React.FC<ResourcesSegmentProps> = ({
       )}
       {resources.map((resource, index) => {
         return (
-          <div className="ion-padding-horizontal" key={index}>
             <ResourceCard
+                key={index}
               resourceId={resource.id}
               title={resource.title}
               content={resource.content}
               moderator={resource.moderator}
               bookClubId={bookClubId}
             />
-          </div>
         );
       })}
     </>
