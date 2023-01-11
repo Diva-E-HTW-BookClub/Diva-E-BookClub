@@ -267,4 +267,4 @@ export {
   removeMember,
 };
 
-export type { BookClub, Discussion, Comment };
+export type { BookClub, Discussion, Comment, Resource };

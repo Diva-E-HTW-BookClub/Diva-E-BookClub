@@ -31,6 +31,7 @@ import {
   
     if (resourceData) {
       return {
+          id: resourceData.id,
         title: resourceData.title,
         content: resourceData.content,
         moderator: resourceData.moderator
