@@ -203,9 +203,7 @@ async function searchBookClubs(
     // find documents where user is in the list of members
     // to search by members and club name/book title a corresponding index is needed
     // https://console.firebase.google.com/project/diva-e-htw-bookclub/firestore/indexes
-    queryConstraints.push(
-      where("members", "array-contains", memberId)
-    );
+    queryConstraints.push(where("members", "array-contains", memberId));
     let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
     // returns documents from bookClubs collection matching all query constraints
     var results = await getDocs(q);
