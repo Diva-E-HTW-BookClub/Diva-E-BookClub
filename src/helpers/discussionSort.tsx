@@ -9,14 +9,20 @@ function sortDiscussionsByDate(discussions: Discussion[]) {
 
 function getUpcomingDiscussions(discussions: Discussion[]) {
   return discussions.filter((discussion) =>
-    compareDatesAscending(discussion.endTime)
+    compareDatesAscending(discussion.endTime) && discussion.isArchived != true 
   );
 }
 
 function getPastDiscussions(discussions: Discussion[]) {
   return discussions.filter(
-    (discussion) => !compareDatesAscending(discussion.endTime)
+    (discussion) => !compareDatesAscending(discussion.endTime) || discussion.isArchived == true 
   );
+}
+
+function getArchivedDiscussion(discussions: Discussion[]){
+  return discussions.filter(
+    (discussion) => discussion.isArchived == true
+  )
 }
 
 function getDiscussionsByYear(year: string, discussions: Discussion[]) {

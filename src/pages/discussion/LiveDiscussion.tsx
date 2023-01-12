@@ -20,15 +20,18 @@ import {
 import {
   doc,
   setDoc,
+  updateDoc
 } from "firebase/firestore";
 import { firebaseDB } from "../../firebase/firebaseConfig";
 import io from "socket.io-client"
 import "./LiveDiscussion.css";
 import React, { useRef, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { pause, play } from "ionicons/icons";
-import { getDiscussionAgenda } from "../../firebase/firebaseDiscussions";
+import { book, pause, play } from "ionicons/icons";
+import { getDiscussionAgenda,getDiscussionDocument, getDiscussionTitle, updateDiscussionAgenda } from "../../firebase/firebaseDiscussions";
 import { useParams } from "react-router";
+import { useFieldArray, useForm, Controller } from "react-hook-form";
+
 
 interface AgendaPartProps {
   id: number,
@@ -42,24 +45,23 @@ var isModerator = false;
 var emitTimes:number[] = []
 var emitSum = 0;
 var emitStates:boolean[] = []
+var maxParticipants = 0;
 
 const LiveDiscussion: React.FC = () => {
 
   // Information zu der Agenda
   const user = useSelector((state: any) => state.user.user);
   const [agendaParts, setAgendaParts] = useState<any[]>([]);
+  const [agendaTitle, setAgendaTitle] = useState<any[]>([]);
   let { bookClubId }: { bookClubId: string } = useParams();
   let { discussionId }: { discussionId: string } = useParams();
 
   // Liva-Ansicht-Variablen
-  const [playingState, setPlayingState] = useState<boolean[]>([]);
+  const [playingState, setPlayingState] = useState<boolean[]>([false]);
   const [playingStateReceived, setPlayingStateReceived] = useState([false]);
-  const [progressTimesReceived, setProgressTimesReceived] = useState<number[]>([]);
+  const [progressTimesReceived, setProgressTimesReceived] = useState<number[]>([0]);
   const [progressSumReceived, setProgressSumReceived] = useState(0);
-
-  // Discusscion Room
-  // const [discussionRoom, setDiscussionRoom] = useState("")
-
+  const [participantCount, setparticipantCount] = useState(0);
 
   const joinDiscussionRoom = () => {
     if (discussionId !== "") {
@@ -67,6 +69,13 @@ const LiveDiscussion: React.FC = () => {
     }
   }
 
+  type FormValues = {
+    agenda: {
+      name: string;
+      timeLimit: number;
+      elapsedTime: number;
+    }[];
+  };
 
   const changedPlayingState = doc(firebaseDB, "testCollection", "8hh5w2KA9koJTbyMiDuk");
 
@@ -74,6 +83,34 @@ const LiveDiscussion: React.FC = () => {
     isModerator = true;
   }
 
+  async function saveLiveDiscussion(toBeArchived: boolean){
+    var elapsedTimeArray = progressTimesReceived;
+    let nameArray = agendaParts.map(e => e.name)
+    var timeLimitArray = agendaParts.map(e => e.timeLimit)
+    var elapsedTimeArrayInSeconds = elapsedTimeArray.map(function(x, index){
+      return timeLimitArray[index] * x
+    })
+    console.log("AgendaPoints:")
+    console.log(bookClubId)
+    console.log(discussionId)
+    console.log(agendaParts.length)
+    console.log(elapsedTimeArrayInSeconds)
+    console.log(nameArray)
+    console.log(timeLimitArray)
+    console.log(maxParticipants)
+    console.log(toBeArchived)
+    if(agendaParts.length !=0 ){
+    updateDiscussionAgenda(bookClubId, discussionId,agendaParts.length, elapsedTimeArrayInSeconds,nameArray,timeLimitArray, maxParticipants, toBeArchived)
+    }
+    /*
+    const databaseRef = doc(firebaseDB, "bookClubs", String(bookClubId), "discussions", String(discussionId))
+    await updateDoc(databaseRef, {
+      agenda: ["hallo", "hallo"],
+      location: "yes"
+    })
+    */
+  }
+  
   function createPlayingStatesForButton(length: number, index: number) {
     var timeTable = []
     for (var i = 0; i < length; i++) {
@@ -82,7 +119,6 @@ const LiveDiscussion: React.FC = () => {
     if (!playingState[index]) {
       timeTable[index] = true;
     }
-    
     return timeTable;
   }
 
@@ -99,6 +135,7 @@ const LiveDiscussion: React.FC = () => {
     socket.emit("send_time", { emitTimes, discussionId });
     socket.emit("send_sum_time", { emitSum, discussionId });
     }
+    saveLiveDiscussion(false)
   }
 
   
@@ -123,16 +160,13 @@ const LiveDiscussion: React.FC = () => {
         arrayForTimes[i] = 0;
         }
         getAgendaParts()
-        console.log("Kreirtes Ding: " + arrayForTimes)
       }
       else{
         setProgressTimesReceived(data[0])
       }
-      console.log("All times: " + progressTimesReceived)
     });
 
     socket.on("receive_sum_timeStart", (data) => {
-      console.log("Darf nur ein Wert sein: " + data[0])
       if(data[0] == -1 || typeof data[0] == 'undefined'){
         setProgressSumReceived(0)
       }
@@ -140,7 +174,6 @@ const LiveDiscussion: React.FC = () => {
         setProgressSumReceived(data[0])
       }
     });
-    
     
     socket.on("receive_playButton", (data) => {
       if(typeof data.emitStates !== "undefined"){
@@ -167,7 +200,17 @@ const LiveDiscussion: React.FC = () => {
       else{
         setProgressSumReceived(data)
       }
-    });    
+    });
+    
+    socket.on("changeParticipantCount", (data) => {
+      setparticipantCount(data)  
+      console.log("Aktueller Count: " + data)
+      if(maxParticipants <= data){
+        maxParticipants = data;
+      }
+      console.log("Testlänge: "+ agendaParts.length)
+      saveLiveDiscussion(false);
+    });  
   }, [socket]);
 
   
@@ -221,7 +264,9 @@ return () => clearInterval(interval);
 
   async function getAgendaParts() {
     let agendaParts = await getDiscussionAgenda(bookClubId, discussionId);
+    let agendaTitle = await getDiscussionTitle(bookClubId, discussionId);
     setAgendaParts(agendaParts)
+    setAgendaTitle(agendaTitle)
     for(var i = 0; i < agendaParts.length; i++){
       progressTimesReceived[i] = 0;
       playingStateReceived[i] = false;
@@ -229,7 +274,7 @@ return () => clearInterval(interval);
     }
   }
   // convert agenda parts to elapsedTime and timeLimit and sum the values
-  // let totalElapsedTime = agendaParts.map(e => e.elapsedTime).reduce((a, b) => a + b, 0);
+  //let totalElapsedTime = agendaParts.map(e => e.elapsedTime).reduce((a, b) => a + b, 0);
   let totalTimeLimit = agendaParts.map(e => e.timeLimit).reduce((a, b) => a + b, 0);
   let maxTimes = agendaParts.map(e => e.timeLimit)
 
@@ -245,7 +290,8 @@ return () => clearInterval(interval);
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Live Ansicht</IonTitle>
+          <IonTitle>Live Ansicht: {agendaTitle}</IonTitle>
+          <IonTitle>Aktuelle Teilnehmer: {participantCount}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -300,8 +346,10 @@ return () => clearInterval(interval);
         </IonList>
         <IonButton fill="outline" onClick={() => beModerator()}>
               Moderator
-              </IonButton>
-        
+        </IonButton>
+        <IonButton routerLink={"/clubs/" + bookClubId+ "/view"} fill="outline" onClick={() => saveLiveDiscussion(true)}>
+              End discussion
+        </IonButton>
       </IonContent>
     </IonPage>
   );

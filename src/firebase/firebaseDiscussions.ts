@@ -1,3 +1,4 @@
+import { fr } from "date-fns/locale";
 import {
   addDoc,
   arrayRemove,
@@ -65,6 +66,7 @@ async function getDiscussionDocument(bookClubId: string, discussionId: string) {
       participants: discussionData.participants,
       agenda: discussionData.agenda,
       moderator: discussionData.moderator,
+      isArchived: discussionData.isArchived
     };
   }
 }
@@ -170,10 +172,49 @@ async function getDiscussionAgenda(bookClubId: string, discussionId: string) {
   }
 }
 
+async function getDiscussionMaxParticipants(bookClubId: string, discussionId: string) {
+  const discussionDocument = doc(
+    firebaseDB,
+    "bookClubs",
+    bookClubId,
+    "discussions",
+    discussionId
+  );
+
+  let discussionDocResult = await getDoc(discussionDocument);
+  let discussionData = discussionDocResult.data();
+
+  if (discussionData) {
+    return discussionData.maxParticipants;
+  }
+}
+
+async function getDiscussionTitle(bookClubId: string, discussionId: string) {
+  const discussionDocument = doc(
+    firebaseDB,
+    "bookClubs",
+    bookClubId,
+    "discussions",
+    discussionId
+  );
+
+  let discussionDocResult = await getDoc(discussionDocument);
+  let discussionData = discussionDocResult.data();
+
+  if (discussionData) {
+    return discussionData.title;
+  }
+}
+
 async function updateDiscussionAgenda(
   bookClubId: string,
   discussionId: string,
-  data: string
+  amountOfChapter: number,
+  elapsedTimes: any,
+  names: any,
+  timeLimits: any,
+  maxParticipants: number,
+  saveArchive: boolean
 ) {
   const discussionDocument = doc(
     firebaseDB,
@@ -182,9 +223,15 @@ async function updateDiscussionAgenda(
     "discussions",
     discussionId
   );
-  const agenda_update_data = { agenda: data };
-
-  updateDoc(discussionDocument, agenda_update_data);
+  updateDoc(discussionDocument, {agenda:{}})
+  for(let i = 0; i < amountOfChapter; i++){
+    updateDoc(discussionDocument, {agenda:arrayUnion({elapsedTime: elapsedTimes[i], name: names[i], timeLimit: timeLimits[i]})})
+    
+  }
+  if(saveArchive == true){
+    updateDoc(discussionDocument, {isArchived: true})
+  }
+  updateDoc(discussionDocument, {maxParticipants: maxParticipants})
 }
 
 async function deleteDiscussionAgenda(
@@ -203,6 +250,14 @@ async function deleteDiscussionAgenda(
   updateDoc(discussionDocument, agenda_update_data);
 }
 
+async function updateElapsedTimesOfDiscussion(bookClubId: string, discussionId: string, data: any) {
+  console.log(data);
+  const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId), "discussions", String(discussionId));
+  updateDoc(bookClubDocument, data);
+}
+  
+
+
 export {
   createDiscussionDocument,
   updateDiscussionDocument,
@@ -212,6 +267,9 @@ export {
   removeDiscussionParticipant,
   addDiscussionAgenda,
   getDiscussionAgenda,
+  getDiscussionMaxParticipants,
   updateDiscussionAgenda,
+  getDiscussionTitle,
   deleteDiscussionAgenda,
+  updateElapsedTimesOfDiscussion
 };

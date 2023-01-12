@@ -228,6 +228,7 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
             <IonLabel>
               <div className="locationBox">{discussionLocation}</div>
             </IonLabel>
+            
             <IonButton
               fill="clear"
               routerLink={
@@ -240,6 +241,21 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
             >
               <IonIcon slot="icon-only" icon={chatbox}></IonIcon>
             </IonButton>
+            {isDone &&
+            <IonButton
+              fill="clear"
+              routerLink={
+                "/clubs/" +
+                bookClubId +
+                "/discussions/" +
+                discussionId +
+                "/archived"
+              }
+            >
+              <IonIcon slot="icon-only" icon={clipboard}></IonIcon>
+            </IonButton>
+            }
+             {!isDone &&
             <IonButton
               fill="clear"
               routerLink={
@@ -252,6 +268,7 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
             >
               <IonIcon slot="icon-only" icon={clipboard}></IonIcon>
             </IonButton>
+            }
             <IonChip
               disabled={isDone || !isMember}
               onClick={() => handleJoinLeave()}
