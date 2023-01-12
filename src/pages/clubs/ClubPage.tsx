@@ -19,10 +19,9 @@ import {
   IonItem,
   IonChip,
   IonSpinner,
-  IonButton,
 } from "@ionic/react";
 import "./ClubPage.css";
-import { add, calendar, documents, fileTray, people } from "ionicons/icons";
+import { calendar, documents, fileTray, people } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import {
   BookClub,
@@ -38,6 +37,7 @@ import { ResourcesSegment } from "../../components/clubPage/ResourcesSegment";
 import { EditClubModal } from "../../components/clubPage/EditClubModal";
 import { useHistory } from "react-router-dom";
 import { CreateDiscussionModal } from "../../components/clubPage/CreateDiscussionModal";
+import {CreateResourceModal} from "../../components/resources/CreateResourceModal";
 
 const ClubPage: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
@@ -194,20 +194,12 @@ const ClubPage: React.FC = () => {
               <IonItem lines="none">
                 <IonLabel>Resources</IonLabel>
                 {(isMember || isModerator) && (
-                  <IonButton
-                    fill="clear"
-                    slot="end"
-                    routerLink={"/clubs/" + bookClubId + "/resources/add"}
-                  >
-                    <IonIcon slot="icon-only" icon={add}></IonIcon>
-                  </IonButton>
+                  <CreateResourceModal bookClubId={bookClubId} onDismiss={getBookClub} />
                 )}
               </IonItem>
             </div>
             <ResourcesSegment
               bookClubId={bookClubId}
-              isModerator={isModerator}
-              isMember={isMember}
               bookClubData={bookClubData}
               updatePage={getBookClub}
             />
