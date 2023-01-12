@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import {
     IonButton,
-    IonButtons,
+    IonButtons, IonChip,
     IonContent,
     IonHeader,
     IonInfiniteScroll, IonInfiniteScrollContent,
@@ -13,7 +13,7 @@ import {
     IonModal,
     IonNote, IonSearchbar,
     IonTitle,
-    IonToolbar,
+    IonToolbar, useIonPicker,
 } from "@ionic/react";
 import {createBookClubDocument} from "../firebase/firebaseBookClub";
 import {BookCard} from "./BookCard";
@@ -21,7 +21,7 @@ import {useHistory} from "react-router-dom";
 
 type FormValues = {
     name: string;
-    maxMember: number;
+    maxMemberNumber: number;
 };
 
 export type ModalHandle = {
@@ -32,6 +32,7 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
     const history = useHistory();
     const [isOpen, setIsOpen] = useState(false);
     const [books, setBooks] = useState<any[]>([]);
+    const [maxMember, setMaxMember] = useState<number>(1);
     const [selectedBookIndex, setSelectedBookIndex] = useState<number>(0);
     const [query, setQuery] = useState<string>("");
     const user = useSelector((state: any) => state.user.user);
@@ -46,11 +47,12 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
         register,
         handleSubmit,
         reset,
+        setValue,
         formState: { errors },
     } = useForm<FormValues>({
         defaultValues: {
             name: "",
-            maxMember: 1,
+            maxMemberNumber: 1,
         },
         mode: "all",
     });
@@ -107,11 +109,47 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
         }
     }
 
+    const [presentPicker] = useIonPicker();
+
+    const pickerOptions = () => {
+        let options = [];
+        for (let i = 1; i <= 50; i++) {
+            let textLabel = i.toString();
+            options.push({ text: textLabel, value: i });
+        }
+        return options;
+    };
+
+    const openPicker = async () => {
+        await presentPicker({
+            columns: [
+                {
+                    name: "maxMember",
+                    options: pickerOptions(),
+                },
+            ],
+            buttons: [
+                {
+                    text: "Cancel",
+                    role: "cancel",
+                },
+                {
+                    text: "Confirm",
+                    handler: (value) => {
+                            setValue("maxMemberNumber", value.maxMember.value);
+                            setMaxMember(value.maxMember.value);
+                    },
+                },
+            ],
+        });
+    };
+
     function cancelModal() {
         reset({
             name: "",
-            maxMember: 1,
+            maxMemberNumber: 1,
         });
+        setMaxMember(1);
         setIsOpen(false);
         setBooks([]);
         setSelectedBookIndex(0);
@@ -125,7 +163,7 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
             name: data.name,
             moderator: [userId],
             members: [userId],
-            maxMemberNumber: data.maxMember,
+            maxMemberNumber: data.maxMemberNumber,
             book: {
                 title: book.title,
                 authors: book.author_name,
@@ -170,36 +208,32 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
                                 </IonNote>
                             )}
                         </IonItem>
-                        <IonItem className={errors.maxMember ? "ion-invalid" : "ion-valid"}>
-                            <IonLabel position="stacked">Max Number of Members</IonLabel>
-                            <IonInput
-                                placeholder="Enter a number"
-                                {...register("maxMember", {
-                                    required: "Max Number of Members is required",
-                                })}
-                            />
+                        <IonItem className={errors.maxMemberNumber ? "ion-invalid" : "ion-valid"}>
+                            <IonLabel>Max number of members</IonLabel>
+                            <IonChip
+                                onClick={() => openPicker()}
+                                {...register("maxMemberNumber")}
+                            >
+                                {maxMember}
+                            </IonChip>
                             <IonNote slot="helper">
-                                Amount of people that can join your Club (including yourself)
+                                Amount of people that can join your Club<br/>(including yourself)
                             </IonNote>
-                            {errors.maxMember && (
-                                <IonNote slot="error" color={"danger"}>
-                                    {errors.maxMember.message}
-                                </IonNote>
-                            )}
                         </IonItem>
                     </form>
                     <IonSearchbar className="ion-no-padding" placeholder="Find a book" debounce={1000} onIonInput={search}></IonSearchbar>
                     <IonList lines="none">
                         {books.map((book, index) => {
                             return (
-                                <IonItem key={index} onClick={() => setSelectedBookIndex(index)}>
+                                <div onClick={() => setSelectedBookIndex(index)}>
                                     <BookCard
+                                        key={index}
                                         image={book.image}
                                         title={book.title}
                                         author={book.author}
                                         selected={selectedBookIndex === index}
                                     />
-                                </IonItem>
+                                </div>
                             );
                         })}
                     </IonList>
