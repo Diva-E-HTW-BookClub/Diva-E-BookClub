@@ -12,7 +12,6 @@ import {
   IonSegmentButton,
   IonCardTitle,
   IonCardSubtitle,
-  IonButton,
   IonIcon,
   IonBackButton,
   IonButtons,
@@ -35,11 +34,16 @@ import { useSelector } from "react-redux";
 import { ArchiveSegment } from "../../components/clubPage/ArchiveSegment";
 import { UpcomingDiscussionsSegment } from "../../components/clubPage/UpcomingDiscussionsSegment";
 import { ResourcesSegment } from "../../components/clubPage/ResourcesSegment";
+import { EditClubModal } from "../../components/clubPage/EditClubModal";
+import { useHistory } from "react-router-dom";
+import { CreateDiscussionModal } from "../../components/clubPage/CreateDiscussionModal";
+import {CreateResourceModal} from "../../components/resources/CreateResourceModal";
 
 const ClubPage: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
 
   const user = useSelector((state: any) => state.user.user);
+  const history = useHistory();
   const [bookClubData, setBookClubData] = useState<BookClub>();
   const [selectedSegment, setSelectedSegment] = useState<string>("calendar");
   const [isModerator, setIsModerator] = useState<boolean>(false);
@@ -59,9 +63,7 @@ const ClubPage: React.FC = () => {
 
   const handleJoinLeave = async () => {
     if (bookClubData != null && !isModerator) {
-      if (
-        bookClubData.members.length < bookClubData.maxMemberNumber
-      ) {
+      if (bookClubData.members.length < bookClubData.maxMemberNumber) {
         await addMember(bookClubId, user.uid);
         getBookClub();
       }
@@ -83,15 +85,17 @@ const ClubPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/clubs" />
+          <IonButtons onClick={() => history.push("/clubs")} slot="start">
+            <IonBackButton defaultHref="/clubs" text="Clubs"></IonBackButton>
           </IonButtons>
           <IonTitle>{clubName}</IonTitle>
           {isModerator && (
             <IonButtons slot="end">
-              <IonButton routerLink={"/clubs/" + bookClubId + "/edit"}>
-                Edit
-              </IonButton>
+              <EditClubModal
+                bookClubId={bookClubId}
+                bookClubData={bookClubData}
+                onDismiss={getBookClub}
+              />
             </IonButtons>
           )}
         </IonToolbar>
@@ -107,7 +111,6 @@ const ClubPage: React.FC = () => {
                 </IonLabel>
                 <IonItem lines="none">
                   <IonChip
-                    onClick={() => handleJoinLeave()}
                     className={isMember || isModerator ? "chipIsMember" : ""}
                   >
                     <IonIcon
@@ -117,11 +120,20 @@ const ClubPage: React.FC = () => {
                     {!clubMembers || !clubMemberMax ? (
                       <IonSpinner name="dots"></IonSpinner>
                     ) : (
-                      <p className="clubMembersSpacing">
-                        {clubMembers + " / " + clubMemberMax}
-                      </p>
+                      <IonLabel className="clubMembersSpacing">
+                        {clubMembers + " of " + clubMemberMax}
+                      </IonLabel>
                     )}
                   </IonChip>
+                  {bookClubData && !isModerator && (
+                    <IonChip
+                      outline
+                      color={isMember ? "danger" : ""}
+                      onClick={() => handleJoinLeave()}
+                    >
+                      {!isMember ? "Join" : "Leave"}
+                    </IonChip>
+                  )}
                 </IonItem>
               </IonCol>
               <IonCol sizeMd="2" size="3" className="img-column">
@@ -155,27 +167,56 @@ const ClubPage: React.FC = () => {
           </IonSegment>
         </div>
         {selectedSegment === "calendar" && (
-          <UpcomingDiscussionsSegment
-            bookClubId={bookClubId}
-            isModerator={isModerator}
-            isMember={isMember}
-            bookClubData={bookClubData}
-          />
+          <>
+            <div className="ion-padding-horizontal">
+              <IonItem lines="none">
+                <IonLabel>Upcoming Discussions</IonLabel>
+                {isModerator && (
+                  <CreateDiscussionModal
+                    bookClubId={bookClubId}
+                    onDismiss={getBookClub}
+                  />
+                )}
+              </IonItem>
+            </div>
+            <UpcomingDiscussionsSegment
+              bookClubId={bookClubId}
+              isModerator={isModerator}
+              isMember={isMember}
+              bookClubData={bookClubData}
+              updatePage={getBookClub}
+            />
+          </>
         )}
         {selectedSegment === "resources" && (
-          <ResourcesSegment
-            bookClubId={bookClubId}
-            isModerator={isModerator}
-            isMember={isMember}
-            bookClubData={bookClubData}
-          />
+          <>
+            <div className="ion-padding-horizontal">
+              <IonItem lines="none">
+                <IonLabel>Resources</IonLabel>
+                {(isMember || isModerator) && (
+                  <CreateResourceModal bookClubId={bookClubId} onDismiss={getBookClub} />
+                )}
+              </IonItem>
+            </div>
+            <ResourcesSegment
+              bookClubId={bookClubId}
+              bookClubData={bookClubData}
+              updatePage={getBookClub}
+            />
+          </>
         )}
         {selectedSegment === "archive" && (
-          <ArchiveSegment
-            bookClubId={bookClubId}
-            isModerator={isModerator}
-            bookClubData={bookClubData}
-          />
+          <>
+            <div className="ion-padding-horizontal">
+              <IonItem lines="none">Past Discussions</IonItem>
+            </div>
+            <ArchiveSegment
+              bookClubId={bookClubId}
+              isModerator={isModerator}
+              bookClubData={bookClubData}
+              updatePage={getBookClub}
+            />
+          </>
         )}
       </IonContent>
     </IonPage>
