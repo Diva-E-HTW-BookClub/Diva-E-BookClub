@@ -4,7 +4,6 @@ import React, {
   useImperativeHandle,
   useState,
 } from "react";
-import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import {
   IonButton,
@@ -54,7 +53,6 @@ export const EditCommentModal = forwardRef<ModalHandle, EditCommentModalProps>(
     const [isOpen, setIsOpen] = useState(false);
     const [photo, setPhoto] = useState<string>();
     const [comment, setComment] = useState<Comment>();
-    const user = useSelector((state: any) => state.user.user);
 
     const {
       register,
@@ -64,10 +62,6 @@ export const EditCommentModal = forwardRef<ModalHandle, EditCommentModalProps>(
       formState: { errors },
     } = useForm<FormValues>({
       mode: "all",
-      defaultValues: {
-        passage: "",
-        text: "",
-      },
     });
 
     useImperativeHandle(ref, () => ({
@@ -112,17 +106,20 @@ export const EditCommentModal = forwardRef<ModalHandle, EditCommentModalProps>(
     }
 
     async function submitData(data: any) {
-      let userId = user.uid;
-      if (photo != null) {
+      if (photo != null && photo !== "") {
         data.photo = await base64FromPath(photo);
       } else {
-        data.photo = null;
+        data.photo = "";
       }
       await updateCommentDocument(
         bookClubId,
         discussionId,
         commentId,
-        Object.assign(data, { moderator: userId })
+          {
+            passage: data.passage,
+            text: data.text,
+            photo: data.photo,
+          }
       ).then(() => {
         setIsOpen(false);
         onDismiss();
