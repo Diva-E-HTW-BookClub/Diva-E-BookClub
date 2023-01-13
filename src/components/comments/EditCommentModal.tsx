@@ -111,16 +111,11 @@ export const EditCommentModal = forwardRef<ModalHandle, EditCommentModalProps>(
       } else {
         data.photo = "";
       }
-      await updateCommentDocument(
-        bookClubId,
-        discussionId,
-        commentId,
-          {
-            passage: data.passage,
-            text: data.text,
-            photo: data.photo,
-          }
-      ).then(() => {
+      await updateCommentDocument(bookClubId, discussionId, commentId, {
+        passage: data.passage,
+        text: data.text,
+        photo: data.photo,
+      }).then(() => {
         setIsOpen(false);
         onDismiss();
       });

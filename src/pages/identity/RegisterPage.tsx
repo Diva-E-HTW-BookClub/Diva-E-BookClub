@@ -12,12 +12,13 @@ import {
   IonItem,
   IonCheckbox,
   IonRouterLink,
-  IonNote, IonSpinner
+  IonNote,
+  IonSpinner,
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import { registerUser } from "../../firebase/firebaseAuth";
 import { useForm, Controller } from "react-hook-form";
-import {useState} from "react";
+import { useState } from "react";
 
 type FormValues = {
   username: string;
@@ -31,29 +32,39 @@ const RegisterPage: React.FC = () => {
   const history = useHistory();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const { register, control, handleSubmit, setValue, getValues, setError, formState: { errors } } =
-    useForm<FormValues>({
-      defaultValues: {
-        username: "",
-        email: "",
-        password: "",
-        confirmedPassword: "",
-        termsAccepted: false
-      },
-      mode: "all"
-    });
+  const {
+    register,
+    control,
+    handleSubmit,
+    setValue,
+    getValues,
+    setError,
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmedPassword: "",
+      termsAccepted: false,
+    },
+    mode: "all",
+  });
 
   async function submitData(data: any) {
     setIsSubmitting(true);
-      await registerUser(data.email, data.password).then((result) => {
-        // if result has no errors redirect to home page
-        if (result === "") {
-          history.push("/home");
-        } else if (result === "auth/email-already-in-use") {
-          setError("email", { type: "custom", message: "User with this Email already exists" })
-        }
-        setIsSubmitting(false);
-      });
+    await registerUser(data.email, data.password).then((result) => {
+      // if result has no errors redirect to home page
+      if (result === "") {
+        history.push("/home");
+      } else if (result === "auth/email-already-in-use") {
+        setError("email", {
+          type: "custom",
+          message: "User with this Email already exists",
+        });
+      }
+      setIsSubmitting(false);
+    });
   }
 
   return (
@@ -68,16 +79,18 @@ const RegisterPage: React.FC = () => {
       </IonHeader>
       <IonContent>
         <h1>Welcome to Book Club App</h1>
-        <form onSubmit={handleSubmit(submitData)} >
+        <form onSubmit={handleSubmit(submitData)}>
           <IonItem>
             <IonLabel position="stacked">Username</IonLabel>
             <IonInput
               {...register("username", {
-                required: "Username is required"
+                required: "Username is required",
               })}
             />
             {errors.username && (
-                <IonNote slot="error" color={"danger"}>{errors.username.message}</IonNote>
+              <IonNote slot="error" color={"danger"}>
+                {errors.username.message}
+              </IonNote>
             )}
           </IonItem>
 
@@ -88,76 +101,95 @@ const RegisterPage: React.FC = () => {
                 required: "Email is required",
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                  message: "email is invalid"
-                }
+                  message: "email is invalid",
+                },
               })}
             />
             {errors.email && (
-                <IonNote slot="error" color={"danger"}>{errors.email.message}</IonNote>
+              <IonNote slot="error" color={"danger"}>
+                {errors.email.message}
+              </IonNote>
             )}
           </IonItem>
 
           <IonItem className={errors.password ? "ion-invalid" : "ion-valid"}>
             <IonLabel position="stacked">Password</IonLabel>
-            <IonInput type="password"
+            <IonInput
+              type="password"
               {...register("password", {
                 required: "Password is required",
                 minLength: {
                   value: 6,
-                  message: "Should contain at least 6 symbols"
+                  message: "Should contain at least 6 symbols",
                 },
               })}
             />
             {errors.password && (
-                <IonNote slot="error" color={"danger"}>{errors.password.message}</IonNote>
+              <IonNote slot="error" color={"danger"}>
+                {errors.password.message}
+              </IonNote>
             )}
           </IonItem>
 
-          <IonItem className={errors.confirmedPassword ? "ion-invalid" : "ion-valid"}>
+          <IonItem
+            className={errors.confirmedPassword ? "ion-invalid" : "ion-valid"}
+          >
             <IonLabel position="stacked">Confirm password</IonLabel>
-            <IonInput type="password"
+            <IonInput
+              type="password"
               {...register("confirmedPassword", {
                 required: "Please confirm your Password",
-                validate: value => getValues("password") === value || "Passwords do not match"
+                validate: (value) =>
+                  getValues("password") === value || "Passwords do not match",
               })}
             />
             {errors.confirmedPassword && (
-                <IonNote slot="error" color={"danger"}>{errors.confirmedPassword.message}</IonNote>
+              <IonNote slot="error" color={"danger"}>
+                {errors.confirmedPassword.message}
+              </IonNote>
             )}
           </IonItem>
 
-          <IonItem className={errors.termsAccepted ? "ion-valid" : "ion-invalid"}>
+          <IonItem
+            className={errors.termsAccepted ? "ion-valid" : "ion-invalid"}
+          >
             <IonLabel>
               I have taken note of the
               <br />
               data protection regulations
             </IonLabel>
             <Controller
-                name="termsAccepted"
-                control={control}
-                rules={{required: "Please accept our Terms and Conditions"}}
-                render={({field}) => {
-                  return (
-                      <IonCheckbox
-                          checked={field.value}
-                      onIonChange={e => {
-                        setValue("termsAccepted", e.detail.checked);
-                      }}
-                  />)
-                }}
+              name="termsAccepted"
+              control={control}
+              rules={{ required: "Please accept our Terms and Conditions" }}
+              render={({ field }) => {
+                return (
+                  <IonCheckbox
+                    checked={field.value}
+                    onIonChange={(e) => {
+                      setValue("termsAccepted", e.detail.checked);
+                    }}
+                  />
+                );
+              }}
             />
             {errors.termsAccepted && (
-                <IonNote slot="error" color={"danger"}>{errors.termsAccepted.message}</IonNote>
+              <IonNote slot="error" color={"danger"}>
+                {errors.termsAccepted.message}
+              </IonNote>
             )}
           </IonItem>
-          <br/>
+          <br />
           <IonButton expand="block" type="submit">
             {isSubmitting ? <IonSpinner></IonSpinner> : "REGISTER"}
           </IonButton>
           <IonItem lines="none">
             <p>
               Already have an account?
-              <IonRouterLink routerDirection="forward" routerLink="/login"> Log in</IonRouterLink>
+              <IonRouterLink routerDirection="forward" routerLink="/login">
+                {" "}
+                Log in
+              </IonRouterLink>
             </p>
           </IonItem>
         </form>
