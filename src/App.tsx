@@ -15,7 +15,6 @@ import { homeSharp, chatbubblesSharp, personSharp } from "ionicons/icons";
 import HomeTab from "./pages/home/HomeTab";
 import ClubsTab from "./pages/clubs/ClubsTab";
 import ProfileTab from "./pages/profile/ProfileTab";
-import CreateClubPage from "./pages/clubs/CreateClubPage";
 import LoginPage from "./pages/identity/LoginPage";
 import RegisterPage from "./pages/identity/RegisterPage";
 import Agenda from "./pages/Agenda";
@@ -85,7 +84,6 @@ return <IonApp>
                 <Redirect to="/start"/>
               </Route>
 
-              <PrivateRoute path="/create_club" component={CreateClubPage} exact/>
               <PrivateRoute path="/clubs/:bookClubId/view" component={ClubPage} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments" component={Comments} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments/:commentId/edit" component={EditComment} exact/>
