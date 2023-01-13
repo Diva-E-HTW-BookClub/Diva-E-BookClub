@@ -21,6 +21,7 @@ import RegisterPage from "./pages/identity/RegisterPage";
 import Agenda from "./pages/Agenda";
 import ClubPage from "./pages/clubs/ClubPage";
 import LiveDiscussion from "./pages/discussion/LiveDiscussion";
+import ArchivedLiveDiscussion from "./pages/discussion/ArchivedLiveDiscussion";
 import StartPage from "./pages/identity/StartPage";
 import Comments from "./pages/comments/Comments";
 import EditComment from "./pages/comments/EditComment";
@@ -90,6 +91,7 @@ return <IonApp>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments/:commentId/edit" component={EditComment} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/agenda" component={Agenda} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/live" component={LiveDiscussion}  exact/>
+              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/archived" component={ArchivedLiveDiscussion}  exact/>
 
             </IonRouterOutlet>
             <IonTabBar slot="bottom">

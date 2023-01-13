@@ -41,6 +41,7 @@ type Discussion = {
   location: string;
   agenda: [];
   moderator: string;
+  isArchived: boolean;
 };
 
 type Resource = {
@@ -124,6 +125,7 @@ async function getBookClubDocument(bookClubId: string) {
       location: discussionData.location,
       agenda: discussionData.agenda,
       moderator: discussionData.moderator,
+      isArchived: discussionData.isArchived
     });
   });
 
