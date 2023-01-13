@@ -133,10 +133,10 @@ export const EditCommentModal = forwardRef<ModalHandle, EditCommentModalProps>(
             <IonButtons slot="start">
               <IonButton onClick={cancelModal}>Cancel</IonButton>
             </IonButtons>
-            <IonTitle>Add Comment</IonTitle>
+            <IonTitle>Edit Comment</IonTitle>
             <IonButtons slot="end">
               <IonButton type="submit" form="createComment">
-                Create
+                Save
               </IonButton>
             </IonButtons>
           </IonToolbar>
