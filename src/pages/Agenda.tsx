@@ -212,6 +212,8 @@ const Agenda: React.FC = () => {
     return <IonSpinner></IonSpinner>;
   }
 
+ 
+
   return (
     <IonPage>
       <IonHeader>
@@ -312,3 +314,4 @@ const Agenda: React.FC = () => {
 };
 
 export default Agenda;
+

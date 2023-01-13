@@ -20,10 +20,12 @@ import {
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import "./ClubsTab.css";
-import { useEffect, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import { ClubCard } from "../../components/ClubCard";
 import { searchBookClubs, BookClub } from "../../firebase/firebaseBookClub";
 import { useSelector } from "react-redux";
+import {ModalHandle} from "../../components/resources/EditResourceModal";
+import CreateClubModal from "../../components/CreateClubModal";
 
 const ClubsTab: React.FC = () => {
   const [bookClubs, setBookClubs] = useState<BookClub[]>([]);
@@ -31,6 +33,7 @@ const ClubsTab: React.FC = () => {
   const [selectedSegment, setSelectedSegment] = useState<string>("your");
   const [selectedFilter, setSelectedFilter] = useState<string>("name");
   const user = useSelector((state:any) => state.user.user)
+  const createModal = useRef<ModalHandle>(null);
 
   function getCurrentUserId() {
     if(user){
@@ -139,10 +142,11 @@ const ClubsTab: React.FC = () => {
         </IonInfiniteScroll>
 
         <IonFab slot="fixed" vertical="bottom" horizontal="end">
-          <IonFabButton routerLink="/create_club">
+          <IonFabButton onClick={() => createModal.current?.open()}>
             <IonIcon icon={add}></IonIcon>
           </IonFabButton>
         </IonFab>
+        <CreateClubModal ref={createModal}/>
       </IonContent>
     </IonPage>
   );
