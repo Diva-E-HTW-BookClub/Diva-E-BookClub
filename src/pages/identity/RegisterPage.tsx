@@ -17,7 +17,7 @@ import {
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import { registerUser } from "../../firebase/firebaseAuth";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useState } from "react";
 
 type FormValues = {
@@ -34,7 +34,6 @@ const RegisterPage: React.FC = () => {
 
   const {
     register,
-    control,
     handleSubmit,
     setValue,
     getValues,
@@ -149,35 +148,18 @@ const RegisterPage: React.FC = () => {
               </IonNote>
             )}
           </IonItem>
-
-          <IonItem
-            className={errors.termsAccepted ? "ion-valid" : "ion-invalid"}
-          >
+          <IonItem>
             <IonLabel>
               I have taken note of the
               <br />
               data protection regulations
             </IonLabel>
-            <Controller
-              name="termsAccepted"
-              control={control}
-              rules={{ required: "Please accept our Terms and Conditions" }}
-              render={({ field }) => {
-                return (
-                  <IonCheckbox
-                    checked={field.value}
-                    onIonChange={(e) => {
-                      setValue("termsAccepted", e.detail.checked);
-                    }}
-                  />
-                );
-              }}
-            />
-            {errors.termsAccepted && (
-              <IonNote slot="error" color={"danger"}>
-                {errors.termsAccepted.message}
-              </IonNote>
-            )}
+            <IonCheckbox
+                {...register("termsAccepted", {required: "Please accept our Terms and Conditions"})}
+                slot="end"
+                onIonChange={(e) => {e.detail.checked ? setValue("termsAccepted", true) : setValue("termsAccepted", false)}}>
+            </IonCheckbox>
+            {errors.termsAccepted && <IonNote slot="helper" color="danger">{errors.termsAccepted.message}</IonNote>}
           </IonItem>
           <br />
           <IonButton expand="block" type="submit">
