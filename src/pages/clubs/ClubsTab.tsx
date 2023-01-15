@@ -144,6 +144,7 @@ const ClubsTab: React.FC = () => {
             </IonSegmentButton>
           </IonSegment>
         </div>
+        <hr className="separator"></hr>
         <IonList>
           {bookClubs.map((bookClub) => {
             return (
