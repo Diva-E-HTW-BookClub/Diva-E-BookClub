@@ -77,6 +77,7 @@ export const CreateCommentModal = forwardRef<
       passage: "",
       text: "",
     });
+    setPhoto(undefined);
     setIsOpen(false);
   }
 
@@ -90,7 +91,7 @@ export const CreateCommentModal = forwardRef<
       discussionId,
       Object.assign(data, { moderator: userId })
     ).then(() => {
-      setIsOpen(false);
+      cancelModal();
       onDismiss();
     });
   }
