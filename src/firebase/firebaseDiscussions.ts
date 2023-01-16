@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   addDoc,
   arrayRemove,
@@ -10,6 +11,7 @@ import {
   query,
   updateDoc,
 } from "firebase/firestore";
+import { API_URL } from "../constants";
 
 import { firebaseDB } from "./firebaseConfig";
 
@@ -22,10 +24,12 @@ import { firebaseDB } from "./firebaseConfig";
 // }
 
 async function createDiscussionDocument(bookClubId: string, data: any) {
-  var res = await addDoc(
-    collection(firebaseDB, "bookClubs", bookClubId, "discussions"),
-    data
-  );
+  let params =  new URLSearchParams({"bookClubId" : bookClubId})
+  let url = API_URL+"bookClub/discussion?" + params
+  axios.post(url, data)
+    .catch(error => {
+        console.log(error);
+    });
 }
 
 async function updateDiscussionDocument(
@@ -33,38 +37,35 @@ async function updateDiscussionDocument(
   discussionId: string,
   data: any
 ) {
-  const discussionDocument = doc(
-    firebaseDB,
-    "bookClubs",
-    bookClubId,
-    "discussions",
-    discussionId
-  );
-  updateDoc(discussionDocument, data);
+  let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
+  let url = API_URL+"bookClub/discussion?" + params
+  axios.patch(url, data)
+    .catch(error => {
+        console.log(error);
+    });
 }
 
 async function getDiscussionDocument(bookClubId: string, discussionId: string) {
-  const discussionDocument = doc(
-    firebaseDB,
-    "bookClubs",
-    bookClubId,
-    "discussions",
-    discussionId
-  );
-  let discussionDocResult = await getDoc(discussionDocument);
-  let discussionData = discussionDocResult.data();
+  let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
+  let url = API_URL+"bookClub/discussion?" + params
+  const res = await axios.get(url)
+    .then(response => response.data)
+    .then(data => data.result)
+    .catch(error => {
+        console.log(error);
+    });
 
-  if (discussionData) {
+  if (res) {
     return {
-      id: discussionData.id,
-      title: discussionData.title,
-      date: discussionData.date,
-      startTime: discussionData.startTime,
-      endTime: discussionData.endTime,
-      location: discussionData.location,
-      participants: discussionData.participants,
-      agenda: discussionData.agenda,
-      moderator: discussionData.moderator,
+      id: res.id,
+      title: res.title,
+      date: res.date,
+      startTime: res.startTime,
+      endTime: res.endTime,
+      location: res.location,
+      participants: res.participants,
+      agenda: res.agenda,
+      moderator: res.moderator,
     };
   }
 }
@@ -73,32 +74,12 @@ async function deleteDiscussionDocument(
   bookClubId: string,
   discussionId: string
 ) {
-  //delete discussion
-  const discussionDocument = doc(
-    firebaseDB,
-    "bookClubs",
-    bookClubId,
-    "discussions",
-    discussionId
-  );
-  deleteDoc(discussionDocument);
-
-  //delete comments
-  let commentsQuery = query(
-    collection(
-      firebaseDB,
-      "bookClubs",
-      String(bookClubId),
-      "discussions",
-      String(discussionId),
-      "comments"
-    )
-  );
-
-  var commentDocuments = await getDocs(commentsQuery);
-  commentDocuments.forEach((doc) => {
-    deleteDoc(doc.ref);
-  });
+  let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
+  let url = API_URL+"bookClub/discussion?" + params
+  axios.delete(url)
+    .catch(error => {
+        console.log(error);
+    });
 }
 
 async function addDiscussionParticipant(
@@ -106,34 +87,24 @@ async function addDiscussionParticipant(
   discussionId: string,
   participantId: string
 ) {
-  const discussionDocument = doc(
-    firebaseDB,
-    "bookClubs",
-    bookClubId,
-    "discussions",
-    discussionId
-  );
-  // Atomically add a new participant to the "participants" array field.
-  await updateDoc(discussionDocument, {
-    participants: arrayUnion(participantId),
-  });
+  let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId, "participantId":participantId})
+  let url = API_URL+"bookClub/discussion/addParticipant?" + params
+  axios.post(url)
+    .catch(error => {
+        console.log(error);
+    });
 }
 async function removeDiscussionParticipant(
   bookClubId: string,
   discussionId: string,
   participantId: string
 ) {
-  const discussionDocument = doc(
-    firebaseDB,
-    "bookClubs",
-    bookClubId,
-    "discussions",
-    discussionId
-  );
-  // Atomically remove a participant from the "participants" array field.
-  await updateDoc(discussionDocument, {
-    participants: arrayRemove(participantId),
-  });
+  let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId, "participantId":participantId})
+  let url = API_URL+"bookClub/discussion/removeParticipant?" + params
+  axios.post(url)
+    .catch(error => {
+        console.log(error);
+    });
 }
 
 async function addDiscussionAgenda(
@@ -141,32 +112,26 @@ async function addDiscussionAgenda(
   discussionId: string,
   data: any
 ) {
-  const discussionDocument = doc(
-    firebaseDB,
-    "bookClubs",
-    bookClubId,
-    "discussions",
-    discussionId
-  );
-  const agenda_update_data = { agenda: data };
-
-  updateDoc(discussionDocument, agenda_update_data);
+  let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
+  let url = API_URL+"bookClub/discussion/agenda?" + params
+  axios.post(url,data)
+    .catch(error => {
+        console.log(error);
+    });
 }
 
 async function getDiscussionAgenda(bookClubId: string, discussionId: string) {
-  const discussionDocument = doc(
-    firebaseDB,
-    "bookClubs",
-    bookClubId,
-    "discussions",
-    discussionId
-  );
+  let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
+  let url = API_URL+"bookClub/discussion?" + params
+  let res = await axios.post(url)
+    .then(response => response.data)
+    .then(data => data.result)
+    .catch(error => {
+        console.log(error);
+    });
 
-  let discussionDocResult = await getDoc(discussionDocument);
-  let discussionData = discussionDocResult.data();
-
-  if (discussionData) {
-    return discussionData.agenda;
+  if (res) {
+    return res.agenda;
   }
 }
 
@@ -175,32 +140,24 @@ async function updateDiscussionAgenda(
   discussionId: string,
   data: string
 ) {
-  const discussionDocument = doc(
-    firebaseDB,
-    "bookClubs",
-    bookClubId,
-    "discussions",
-    discussionId
-  );
-  const agenda_update_data = { agenda: data };
-
-  updateDoc(discussionDocument, agenda_update_data);
+  let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
+  let url = API_URL+"bookClub/discussion?" + params
+  axios.patch(url,data)
+    .catch(error => {
+        console.log(error);
+    });
 }
 
 async function deleteDiscussionAgenda(
   bookClubId: string,
   discussionId: string
 ) {
-  const discussionDocument = doc(
-    firebaseDB,
-    "bookClubs",
-    bookClubId,
-    "discussions",
-    discussionId
-  );
-  const agenda_update_data = { agenda: "" };
-
-  updateDoc(discussionDocument, agenda_update_data);
+  let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
+  let url = API_URL+"bookClub/discussion?" + params
+  axios.delete(url)
+    .catch(error => {
+        console.log(error);
+    });
 }
 
 export {
