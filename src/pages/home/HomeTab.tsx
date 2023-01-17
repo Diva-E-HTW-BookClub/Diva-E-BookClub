@@ -27,21 +27,27 @@ const HomeTab: React.FC = () => {
             <IonTitle size="large">Home</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonItem>Your next Discussions</IonItem>
+        <IonItem class="nextDiscussions">Your next Discussions</IonItem>
         {isNewUser && (
           <>
             <IonItem lines="none">
               <IonLabel>
+                <div className="label"> 
                 There are no upcoming discussions.
                 <br />
                 Join a Club or create your own!
+                </div>
               </IonLabel>
             </IonItem>
+         
             <IonItem lines="none">
-              <IonButton size="default" routerLink="/clubs">
+            <div className="startButton"> 
+            <IonButton  size="default" routerLink="/clubs">
                 Start Now
               </IonButton>
+              </div>
             </IonItem>
+    
           </>
         )}
         {!isNewUser && (

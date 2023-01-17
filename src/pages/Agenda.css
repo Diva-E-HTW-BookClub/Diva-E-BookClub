@@ -1,0 +1,11 @@
+.agendaTitle {
+    font-size: 30px !important;
+    margin-bottom: 50%;
+
+}
+.agendaDate{
+    flex-direction: column;
+}
+.agenda{
+    margin-top: 40%;
+}

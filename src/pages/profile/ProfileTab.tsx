@@ -56,7 +56,7 @@ const ProfileTab: React.FC = () => {
               <h4>{user.email}</h4>
             </IonItem>
             <IonItem lines="none">
-              <div className="editButton">
+              <div className="editProfileButton">
                 <IonButton
                   size="default"
                   onClick={() => setIsReadOnly(!isReadOnly)}
@@ -64,9 +64,11 @@ const ProfileTab: React.FC = () => {
                   Edit Profile
                 </IonButton>
               </div>
-              <IonButton size="default" onClick={logoutUser}>
+              <div className="logOutButton">
+              <IonButton size="default" color={"danger"} onClick={logoutUser}>
                 logout
               </IonButton>
+              </div>
             </IonItem>
           </>
         )}

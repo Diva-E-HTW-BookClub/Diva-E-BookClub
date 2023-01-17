@@ -32,6 +32,7 @@ import {
   getTimeSlotString,
   getTimezonedDate,
 } from "../helpers/datetimeFormatter";
+import "./Agenda.css";
 
 type FormValues = {
   agenda: {
@@ -95,14 +96,17 @@ const Agenda: React.FC = () => {
       append({
         name: agendaArray[i].name,
         timeLimit: agendaArray[i].timeLimit,
-        elapsedTime: agendaArray[i].elapsedTime
+        elapsedTime: agendaArray[i].elapsedTime,
       });
     }
   }
 
   function calcTotalTime() {
     // convert agenda parts to timeLimit and sum the values
-    let time = getValues().agenda.map(e => e.timeLimit).reduce((a, b) => a + b, 0) / 60;
+    let time =
+      getValues()
+        .agenda.map((e) => e.timeLimit)
+        .reduce((a, b) => a + b, 0) / 60;
     setTotalTime(time);
   }
 
@@ -178,10 +182,12 @@ const Agenda: React.FC = () => {
                   <>
                     {!isReadOnly && (
                       <IonButton {...field} onClick={() => openPicker(index)}>
-                        {(field.value / 60) + " min"}
+                        {field.value / 60 + " min"}
                       </IonButton>
                     )}
-                    {isReadOnly && <IonText>{(field.value / 60) + " min"}</IonText>}
+                    {isReadOnly && (
+                      <IonText>{field.value / 60 + " min"}</IonText>
+                    )}
                   </>
                 )}
                 rules={{ required: true, min: 1 }}
@@ -232,15 +238,21 @@ const Agenda: React.FC = () => {
           <IonList>
             <IonListHeader>
               <IonLabel>
-                <h1>{discussionData.title}</h1>
-                <h2>{getTimezonedDate(discussionData.date)}</h2>
-                <p>
-                  {getTimeSlotString(
-                    discussionData.startTime,
-                    discussionData.endTime
-                  )}
-                </p>
+                <h1 className="agendaTitle">{discussionData.title}</h1>
               </IonLabel>
+              <div className="agendaDate">
+                <IonLabel>
+                  <h2>{getTimezonedDate(discussionData.date)}</h2>
+                </IonLabel>
+                <IonLabel>
+                  <p>
+                    {getTimeSlotString(
+                      discussionData.startTime,
+                      discussionData.endTime
+                    )}
+                  </p>
+                </IonLabel>
+              </div>
             </IonListHeader>
             {inputFields()}
           </IonList>
@@ -252,7 +264,7 @@ const Agenda: React.FC = () => {
                   append({
                     name: "",
                     timeLimit: 5 * 60,
-                    elapsedTime: 0
+                    elapsedTime: 0,
                   });
                   calcTotalTime();
                 }}

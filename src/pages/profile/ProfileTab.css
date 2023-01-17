@@ -10,13 +10,29 @@
   left: 50%;
   margin-right: -50%;
   transform: translate(-50%, -50%);
-
   color: brown;
 }
-
 .editButton {
   margin: auto;
   margin-top: 10%;
   margin-bottom: 10%;
   text-align: center;
+}
+
+.editProfileButton {
+  position: fixed;
+  top: 70%;
+  left: 50%;
+  margin-top: 5%;
+  transform: translate(-50%, -50%);
+
+}
+.logOutButton{
+  position: fixed;
+  top: 70%;
+  left: 50%;
+  margin-top: 23%;
+  transform: translate(-50%, -50%);
+ 
+
 }
