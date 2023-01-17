@@ -20,9 +20,10 @@ import { deleteDiscussionDocument } from "./firebaseDiscussions";
 import { deleteResourceDocument } from "./firebaseResource";
 
 type Comment = {
+  id: string,
   text: string;
   passage: string;
-  commentId: string;
+  photo: string;
   owner: string;
 };
 type Book = {

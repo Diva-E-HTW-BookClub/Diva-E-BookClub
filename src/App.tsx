@@ -23,7 +23,6 @@ import LiveDiscussion from "./pages/discussion/LiveDiscussion";
 import ArchivedLiveDiscussion from "./pages/discussion/ArchivedLiveDiscussion";
 import StartPage from "./pages/identity/StartPage";
 import Comments from "./pages/comments/Comments";
-import EditComment from "./pages/comments/EditComment";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -86,7 +85,6 @@ return <IonApp>
 
               <PrivateRoute path="/clubs/:bookClubId/view" component={ClubPage} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments" component={Comments} exact/>
-              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments/:commentId/edit" component={EditComment} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/agenda" component={Agenda} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/live" component={LiveDiscussion}  exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/archived" component={ArchivedLiveDiscussion}  exact/>

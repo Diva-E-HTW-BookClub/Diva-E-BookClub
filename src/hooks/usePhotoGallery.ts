@@ -40,3 +40,9 @@ export async function base64FromPath(path: string): Promise<string> {
     reader.readAsDataURL(blob);
   });
 }
+
+export function getFileSizeFromBase64(base64String: string){
+  let length = base64String.length - 'data:image/png;base64,'.length;
+  //calc size in bytes
+  return 4 * Math.ceil((length / 4) * 3);
+}
