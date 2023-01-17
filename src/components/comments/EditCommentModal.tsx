@@ -18,10 +18,10 @@ import {
   IonNote,
   IonTextarea,
   IonTitle,
-  IonToolbar,
+  IonToolbar, useIonToast,
 } from "@ionic/react";
-import { camera, informationCircleOutline, trashOutline } from "ionicons/icons";
-import { base64FromPath, usePhotoGallery } from "../../hooks/usePhotoGallery";
+import {alertCircleOutline, camera, informationCircleOutline, trashOutline} from "ionicons/icons";
+import {base64FromPath, getFileSizeFromBase64, usePhotoGallery} from "../../hooks/usePhotoGallery";
 import {
   getCommentDocument,
   updateCommentDocument,
@@ -53,6 +53,7 @@ export const EditCommentModal = forwardRef<ModalHandle, EditCommentModalProps>(
     const [isOpen, setIsOpen] = useState(false);
     const [photo, setPhoto] = useState<string>();
     const [comment, setComment] = useState<Comment>();
+    const [present] = useIonToast();
 
     const {
       register,
@@ -89,7 +90,23 @@ export const EditCommentModal = forwardRef<ModalHandle, EditCommentModalProps>(
 
     async function makePhoto() {
       let newPhoto = await takePhoto();
-      setPhoto(newPhoto);
+      if(newPhoto){
+        let base64String = await base64FromPath(newPhoto);
+        if(getFileSizeFromBase64(base64String) > 1048487){
+          presentToast();
+        }else{
+          setPhoto(newPhoto);
+        }
+      }
+    }
+
+    const presentToast = () => {
+      present({
+        message: 'Photo is larger than 1Mb. Please select a smaller image',
+        duration: 2500,
+        icon: alertCircleOutline,
+        color: "danger"
+      });
     }
 
     async function deletePhoto() {

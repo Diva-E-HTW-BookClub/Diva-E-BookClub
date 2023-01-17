@@ -14,10 +14,10 @@ import {
   IonNote,
   IonTextarea,
   IonTitle,
-  IonToolbar,
+  IonToolbar, useIonToast,
 } from "@ionic/react";
-import { camera, informationCircleOutline, trashOutline } from "ionicons/icons";
-import { base64FromPath, usePhotoGallery } from "../../hooks/usePhotoGallery";
+import {alertCircleOutline, camera, informationCircleOutline, trashOutline} from "ionicons/icons";
+import {base64FromPath, getFileSizeFromBase64, usePhotoGallery} from "../../hooks/usePhotoGallery";
 import { createCommentDocument } from "../../firebase/firebaseComments";
 
 type FormValues = {
@@ -43,6 +43,9 @@ export const CreateCommentModal = forwardRef<
   const [isOpen, setIsOpen] = useState(false);
   const [photo, setPhoto] = useState<string>();
   const user = useSelector((state: any) => state.user.user);
+  const [present] = useIonToast();
+
+  //max photo size = 1048487 bytes
 
   const {
     register,
@@ -65,7 +68,23 @@ export const CreateCommentModal = forwardRef<
 
   async function makePhoto() {
     let newPhoto = await takePhoto();
-    setPhoto(newPhoto);
+    if(newPhoto){
+      let base64String = await base64FromPath(newPhoto);
+      if(getFileSizeFromBase64(base64String) > 1048487){
+        presentToast();
+      }else{
+        setPhoto(newPhoto);
+      }
+    }
+  }
+
+  const presentToast = () => {
+    present({
+      message: 'Photo is larger than 1Mb. Please select a smaller image',
+      duration: 2500,
+      icon: alertCircleOutline,
+      color: "danger"
+    });
   }
 
   async function deletePhoto() {
@@ -85,6 +104,7 @@ export const CreateCommentModal = forwardRef<
     let userId = user.uid;
     if (photo != null) {
       data.photo = await base64FromPath(photo);
+      console.log(data.photo);
     }
     await createCommentDocument(
       bookClubId,
@@ -189,6 +209,7 @@ export const CreateCommentModal = forwardRef<
             <IonIcon slot="start" icon={informationCircleOutline} />
             <IonLabel class="ion-text-wrap">
               <p>
+                Max size of a photo is 1 Mb.<br/>
                 You can also just upload a picture without adding a Passage or
                 Comment.
               </p>
