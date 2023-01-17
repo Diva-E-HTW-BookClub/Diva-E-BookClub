@@ -163,6 +163,27 @@ async function getBookClubDocument(bookClubId: string) {
   }
 }
 
+async function getBookClubsByModerator(moderatorId: string){
+  let queryConstraints = [where("moderator", "array-contains", moderatorId)];
+  let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
+  var results = await getDocs(q);
+  return results.docs.map(docToBookClub);
+}
+
+async function getBookClubsByJoinedMember(memberId: string){
+  let queryConstraints = [
+      where("members", "array-contains", memberId),
+  ];
+  let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
+  var results = await getDocs(q);
+  return (
+      results.docs
+          .map(docToBookClub)
+          // remove clubs where our user is a moderator
+          .filter((bookClub) => !bookClub.moderator.includes(memberId))
+  );
+}
+
 // serch book clubs by their name, book title
 // and where members contains and not contains given member id
 // (needed to find clubs where user is a member and where not)
@@ -266,6 +287,8 @@ export {
   searchBookClubs,
   addMember,
   removeMember,
+    getBookClubsByModerator,
+    getBookClubsByJoinedMember,
 };
 
 export type { BookClub, Discussion, Comment, Resource };
