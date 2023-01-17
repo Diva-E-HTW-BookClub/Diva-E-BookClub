@@ -149,6 +149,7 @@ const Agenda: React.FC = () => {
   const inputFields = () => {
     return (
       <>
+      <div className="inputFields">
         {fields.map((field, index) => {
           return (
             <IonItem key={field.id}>
@@ -200,6 +201,7 @@ const Agenda: React.FC = () => {
             </IonItem>
           );
         })}
+        </div>
       </>
     );
   };
@@ -218,8 +220,11 @@ const Agenda: React.FC = () => {
     return <IonSpinner></IonSpinner>;
   }
 
+ 
+
   return (
     <IonPage>
+      <div className="parent">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -238,11 +243,11 @@ const Agenda: React.FC = () => {
           <IonList>
             <IonListHeader>
               <IonLabel>
-                <h1 className="agendaTitle">{discussionData.title}</h1>
+                <h1 className="agendaTitle">{discussionData.title }</h1>
               </IonLabel>
               <div className="agendaDate">
                 <IonLabel>
-                  <h2>{getTimezonedDate(discussionData.date)}</h2>
+                  <h2 id="date">{getTimezonedDate(discussionData.date)}</h2>
                 </IonLabel>
                 <IonLabel>
                   <p>
@@ -296,31 +301,41 @@ const Agenda: React.FC = () => {
             </IonText>
           </IonItem>
           {isModerator && isReadOnly && (
+            <div className="edit">
             <IonButton onClick={() => setIsReadOnly(!isReadOnly)}>
               Edit
             </IonButton>
+            </div>
           )}
           {!isReadOnly && (
             <>
-              <IonButton fill="outline" onClick={cancelEdit}>
+            <div className="edit">
+              <IonButton fill="outline"  data-inline="true" onClick={cancelEdit}>
                 Cancel
               </IonButton>
+              </div>
+              <div className="liveButton">
               <IonButton type="submit">Save</IonButton>
+              </div>
             </>
           )}
         </form>
         {isReadOnly && (
-          <IonButton
+          <div className="liveButton">
+          <IonButton  data-inline="true"
             routerLink={
               "/clubs/" + bookClubId + "/discussions/" + discussionId + "/live"
             }
           >
             Live
           </IonButton>
+          </div>
         )}
       </IonContent>
+      </div>
     </IonPage>
   );
 };
 
 export default Agenda;
+

@@ -5,7 +5,25 @@
 }
 .agendaDate{
     flex-direction: column;
+    margin-right: 20px;
 }
-.agenda{
-    margin-top: 40%;
+
+#date{
+font-weight: bold;
+}
+
+.liveButton{
+position: absolute;
+right: 30px;
+margin-top: 40px;
+}
+.edit{
+    position: absolute;
+    margin-top: 40px;
+}
+.parent{
+    position: relative;
+}
+.inputFields{
+    margin-top: 10px;
 }
