@@ -20,9 +20,10 @@ import { deleteDiscussionDocument } from "./firebaseDiscussions";
 import { deleteResourceDocument } from "./firebaseResource";
 
 type Comment = {
+  id: string,
   text: string;
   passage: string;
-  commentId: string;
+  photo: string;
   owner: string;
 };
 type Book = {
@@ -41,6 +42,7 @@ type Discussion = {
   location: string;
   agenda: [];
   moderator: string;
+  isArchived: boolean;
 };
 
 type Resource = {
@@ -124,6 +126,7 @@ async function getBookClubDocument(bookClubId: string) {
       location: discussionData.location,
       agenda: discussionData.agenda,
       moderator: discussionData.moderator,
+      isArchived: discussionData.isArchived
     });
   });
 
@@ -203,9 +206,7 @@ async function searchBookClubs(
     // find documents where user is in the list of members
     // to search by members and club name/book title a corresponding index is needed
     // https://console.firebase.google.com/project/diva-e-htw-bookclub/firestore/indexes
-    queryConstraints.push(
-      where("members", "array-contains", memberId)
-    );
+    queryConstraints.push(where("members", "array-contains", memberId));
     let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
     // returns documents from bookClubs collection matching all query constraints
     var results = await getDocs(q);
@@ -267,4 +268,4 @@ export {
   removeMember,
 };
 
-export type { BookClub, Discussion, Comment };
+export type { BookClub, Discussion, Comment, Resource };
