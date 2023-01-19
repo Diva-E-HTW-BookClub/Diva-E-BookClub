@@ -300,13 +300,14 @@ return () => clearInterval(interval);
 
   return (
     <IonPage>
+           <div>
       <IonHeader>
         <IonToolbar>
           <IonTitle>Live Ansicht: {agendaTitle}</IonTitle>
           <IonTitle>Aktuelle Teilnehmer: {participantCount}</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+    <IonContent fullscreen>
         <IonCard>
           <IonCardHeader>
             <IonCardTitle>Total discussion time</IonCardTitle>
@@ -326,10 +327,10 @@ return () => clearInterval(interval);
           {agendaParts.map((agendaPart, index) => {
             return (
               <IonItem className="iten-no-padding" key={index}>
-                <IonCard>
+                <IonCard className="cards">
                   <IonCardHeader>
                     {isModerator &&
-                    <IonButton className="playButton" fill="outline" onClick={() => setButtons(index)}>
+                    <IonButton className="playButton" fill="solid" color={"favorite"} onClick={() => setButtons(index)}>
                     
                       {!playingStateReceived[index] &&
                         <IonIcon className="button-icon" icon={play}></IonIcon>
@@ -358,10 +359,13 @@ return () => clearInterval(interval);
             );
           })}
         </IonList>
-        <IonButton routerLink={"/clubs/" + bookClubId+ "/view"} fill="outline" onClick={() => saveLiveDiscussion(true)}>
-              End discussion
+        <div className="live">
+        <IonButton routerLink= {"/clubs/" + bookClubId+ "/view"} onClick={() => saveLiveDiscussion(true)}>
+              End discussion 
         </IonButton>
+        </div>
       </IonContent>
+      </div>
     </IonPage>
   );
 };
