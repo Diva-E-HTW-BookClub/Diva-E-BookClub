@@ -8,7 +8,13 @@
 }
 
 .swiper-pagination {
-    margin-top: 50px !important;
+    margin-top: 15px !important;
+    position: relative !important;
+
+}
+
+.swiper-pagination-bullet-active {
+    background: #3b432b !important;
 }
 
 .bookTitleHome {
@@ -22,8 +28,8 @@
 }
 
 .verticalSpacing {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
 .flexbox {
@@ -41,7 +47,24 @@
     filter: drop-shadow(0rem 0.3rem 0.3rem rgba(0, 0, 0, 0.65));
 }
 
-.columnClubCard {
+.card {
+    height: 200px;
+}
+
+ion-img::part(image) {
+    max-height: 120px;
+}
+
+@media screen and (min-width: 769px) {
+    ion-img::part(image) {
+        max-height: 170px;
+    }
+}
+
+.columnClubCardHome {
+    height: 190px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     overflow: hidden;
     padding-right: 10px;
     min-height: 8rem;
@@ -50,8 +73,7 @@
     justify-content: space-between;
 }
 
-.img-column {
+.img-columnHome {
     padding-top: 10px;
-    padding-bottom: 5px;
-    min-height: 8rem;
+    padding-bottom: 10px;
 }

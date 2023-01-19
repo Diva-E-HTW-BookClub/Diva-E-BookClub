@@ -44,10 +44,10 @@ export const HomeClubCard: React.FC<HomeClubCardProps> = ({
     };
 
     return (
-        <IonCard routerLink={`/clubs/${id}/view`}>
+        <IonCard routerLink={`/clubs/${id}/view`} className="card">
             <IonGrid className="ion-padding-horizontal">
                 <IonRow className="ion-align-items-center">
-                    <IonCol sizeMd="10" size="9" className="columnClubCard">
+                    <IonCol sizeMd="10" size="9" className="columnClubCardHome">
                         <div className="clubNameHome">{name}</div>
                         <div className="verticalSpacing"></div>
                         <div className="flexStartClubCard">
@@ -75,12 +75,12 @@ export const HomeClubCard: React.FC<HomeClubCardProps> = ({
                             </IonLabel>
                         </div>
                     </IonCol>
-                    <IonCol sizeMd="2" size="3" className="img-column">
+                    <IonCol sizeMd="2" size="3" className="img-columnHome">
                         <IonImg
                             className="clubCardBookCover"
                             alt="assets/images/default_book_cover.jpg"
                             src={image}
-                        />
+                        ></IonImg>
                     </IonCol>
                 </IonRow>
             </IonGrid>
