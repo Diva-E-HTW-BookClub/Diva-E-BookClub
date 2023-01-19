@@ -1,5 +1,5 @@
 import { Discussion } from "../firebase/firebaseBookClub";
-import { compareDatesAscending, getYearValue } from "./datetimeFormatter";
+import {compareDatesAscending, formatToTimezonedISOString, getYearValue} from "./datetimeFormatter";
 
 function sortDiscussionsByDate(discussions: Discussion[]) {
   return discussions.sort((a, b) => {
@@ -46,10 +46,18 @@ function getYearArrayOfDiscussions(discussions: Discussion[]) {
   return years;
 }
 
+function getNextDiscussionsUntilWeeks(discussions: Discussion[], weeks: number) {
+  let upcomingDiscussions = getUpcomingDiscussions(discussions);
+  let endDate = new Date();
+  endDate.setDate(endDate.getDate() + (weeks * 7));
+  return upcomingDiscussions.filter((discussion) => compareDatesAscending(formatToTimezonedISOString(endDate), discussion.startTime));
+}
+
 export {
   sortDiscussionsByDate,
   getUpcomingDiscussions,
   getPastDiscussions,
   getDiscussionsByYear,
   getYearArrayOfDiscussions,
+    getNextDiscussionsUntilWeeks,
 };

@@ -18,6 +18,7 @@ import {
 import { firebaseDB } from "./firebaseConfig";
 import { deleteDiscussionDocument } from "./firebaseDiscussions";
 import { deleteResourceDocument } from "./firebaseResource";
+import {getNextDiscussionsUntilWeeks} from "../helpers/discussionSort";
 
 type Comment = {
   id: string,
@@ -43,6 +44,8 @@ type Discussion = {
   agenda: [];
   moderator: string;
   isArchived: boolean;
+  bookClubId?: string;
+  bookClubName?: string;
 };
 
 type Resource = {
@@ -184,6 +187,22 @@ async function getBookClubsByJoinedMember(memberId: string){
   );
 }
 
+async function getAllDiscussionsOfBookClubsByUser(userId: string){
+  let queryConstraints = [where("members", "array-contains", userId)];
+  let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
+  var results = await getDocs(q);
+  let resultsArray = results.docs.map(docToBookClub);
+  let nextDiscussionArray: Discussion[] = [];
+  for await (const bookClub of resultsArray){
+    await getBookClubDocument(bookClub.id).then((fullBookClub) => {
+      if(fullBookClub) {
+        nextDiscussionArray.push(...getNextDiscussionsUntilWeeks(fullBookClub.discussions, 2))
+      }
+    })
+  }
+  return nextDiscussionArray;
+}
+
 // serch book clubs by their name, book title
 // and where members contains and not contains given member id
 // (needed to find clubs where user is a member and where not)
@@ -289,6 +308,7 @@ export {
   removeMember,
     getBookClubsByModerator,
     getBookClubsByJoinedMember,
+    getAllDiscussionsOfBookClubsByUser,
 };
 
 export type { BookClub, Discussion, Comment, Resource };
