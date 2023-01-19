@@ -15,7 +15,7 @@ import {
   FieldPath,
   startAfter,
 } from "firebase/firestore";
-import { API_URL } from "../constants";
+import { API_URL, REQUEST_CONFIG } from "../constants";
 import axios from 'axios';
 import { getCurrentUser } from "./firebaseAuth";
 
@@ -66,11 +66,7 @@ async function createBookClubDocument(data: BookClub) {
   let user_uid 
   await getCurrentUser().then((user: any) => {user_uid = user.uid})
   let url = API_URL+"bookClub"
-  const res = await axios.post(url, data, {
-    headers: {
-      'Authorization': `Bearer ${user_uid}`
-    }
-  })
+  const res = await axios.post(url, data, REQUEST_CONFIG)
     .then(response => response.data)
     .then(data => data.result)
     .catch(error => {
@@ -83,14 +79,8 @@ async function createBookClubDocument(data: BookClub) {
 async function updateBookClubDocument(bookClubId: string, data: any) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId})
   let url = API_URL+"bookClub?" + params
-  let user_uid 
-  await getCurrentUser().then((user: any) => {user_uid = user.uid})
 
-  axios.patch(url, data, {
-    headers: {
-      'Authorization': `Bearer ${user_uid}`
-    }
-  })
+  axios.patch(url, data, REQUEST_CONFIG)
     .catch(error => {
         console.log(error);
     });
@@ -101,7 +91,7 @@ async function updateBookClubDocument(bookClubId: string, data: any) {
 async function deleteBookClubDocument(bookClubId: string) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId})
   let url = API_URL+"bookClub?" + params
-  axios.delete(url)
+  axios.delete(url, REQUEST_CONFIG)
     .then(response => {
       console.log(response.headers)
       console.log(response.data);
@@ -115,7 +105,7 @@ async function getBookClubDocument(bookClubId: string) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId})
   let url = API_URL+"bookClub?" + params
 
-  const res = await axios.get(url)
+  const res = await axios.get(url, REQUEST_CONFIG)
     .then(response => response.data)
     .then(data => data.result)
     .catch(error => {
@@ -157,7 +147,7 @@ async function searchBookClubs(
     params.append("lastBookClubId", String(lastBookClubId))
   }
   let url = API_URL+"bookClub/search?" + params
-  let res = await axios.get(url)
+  let res = await axios.get(url, REQUEST_CONFIG)
     .then(response => response.data)
     .then(data => data.result)
     .catch(error => {
@@ -190,7 +180,7 @@ async function addMember(bookClubId: string, memberId: string) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId, "memberId": memberId})
   let url = API_URL+"bookClub/addMember?" + params
 
-  const res = await axios.post(url)
+  const res = await axios.post(url, REQUEST_CONFIG)
     .catch(error => {
       console.log(error);
     });
@@ -200,7 +190,7 @@ async function removeMember(bookClubId: string, memberId: string) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId, "memberId": memberId})
   let url = API_URL+"bookClub/removeMember?" + params
 
-  const res = await axios.post(url)
+  const res = await axios.post(url, REQUEST_CONFIG)
     .catch(error => {
       console.log(error);
     });

@@ -12,7 +12,7 @@ import {
     setDoc,
     updateDoc,
   } from "firebase/firestore";
-import { API_URL } from "../constants";
+import { API_URL, REQUEST_CONFIG } from "../constants";
   
   import {  updateBookClubDocument } from "./firebaseBookClub";
   import { firebaseDB } from "./firebaseConfig";
@@ -20,7 +20,7 @@ import { API_URL } from "../constants";
   async function createResourceDocument(bookClubId: string, data: any) {
     let params =  new URLSearchParams({"bookClubId" : bookClubId})
     let url = API_URL+"bookClub/resource?" + params
-    axios.post(url,data)
+    axios.post(url,data, REQUEST_CONFIG)
       .catch(error => {
           console.log(error);
       });
@@ -29,7 +29,7 @@ import { API_URL } from "../constants";
   async function updateResourceDocument(bookClubId: string, resourceId: string, data: any) {
     let params =  new URLSearchParams({"bookClubId" : bookClubId, "resourceId" : resourceId})
     let url = API_URL+"bookClub/resource?" + params
-    axios.patch(url,data)
+    axios.patch(url,data, REQUEST_CONFIG)
       .catch(error => {
           console.log(error);
       });
@@ -38,7 +38,7 @@ import { API_URL } from "../constants";
   async function getResourceDocument(bookClubId: string, resourceId: string) {
     let params =  new URLSearchParams({"bookClubId" : bookClubId, "resourceId" : resourceId})
     let url = API_URL+"bookClub/resource?" + params
-    let res = await axios.get(url)
+    let res = await axios.get(url, REQUEST_CONFIG)
       .then(response => response.data)
       .then(data => data.result)
       .catch(error => {
@@ -57,7 +57,7 @@ import { API_URL } from "../constants";
   async function deleteResourceDocument(bookClubId: string, resourceId: string) {
     let params =  new URLSearchParams({"bookClubId" : bookClubId, "resourceId" : resourceId})
     let url = API_URL+"bookClub/resource?" + params
-    axios.delete(url)
+    axios.delete(url, REQUEST_CONFIG)
       .catch(error => {
           console.log(error);
       });

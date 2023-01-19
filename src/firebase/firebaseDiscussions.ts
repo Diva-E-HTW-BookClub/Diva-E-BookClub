@@ -11,7 +11,7 @@ import {
   query,
   updateDoc,
 } from "firebase/firestore";
-import { API_URL } from "../constants";
+import { API_URL, REQUEST_CONFIG } from "../constants";
 
 import { firebaseDB } from "./firebaseConfig";
 
@@ -26,7 +26,7 @@ import { firebaseDB } from "./firebaseConfig";
 async function createDiscussionDocument(bookClubId: string, data: any) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId})
   let url = API_URL+"bookClub/discussion?" + params
-  axios.post(url, data)
+  axios.post(url, data, REQUEST_CONFIG)
     .catch(error => {
         console.log(error);
     });
@@ -39,7 +39,7 @@ async function updateDiscussionDocument(
 ) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
   let url = API_URL+"bookClub/discussion?" + params
-  axios.patch(url, data)
+  axios.patch(url, data, REQUEST_CONFIG)
     .catch(error => {
         console.log(error);
     });
@@ -48,7 +48,7 @@ async function updateDiscussionDocument(
 async function getDiscussionDocument(bookClubId: string, discussionId: string) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
   let url = API_URL+"bookClub/discussion?" + params
-  const res = await axios.get(url)
+  const res = await axios.get(url, REQUEST_CONFIG)
     .then(response => response.data)
     .then(data => data.result)
     .catch(error => {
@@ -76,7 +76,7 @@ async function deleteDiscussionDocument(
 ) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
   let url = API_URL+"bookClub/discussion?" + params
-  axios.delete(url)
+  axios.delete(url, REQUEST_CONFIG)
     .catch(error => {
         console.log(error);
     });
@@ -89,7 +89,7 @@ async function addDiscussionParticipant(
 ) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId, "participantId":participantId})
   let url = API_URL+"bookClub/discussion/addParticipant?" + params
-  axios.post(url)
+  axios.post(url, REQUEST_CONFIG)
     .catch(error => {
         console.log(error);
     });
@@ -101,7 +101,7 @@ async function removeDiscussionParticipant(
 ) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId, "participantId":participantId})
   let url = API_URL+"bookClub/discussion/removeParticipant?" + params
-  axios.post(url)
+  axios.post(url, REQUEST_CONFIG)
     .catch(error => {
         console.log(error);
     });
@@ -114,7 +114,7 @@ async function addDiscussionAgenda(
 ) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
   let url = API_URL+"bookClub/discussion/agenda?" + params
-  axios.post(url,data)
+  axios.post(url,data, REQUEST_CONFIG)
     .catch(error => {
         console.log(error);
     });
@@ -123,7 +123,7 @@ async function addDiscussionAgenda(
 async function getDiscussionAgenda(bookClubId: string, discussionId: string) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
   let url = API_URL+"bookClub/discussion?" + params
-  let res = await axios.post(url)
+  let res = await axios.post(url, REQUEST_CONFIG)
     .then(response => response.data)
     .then(data => data.result)
     .catch(error => {
@@ -142,7 +142,7 @@ async function updateDiscussionAgenda(
 ) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
   let url = API_URL+"bookClub/discussion?" + params
-  axios.patch(url,data)
+  axios.patch(url,data, REQUEST_CONFIG)
     .catch(error => {
         console.log(error);
     });
@@ -154,7 +154,7 @@ async function deleteDiscussionAgenda(
 ) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
   let url = API_URL+"bookClub/discussion?" + params
-  axios.delete(url)
+  axios.delete(url, REQUEST_CONFIG)
     .catch(error => {
         console.log(error);
     });
