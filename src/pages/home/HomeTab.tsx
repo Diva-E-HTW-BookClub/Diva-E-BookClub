@@ -6,7 +6,7 @@ import {
   IonToolbar,
   IonItem,
   IonLabel,
-  IonButton,
+  IonButton, IonItemGroup, IonItemDivider,
 } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import "./HomeTab.css";
@@ -17,18 +17,20 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css/bundle";
 import { useSelector } from "react-redux";
 import {
-  BookClub,
+  BookClub, Discussion, getAllDiscussionsOfBookClubsByUser,
   getBookClubsByJoinedMember,
   getBookClubsByModerator,
 } from "../../firebase/firebaseBookClub";
 import { HomeClubCard } from "../../components/home/HomeClubCard";
 import {Pagination} from "swiper";
+import {HomeDiscussionCard} from "../../components/home/HomeDiscussionCard";
 
 const HomeTab: React.FC = () => {
   const [isNewUser, setIsNewUser] = useState<boolean>(false);
   const user = useSelector((state: any) => state.user.user);
   const [ownClubs, setOwnClubs] = useState<BookClub[]>();
   const [joinedClubs, setJoinedClubs] = useState<BookClub[]>();
+  const [nextDiscussions, setNextDiscussions] = useState<Discussion[]>()
 
   useEffect(() => {
     getBookClubs();
@@ -39,12 +41,17 @@ const HomeTab: React.FC = () => {
       if (ownBookClubs) {
         setOwnClubs(ownBookClubs);
       }
-    });
+      })
     await getBookClubsByJoinedMember(user.uid).then((joinedBookClubs) => {
       if (joinedBookClubs) {
         setJoinedClubs(joinedBookClubs);
       }
     });
+    await getAllDiscussionsOfBookClubsByUser(user.uid).then((nextDiscussionsArray) => {
+      if(nextDiscussionsArray){
+        setNextDiscussions(nextDiscussionsArray);
+      }
+    })
   }
 
   return (
@@ -78,13 +85,12 @@ const HomeTab: React.FC = () => {
         )}
         {!isNewUser && (
           <>
-            <p className="ion-padding-horizontal">Welcome Back</p>
             {ownClubs && (
               <>
-                <h2 className="ion-padding-horizontal">Own Clubs</h2>
+                <h2 className="h2">Own Clubs</h2>
                 <Swiper
                     modules={[Pagination]}
-                  className="ion-padding-horizontal ion-padding-vertical"
+                  className="ion-padding-horizontal"
                     pagination={{clickable: true}}
                   grabCursor={true}
                   spaceBetween={5}
@@ -112,12 +118,14 @@ const HomeTab: React.FC = () => {
         )}
         {!isNewUser && joinedClubs && (
           <>
-            <h2 className="ion-padding-horizontal">Joined Clubs</h2>
+            <h2 className="h2">Joined Clubs</h2>
             <Swiper
-              className="ion-padding-horizontal"
-              grabCursor={true}
-              spaceBetween={5}
-              slidesPerView={1}
+                modules={[Pagination]}
+                className="ion-padding-horizontal"
+                pagination={{clickable: true}}
+                grabCursor={true}
+                spaceBetween={5}
+                slidesPerView={1}
             >
               {joinedClubs.map((club, index) => {
                 return (
@@ -136,6 +144,26 @@ const HomeTab: React.FC = () => {
               })}
             </Swiper>
           </>
+        )}
+        {nextDiscussions && (
+            <IonItemGroup>
+              <IonItemDivider>2023</IonItemDivider>
+            {nextDiscussions.map((nextDiscussion, index) => {
+              return (
+                  <IonItem key={index}>
+                    <HomeDiscussionCard
+                        bookClubId={"id"}
+                        bookClubName={"BookClubName"}
+                        discussionId={nextDiscussion.id} title={nextDiscussion.title}
+                        date={nextDiscussion.date} startTime={nextDiscussion.startTime}
+                        endTime={nextDiscussion.endTime}
+                        discussionLocation={nextDiscussion.location}
+                        isModerator={true}
+                        isMember={true}
+                    />
+                  </IonItem>
+              )})}
+            </IonItemGroup>
         )}
       </IonContent>
     </IonPage>
