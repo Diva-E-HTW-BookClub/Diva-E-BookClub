@@ -303,10 +303,11 @@ return () => clearInterval(interval);
       <IonHeader>
         <IonToolbar>
           <IonTitle>Live Ansicht: {agendaTitle}</IonTitle>
-          <IonTitle>Aktuelle Teilnehmer: {participantCount}</IonTitle>
+          
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+      <div className="divider-small"></div>
         <IonCard>
           <IonCardHeader>
             <IonCardTitle>Total discussion time</IonCardTitle>
@@ -358,6 +359,9 @@ return () => clearInterval(interval);
             );
           })}
         </IonList>
+        <div className="divider-small"></div>
+        <IonTitle>Aktuelle Teilnehmer: {participantCount}</IonTitle>
+        <div className="divider-small"></div>
         <IonButton routerLink={"/clubs/" + bookClubId+ "/view"} fill="outline" onClick={() => saveLiveDiscussion(true)}>
               End discussion
         </IonButton>
