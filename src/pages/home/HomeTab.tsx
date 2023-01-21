@@ -24,6 +24,7 @@ import {
 import { HomeClubCard } from "../../components/home/HomeClubCard";
 import {Pagination} from "swiper";
 import {HomeDiscussionCard} from "../../components/home/HomeDiscussionCard";
+import {sortDiscussionsByDate} from "../../helpers/discussionSort";
 
 const HomeTab: React.FC = () => {
   const [isNewUser, setIsNewUser] = useState<boolean>(false);
@@ -49,7 +50,7 @@ const HomeTab: React.FC = () => {
     });
     await getAllDiscussionsOfBookClubsByUser(user.uid).then((nextDiscussionsArray) => {
       if(nextDiscussionsArray){
-        setNextDiscussions(nextDiscussionsArray);
+        setNextDiscussions(sortDiscussionsByDate(nextDiscussionsArray));
       }
     })
   }
@@ -87,7 +88,7 @@ const HomeTab: React.FC = () => {
           <>
             {ownClubs && (
               <>
-                <h2 className="h2">Own Clubs</h2>
+                <div className="h2">Own Clubs</div>
                 <Swiper
                     modules={[Pagination]}
                   className="ion-padding-horizontal"
@@ -118,7 +119,7 @@ const HomeTab: React.FC = () => {
         )}
         {!isNewUser && joinedClubs && (
           <>
-            <h2 className="h2">Joined Clubs</h2>
+            <div className="h2">Joined Clubs</div>
             <Swiper
                 modules={[Pagination]}
                 className="ion-padding-horizontal"
@@ -146,24 +147,29 @@ const HomeTab: React.FC = () => {
           </>
         )}
         {nextDiscussions && (
+            <>
+            <div className="h2">Next Discussions</div>
             <IonItemGroup>
               <IonItemDivider>2023</IonItemDivider>
             {nextDiscussions.map((nextDiscussion, index) => {
               return (
                   <IonItem key={index}>
-                    <HomeDiscussionCard
-                        bookClubId={"id"}
-                        bookClubName={"BookClubName"}
-                        discussionId={nextDiscussion.id} title={nextDiscussion.title}
-                        date={nextDiscussion.date} startTime={nextDiscussion.startTime}
-                        endTime={nextDiscussion.endTime}
-                        discussionLocation={nextDiscussion.location}
-                        isModerator={true}
-                        isMember={true}
-                    />
+                    {nextDiscussion.bookClubId && nextDiscussion.bookClubName && (
+                      <HomeDiscussionCard
+                          bookClubId={nextDiscussion.bookClubId}
+                          bookClubName={nextDiscussion.bookClubName}
+                          discussionId={nextDiscussion.id} title={nextDiscussion.title}
+                          date={nextDiscussion.date} startTime={nextDiscussion.startTime}
+                          endTime={nextDiscussion.endTime}
+                          discussionLocation={nextDiscussion.location}
+                          isModerator={true}
+                          isMember={true}
+                      />)
+                    }
                   </IonItem>
               )})}
             </IonItemGroup>
+            </>
         )}
       </IonContent>
     </IonPage>

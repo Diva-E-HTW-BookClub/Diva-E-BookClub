@@ -129,7 +129,7 @@ async function getBookClubDocument(bookClubId: string) {
       location: discussionData.location,
       agenda: discussionData.agenda,
       moderator: discussionData.moderator,
-      isArchived: discussionData.isArchived
+      isArchived: discussionData.isArchived,
     });
   });
 
@@ -153,7 +153,7 @@ async function getBookClubDocument(bookClubId: string) {
 
   if (bookClubData) {
     return {
-      id: bookClubData.id,
+      id: bookClubId,
       name: bookClubData.name,
       moderator: bookClubData.moderator,
       members: bookClubData.members,
@@ -196,7 +196,7 @@ async function getAllDiscussionsOfBookClubsByUser(userId: string){
   for await (const bookClub of resultsArray){
     await getBookClubDocument(bookClub.id).then((fullBookClub) => {
       if(fullBookClub) {
-        nextDiscussionArray.push(...getNextDiscussionsUntilWeeks(fullBookClub.discussions, 2))
+        nextDiscussionArray.push(...getNextDiscussionsUntilWeeks(fullBookClub, 2))
       }
     })
   }
