@@ -6,11 +6,18 @@ import {
   IonToolbar,
   IonItem,
   IonLabel,
-  IonButton, IonItemGroup, IonItemDivider, IonList, IonSpinner, IonRefresher, IonRefresherContent, RefresherEventDetail,
+  IonButton,
+  IonItemGroup,
+  IonItemDivider,
+  IonList,
+  IonSpinner,
+  IonRefresher,
+  IonRefresherContent,
+  RefresherEventDetail,
 } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import "./HomeTab.css";
-import { isPlatform } from "@ionic/react/"
+import { isPlatform } from "@ionic/react/";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -18,21 +25,23 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css/bundle";
 import { useSelector } from "react-redux";
 import {
-  BookClub, Discussion, getAllDiscussionsOfBookClubsByUser,
+  BookClub,
+  Discussion,
+  getAllDiscussionsOfBookClubsByUser,
   getBookClubsByJoinedMember,
   getBookClubsByModerator,
 } from "../../firebase/firebaseBookClub";
 import { HomeClubCard } from "../../components/home/HomeClubCard";
-import {Pagination} from "swiper";
-import {HomeDiscussionCard} from "../../components/home/HomeDiscussionCard";
-import {sortDiscussionsByDate} from "../../helpers/discussionSort";
+import { Pagination } from "swiper";
+import { HomeDiscussionCard } from "../../components/home/HomeDiscussionCard";
+import { sortDiscussionsByDate } from "../../helpers/discussionSort";
 
 const HomeTab: React.FC = () => {
   const [isNewUser, setIsNewUser] = useState<boolean>(false);
   const user = useSelector((state: any) => state.user.user);
   const [ownClubs, setOwnClubs] = useState<BookClub[]>();
   const [joinedClubs, setJoinedClubs] = useState<BookClub[]>();
-  const [nextDiscussions, setNextDiscussions] = useState<Discussion[]>()
+  const [nextDiscussions, setNextDiscussions] = useState<Discussion[]>();
   const [isLoadingDiscussions, setIsLoadingDiscussions] = useState<boolean>();
 
   useEffect(() => {
@@ -45,31 +54,35 @@ const HomeTab: React.FC = () => {
       if (ownBookClubs) {
         setOwnClubs(ownBookClubs);
       }
-      })
+    });
     await getBookClubsByJoinedMember(user.uid).then((joinedBookClubs) => {
       if (joinedBookClubs) {
         setJoinedClubs(joinedBookClubs);
       }
     });
-    await getAllDiscussionsOfBookClubsByUser(user.uid).then((nextDiscussionsArray) => {
-      if(nextDiscussionsArray){
-        setNextDiscussions(sortDiscussionsByDate(nextDiscussionsArray));
+    await getAllDiscussionsOfBookClubsByUser(user.uid).then(
+      (nextDiscussionsArray) => {
+        if (nextDiscussionsArray) {
+          setNextDiscussions(sortDiscussionsByDate(nextDiscussionsArray));
+        }
+        setIsLoadingDiscussions(false);
       }
-      setIsLoadingDiscussions(false);
-    })
+    );
   }
 
   async function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
-      await getBookClubs().then(() => {event.detail.complete()})
+    await getBookClubs().then(() => {
+      event.detail.complete();
+    });
   }
 
   function getNumberOfVisibleSlides() {
-    if(isPlatform("tablet" || "ipad")){
-      return 2
-    }else if(isPlatform("desktop")){
-      return 3
-    }else{
-      return 1
+    if (isPlatform("tablet" || "ipad")) {
+      return 2;
+    } else if (isPlatform("desktop")) {
+      return 3;
+    } else {
+      return 1;
     }
   }
 
@@ -111,9 +124,9 @@ const HomeTab: React.FC = () => {
               <>
                 <div className="h2">Own Clubs</div>
                 <Swiper
-                    modules={[Pagination]}
+                  modules={[Pagination]}
                   className="ion-padding-horizontal"
-                    pagination={{clickable: true}}
+                  pagination={{ clickable: true }}
                   grabCursor={true}
                   spaceBetween={5}
                   slidesPerView={getNumberOfVisibleSlides()}
@@ -142,12 +155,12 @@ const HomeTab: React.FC = () => {
           <>
             <div className="h2">Joined Clubs</div>
             <Swiper
-                modules={[Pagination]}
-                className="ion-padding-horizontal"
-                pagination={{clickable: true}}
-                grabCursor={true}
-                spaceBetween={5}
-                slidesPerView={getNumberOfVisibleSlides()}
+              modules={[Pagination]}
+              className="ion-padding-horizontal"
+              pagination={{ clickable: true }}
+              grabCursor={true}
+              spaceBetween={5}
+              slidesPerView={getNumberOfVisibleSlides()}
             >
               {joinedClubs.map((club, index) => {
                 return (
@@ -168,35 +181,44 @@ const HomeTab: React.FC = () => {
           </>
         )}
         {isLoadingDiscussions && (
-            <div className="centeredLoader">
-              <IonSpinner className="flexbox"></IonSpinner>
-              <IonLabel className="flexbox ion-text-wrap">Checking for next Discussions</IonLabel>
-            </div>
+          <div className="centeredLoader">
+            <IonSpinner className="flexbox"></IonSpinner>
+            <IonLabel className="flexbox ion-text-wrap">
+              Checking for next Discussions
+            </IonLabel>
+          </div>
         )}
         {nextDiscussions && (
-            <>
+          <>
             <div className="h2">Next Discussions</div>
             <IonItemGroup>
               <IonItemDivider>2023</IonItemDivider>
               <IonList>
-            {nextDiscussions.map((nextDiscussion, index) => {
-              if(nextDiscussion.bookClubId && nextDiscussion.bookClubName){
-              return (
+                {nextDiscussions.map((nextDiscussion, index) => {
+                  if (
+                    nextDiscussion.bookClubId &&
+                    nextDiscussion.bookClubName
+                  ) {
+                    return (
                       <HomeDiscussionCard
-                          key={index}
-                          bookClubId={nextDiscussion.bookClubId}
-                          bookClubName={nextDiscussion.bookClubName}
-                          discussionId={nextDiscussion.id} title={nextDiscussion.title}
-                          date={nextDiscussion.date} startTime={nextDiscussion.startTime}
-                          endTime={nextDiscussion.endTime}
-                          discussionLocation={nextDiscussion.location}
-                          isModerator={true}
-                          isMember={true}
-                      />)
-              }})}
+                        key={index}
+                        bookClubId={nextDiscussion.bookClubId}
+                        bookClubName={nextDiscussion.bookClubName}
+                        discussionId={nextDiscussion.id}
+                        title={nextDiscussion.title}
+                        date={nextDiscussion.date}
+                        startTime={nextDiscussion.startTime}
+                        endTime={nextDiscussion.endTime}
+                        discussionLocation={nextDiscussion.location}
+                        isModerator={true}
+                        isMember={true}
+                      />
+                    );
+                  }
+                })}
               </IonList>
             </IonItemGroup>
-            </>
+          </>
         )}
       </IonContent>
     </IonPage>
