@@ -6,10 +6,11 @@ import {
   IonToolbar,
   IonItem,
   IonLabel,
-  IonButton, IonItemGroup, IonItemDivider,
+  IonButton, IonItemGroup, IonItemDivider, IonList, IonSpinner, IonRefresher, IonRefresherContent, RefresherEventDetail,
 } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import "./HomeTab.css";
+import { isPlatform } from "@ionic/react/"
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -32,12 +33,14 @@ const HomeTab: React.FC = () => {
   const [ownClubs, setOwnClubs] = useState<BookClub[]>();
   const [joinedClubs, setJoinedClubs] = useState<BookClub[]>();
   const [nextDiscussions, setNextDiscussions] = useState<Discussion[]>()
+  const [isLoadingDiscussions, setIsLoadingDiscussions] = useState<boolean>();
 
   useEffect(() => {
     getBookClubs();
   }, []);
 
   async function getBookClubs() {
+    setIsLoadingDiscussions(true);
     await getBookClubsByModerator(user.uid).then((ownBookClubs) => {
       if (ownBookClubs) {
         setOwnClubs(ownBookClubs);
@@ -52,7 +55,22 @@ const HomeTab: React.FC = () => {
       if(nextDiscussionsArray){
         setNextDiscussions(sortDiscussionsByDate(nextDiscussionsArray));
       }
+      setIsLoadingDiscussions(false);
     })
+  }
+
+  async function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
+      await getBookClubs().then(() => {event.detail.complete()})
+  }
+
+  function getNumberOfVisibleSlides() {
+    if(isPlatform("tablet" || "ipad")){
+      return 2
+    }else if(isPlatform("desktop")){
+      return 3
+    }else{
+      return 1
+    }
   }
 
   return (
@@ -68,6 +86,9 @@ const HomeTab: React.FC = () => {
             <IonTitle size="large">Home</IonTitle>
           </IonToolbar>
         </IonHeader>
+        <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+          <IonRefresherContent></IonRefresherContent>
+        </IonRefresher>
         {isNewUser && (
           <>
             <IonItem lines="none">
@@ -95,7 +116,7 @@ const HomeTab: React.FC = () => {
                     pagination={{clickable: true}}
                   grabCursor={true}
                   spaceBetween={5}
-                  slidesPerView={1}
+                  slidesPerView={getNumberOfVisibleSlides()}
                 >
                   {ownClubs.map((club, index) => {
                     return (
@@ -126,7 +147,7 @@ const HomeTab: React.FC = () => {
                 pagination={{clickable: true}}
                 grabCursor={true}
                 spaceBetween={5}
-                slidesPerView={1}
+                slidesPerView={getNumberOfVisibleSlides()}
             >
               {joinedClubs.map((club, index) => {
                 return (
@@ -146,16 +167,23 @@ const HomeTab: React.FC = () => {
             </Swiper>
           </>
         )}
+        {isLoadingDiscussions && (
+            <div className="centeredLoader">
+              <IonSpinner className="flexbox"></IonSpinner>
+              <IonLabel className="flexbox ion-text-wrap">Checking for next Discussions</IonLabel>
+            </div>
+        )}
         {nextDiscussions && (
             <>
             <div className="h2">Next Discussions</div>
             <IonItemGroup>
               <IonItemDivider>2023</IonItemDivider>
+              <IonList>
             {nextDiscussions.map((nextDiscussion, index) => {
+              if(nextDiscussion.bookClubId && nextDiscussion.bookClubName){
               return (
-                  <IonItem key={index}>
-                    {nextDiscussion.bookClubId && nextDiscussion.bookClubName && (
                       <HomeDiscussionCard
+                          key={index}
                           bookClubId={nextDiscussion.bookClubId}
                           bookClubName={nextDiscussion.bookClubName}
                           discussionId={nextDiscussion.id} title={nextDiscussion.title}
@@ -165,9 +193,8 @@ const HomeTab: React.FC = () => {
                           isModerator={true}
                           isMember={true}
                       />)
-                    }
-                  </IonItem>
-              )})}
+              }})}
+              </IonList>
             </IonItemGroup>
             </>
         )}

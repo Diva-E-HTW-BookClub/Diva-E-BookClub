@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
     IonChip,
-    IonCol,
-    IonGrid,
     IonIcon,
     IonItem,
     IonLabel,
-    IonRow,
     IonText,
 } from "@ionic/react";
 import {
@@ -20,10 +17,10 @@ import {
 import { useSelector } from "react-redux";
 import {
     addDiscussionParticipant,
-    deleteDiscussionDocument,
     getDiscussionDocument,
     removeDiscussionParticipant,
 } from "../../firebase/firebaseDiscussions";
+import {useHistory} from "react-router-dom";
 
 interface HomeDiscussionCardProps {
     bookClubId: string;
@@ -55,6 +52,7 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
                                                                         isDone,
                                                                     }: HomeDiscussionCardProps) => {
     const user = useSelector((state: any) => state.user.user);
+    const history = useHistory();
     const [discussionParticipants, setDiscussionParticipants] =
         useState<string[]>();
 
@@ -93,13 +91,9 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
         }
     }
 
-    async function deleteDiscussion() {
-        await deleteDiscussionDocument(bookClubId, discussionId).then(updatePage);
-    }
-
     const calendarDate = (date: string) => {
         return (
-            <div className="calendarDate">
+            <div className="calendarDate" onClick={() => history.push("/clubs/" + bookClubId + "/view")}>
                 <IonLabel>
                     <p>{getMonthName(date)}</p>
                     <IonText className="date">{getDayValue(date)}</IonText>
@@ -109,34 +103,31 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
     };
 
     return (
-        <IonGrid fixed className="ion-padding-horizontal">
-            <IonRow>
-                <IonCol className="ion-grid-column">
-                    <IonItem lines="none">
-                        {calendarDate(date)}
-                        <div className="spacing"></div>
-                        <IonLabel>
-                            <div className="title">{bookClubName}</div>
-                            <div className="time">
-                                {getTimeSlotString(startTime, endTime)}
-                            </div>
-                        </IonLabel>
-                        <IonChip
-                            disabled={isDone === true || !isMember}
-                            onClick={() => handleJoinLeave()}
-                            className={isParticipant() ? "chipIsParticipant" : ""}
-                        >
-                            <IonIcon
-                                color={isParticipant() ? "white" : ""}
-                                icon={people}
-                            ></IonIcon>
-                            <p className="discussionMembersSpacing">
-                                {discussionParticipants ? discussionParticipants.length : "0"}
-                            </p>
-                        </IonChip>
-                    </IonItem>
-                </IonCol>
-            </IonRow>
-        </IonGrid>
+        <IonItem button detail={false}>
+            <div className="ion-padding-start">{calendarDate(date)}</div>
+            <div className="spacing"></div>
+            <IonLabel onClick={() => history.push("/clubs/" + bookClubId + "/view")}>
+                <div className="title">{bookClubName}</div>
+                <div className="time">
+                    {getTimeSlotString(startTime, endTime)}
+                </div>
+            </IonLabel>
+            <div className="ion-padding-end">
+                <IonChip
+                    slot="end"
+                    disabled={isDone === true || !isMember}
+                    onClick={() => handleJoinLeave()}
+                    className={isParticipant() ? "chipIsParticipant" : ""}
+                >
+                    <IonIcon
+                        color={isParticipant() ? "white" : ""}
+                        icon={people}
+                    ></IonIcon>
+                    <p className="discussionMembersSpacing">
+                        {discussionParticipants ? discussionParticipants.length : "0"}
+                    </p>
+                </IonChip>
+            </div>
+        </IonItem>
     );
 };

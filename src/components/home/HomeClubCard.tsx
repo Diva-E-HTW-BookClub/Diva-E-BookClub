@@ -30,14 +30,21 @@ export const HomeClubCard: React.FC<HomeClubCardProps> = ({
                                                       id,
                                                   }: HomeClubCardProps) => {
     const authorsString = () => {
+        let indexLimit = 2
         let authorsSet = new Set(authors);
         let authorsArray = Array.from(authorsSet);
         let string = "";
         authorsArray.forEach((author, index) => {
-            if (authorsArray.length - 1 === index) {
+            if(indexLimit + 1 < index){
+                string += "";
+            }else if(indexLimit + 1 === index){
+                string += ", ...";
+            } else if (indexLimit === index) {
                 string += author;
+            } else if (index > 0 && index !== indexLimit) {
+                string += author + ", "
             } else {
-                string += author + ", ";
+                string += author;
             }
         });
         return string;
