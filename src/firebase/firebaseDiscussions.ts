@@ -12,6 +12,9 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { API_URL, REQUEST_CONFIG } from "../constants";
+import {
+  getDistanceInMinutes,
+} from "../helpers/datetimeFormatter";
 
 import { firebaseDB } from "./firebaseConfig";
 

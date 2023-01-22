@@ -42,6 +42,10 @@
   height: 30px;
 }
 
+.divider-small {
+  height: 15px;
+}
+
 .cancel-button {
   --background: #e6e6e6;
   --color: #808080;
