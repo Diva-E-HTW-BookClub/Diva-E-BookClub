@@ -15,16 +15,19 @@ import {
   FieldPath,
   startAfter,
 } from "firebase/firestore";
-import { firebaseDB } from "./firebaseConfig";
+import { API_URL, REQUEST_CONFIG } from "../constants";
+import axios from 'axios';
+import { getCurrentUser } from "./firebaseAuth";
 import { deleteDiscussionDocument } from "./firebaseDiscussions";
 import { deleteResourceDocument } from "./firebaseResource";
+import {getNextDiscussionsUntilWeeks} from "../helpers/discussionSort";
 
 type Comment = {
   id: string,
   text: string;
   passage: string;
   photo: string;
-  owner: string;
+  moderator: string;
 };
 type Book = {
   title: string;
@@ -43,6 +46,8 @@ type Discussion = {
   agenda: [];
   moderator: string;
   isArchived: boolean;
+  bookClubId?: string;
+  bookClubName?: string;
 };
 
 type Resource = {
@@ -65,102 +70,111 @@ type BookClub = {
 };
 
 async function createBookClubDocument(data: BookClub) {
-  const doc = await addDoc(collection(firebaseDB, "bookClubs"), data);
-  return doc.id;
+  let user_uid 
+  await getCurrentUser().then((user: any) => {user_uid = user.uid})
+  let url = API_URL+"bookClub"
+  const res = await axios.post(url, data, REQUEST_CONFIG)
+    .then(response => response.data)
+    .then(data => data.result)
+    .catch(error => {
+      console.log(error);
+    });
+  return res;
 }
 
-async function updateBookClubDocument(bookClubId: string, data: any) {
-  console.log(data);
-  const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
 
-  updateDoc(bookClubDocument, data);
+async function updateBookClubDocument(bookClubId: string, data: any) {
+  let params =  new URLSearchParams({"bookClubId" : bookClubId})
+  let url = API_URL+"bookClub?" + params
+
+  axios.patch(url, data, REQUEST_CONFIG)
+    .catch(error => {
+        console.log(error);
+    });
+
 }
 
 //Needs to delete the BookClub, its discussions and all of their comments
 async function deleteBookClubDocument(bookClubId: string) {
-  const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
-  deleteDoc(bookClubDocument);
-
-  //delete Discussions
-  let discussionQuery = query(
-    collection(firebaseDB, "bookClubs", String(bookClubId), "discussions")
-  );
-
-  var discussionDocuments = await getDocs(discussionQuery);
-  discussionDocuments.forEach((doc) => {
-    deleteDiscussionDocument(bookClubId, doc.id);
-  });
-
-  let resourceQuery = query(
-    collection(firebaseDB, "bookClubs", String(bookClubId), "resources")
-  );
-
-  var resourceDocuments = await getDocs(resourceQuery);
-  resourceDocuments.forEach((doc) => {
-    deleteResourceDocument(bookClubId, doc.id);
-  });
+  let params =  new URLSearchParams({"bookClubId" : bookClubId})
+  let url = API_URL+"bookClub?" + params
+  axios.delete(url, REQUEST_CONFIG)
+    .then(response => {
+      console.log(response.headers)
+      console.log(response.data);
+    })
+    .catch(error => {
+        console.log(error);
+    });
 }
 
 async function getBookClubDocument(bookClubId: string) {
-  const bookClubDocument = doc(firebaseDB, "bookClubs", String(bookClubId));
-  var bookClubResultDocument = await getDoc(bookClubDocument);
-  let bookClubData = bookClubResultDocument.data();
+  let params =  new URLSearchParams({"bookClubId" : bookClubId})
+  let url = API_URL+"bookClub?" + params
 
-  let discussionQuery = query(
-    collection(firebaseDB, "bookClubs", String(bookClubId), "discussions"),
-    orderBy("title"),
-    limit(100)
-  );
-  var discussionDocuments = await getDocs(discussionQuery);
-  var discussionArray: Discussion[] = [];
-
-  discussionDocuments.forEach((doc) => {
-    let discussionData = doc.data();
-    discussionArray.push({
-      id: doc.id,
-      title: discussionData.title,
-      participants: discussionData.participants,
-      date: discussionData.date,
-      startTime: discussionData.startTime,
-      endTime: discussionData.endTime,
-      location: discussionData.location,
-      agenda: discussionData.agenda,
-      moderator: discussionData.moderator,
-      isArchived: discussionData.isArchived
+  const res = await axios.get(url, REQUEST_CONFIG)
+    .then(response => response.data)
+    .then(data => data.result)
+    .catch(error => {
+      console.log(error);
     });
-  });
 
-  let resourceQuery = query(
-    collection(firebaseDB, "bookClubs", String(bookClubId), "resources"),
-    orderBy("title"),
-    limit(100)
-  );
-  var resourceDocuments = await getDocs(resourceQuery);
-  var resourceArray: Resource[] = [];
+  return {
+    id: res.id,
+    name: res.name,
+    moderator: res.moderator,
+    members: res.members,
+    maxMemberNumber: res.maxMemberNumber,
+    book: res.book,
+    discussions: res.discussions,
+    resources: res.resources,
+    owner: res.owner,
+  };    
+}
 
-  resourceDocuments.forEach((doc) => {
-    let resourceData = doc.data();
-    resourceArray.push({
-      id: doc.id,
-      title: resourceData.title,
-      content: resourceData.content,
-      moderator: resourceData.moderator,
+async function getBookClubsByModerator(moderatorId: string){
+  let params =  new URLSearchParams({"memberId" : moderatorId})
+  let url = API_URL+"bookClub/byModerator?" + params
+  const res = await axios.get(url, REQUEST_CONFIG)
+    .then(response => response.data)
+    .then(data => data.result)
+    .catch(error => {
+      console.log(error);
     });
-  });
+  console.log(res)
+  return res;
+}
 
-  if (bookClubData) {
-    return {
-      id: bookClubData.id,
-      name: bookClubData.name,
-      moderator: bookClubData.moderator,
-      members: bookClubData.members,
-      maxMemberNumber: bookClubData.maxMemberNumber,
-      book: bookClubData.book,
-      discussions: discussionArray,
-      resources: resourceArray,
-      owner: bookClubData.owner,
-    };
+async function getBookClubsByJoinedMember(memberId: string){
+
+  let params =  new URLSearchParams({"memberId" : memberId})
+  let url = API_URL+"bookClub/byJoinedMember?" + params
+  const res = await axios.get(url, REQUEST_CONFIG)
+    .then(response => response.data)
+    .then(data => data.result)
+    .catch(error => {
+      console.log(error);
+    });
+  return res;
+}
+
+async function getAllDiscussionsOfBookClubsByUser(userId: string){
+  let params =  new URLSearchParams({"memberId" : userId})
+  let url = API_URL+"bookClub/fullClubByMember?" + params
+  const res = await axios.get(url, REQUEST_CONFIG)
+    .then(response => response.data)
+    .then(data => data.result)
+    .catch(error => {
+      console.log(error);
+    });
+  let nextDiscussionArray: Discussion[] = [];
+  for (const bookClub of res){
+    if(bookClub) {
+      nextDiscussionArray.push(...getNextDiscussionsUntilWeeks(bookClub, 2))
+    }
   }
+
+  return nextDiscussionArray;
 }
 
 // serch book clubs by their name, book title
@@ -174,60 +188,32 @@ async function searchBookClubs(
   resultsLimit: number,
   lastBookClubId?: string
 ) {
-  let fieldPath;
-  if (filter === "name") {
-    fieldPath = new FieldPath("name");
-  } else if (filter === "book") {
-    // field path is more complex for nested documents
-    // to search by title field within the book field we need to use this FieldPath
-    fieldPath = new FieldPath("book", "title");
-  } else {
-    console.log(`unknown field ${filter}`);
-    return [];
+  let params =  new URLSearchParams({
+    "filter" : filter,
+    "inputText" : inputText,
+    "memberId" : memberId,
+    "includeMember" : String(includeMember),
+    "resultsLimit" : String(resultsLimit),
+  })
+  if (lastBookClubId){
+    params.append("lastBookClubId", String(lastBookClubId))
   }
-  let queryConstraints = [
-    // https://stackoverflow.com/a/61516548
-    // search documents in which the field by field path starts with input text
-    where(fieldPath, ">=", inputText),
-    where(fieldPath, "<=", inputText + "~"),
-    orderBy(fieldPath),
-    limit(resultsLimit),
-  ];
-  if (lastBookClubId != null) {
-    // https://firebase.google.com/docs/firestore/query-data/query-cursors#use_a_document_snapshot_to_define_the_query_cursor
-    // this is needed for pagination
-    // we get the last found book club document by id
-    // and tell firebase to return new results starting after that document
-    const lastBookClubDocument = doc(firebaseDB, "bookClubs", lastBookClubId);
-    let lastBookClubDocumentResult = await getDoc(lastBookClubDocument);
-    queryConstraints.push(startAfter(lastBookClubDocumentResult));
-  }
-  if (includeMember) {
-    // find documents where user is in the list of members
-    // to search by members and club name/book title a corresponding index is needed
-    // https://console.firebase.google.com/project/diva-e-htw-bookclub/firestore/indexes
-    queryConstraints.push(where("members", "array-contains", memberId));
-    let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
-    // returns documents from bookClubs collection matching all query constraints
-    var results = await getDocs(q);
-    return results.docs.map(docToBookClub);
-  } else {
-    // find all documents from bookClubs collection matching the search query
-    // regardles of their members
-    let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
-    var results = await getDocs(q);
-    return (
-      results.docs
-        .map(docToBookClub)
-        // remove clubs where our user is a member
-        .filter((bookClub) => !bookClub.members.includes(memberId))
-    );
-  }
+  let url = API_URL+"bookClub/search?" + params
+  let res = await axios.get(url, REQUEST_CONFIG)
+    .then(response => response.data)
+    .then(data => data.result)
+    .catch(error => {
+      console.log(error);
+    });
+
+
+  return res
+
 }
 
 // convert document from firestore to book club
 function docToBookClub(doc: any) {
-  let data = doc.data();
+  let data = doc;
   return {
     id: doc.id,
     name: data.name,
@@ -243,19 +229,23 @@ function docToBookClub(doc: any) {
 
 // https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array
 async function addMember(bookClubId: string, memberId: string) {
-  const bookClubDocument = doc(firebaseDB, "bookClubs", bookClubId);
-  // Atomically add a new member to the "members" array field.
-  await updateDoc(bookClubDocument, {
-    members: arrayUnion(memberId),
-  });
+  let params =  new URLSearchParams({"bookClubId" : bookClubId, "memberId": memberId})
+  let url = API_URL+"bookClub/addMember?" + params
+
+  const res = await axios.post(url, REQUEST_CONFIG)
+    .catch(error => {
+      console.log(error);
+    });
 }
 
 async function removeMember(bookClubId: string, memberId: string) {
-  const bookClubDocument = doc(firebaseDB, "bookClubs", bookClubId);
-  // Atomically remove a member from the "members" array field.
-  await updateDoc(bookClubDocument, {
-    members: arrayRemove(memberId),
-  });
+  let params =  new URLSearchParams({"bookClubId" : bookClubId, "memberId": memberId})
+  let url = API_URL+"bookClub/removeMember?" + params
+
+  const res = await axios.post(url, REQUEST_CONFIG)
+    .catch(error => {
+      console.log(error);
+    });
 }
 
 export {
@@ -266,6 +256,9 @@ export {
   searchBookClubs,
   addMember,
   removeMember,
+    getBookClubsByModerator,
+    getBookClubsByJoinedMember,
+    getAllDiscussionsOfBookClubsByUser,
 };
 
 export type { BookClub, Discussion, Comment, Resource };
