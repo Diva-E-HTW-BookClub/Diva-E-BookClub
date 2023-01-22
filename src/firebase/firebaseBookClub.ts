@@ -18,11 +18,15 @@ import {
 import { API_URL, REQUEST_CONFIG } from "../constants";
 import axios from 'axios';
 import { getCurrentUser } from "./firebaseAuth";
+import { deleteDiscussionDocument } from "./firebaseDiscussions";
+import { deleteResourceDocument } from "./firebaseResource";
+import {getNextDiscussionsUntilWeeks} from "../helpers/discussionSort";
 
 type Comment = {
+  id: string,
   text: string;
   passage: string;
-  commentId: string;
+  photo: string;
   owner: string;
 };
 type Book = {
@@ -41,6 +45,9 @@ type Discussion = {
   location: string;
   agenda: [];
   moderator: string;
+  isArchived: boolean;
+  bookClubId?: string;
+  bookClubName?: string;
 };
 
 type Resource = {
@@ -125,6 +132,43 @@ async function getBookClubDocument(bookClubId: string) {
   };    
 }
 
+async function getBookClubsByModerator(moderatorId: string){
+  let queryConstraints = [where("moderator", "array-contains", moderatorId)];
+  let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
+  var results = await getDocs(q);
+  return results.docs.map(docToBookClub);
+}
+
+async function getBookClubsByJoinedMember(memberId: string){
+  let queryConstraints = [
+      where("members", "array-contains", memberId),
+  ];
+  let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
+  var results = await getDocs(q);
+  return (
+      results.docs
+          .map(docToBookClub)
+          // remove clubs where our user is a moderator
+          .filter((bookClub) => !bookClub.moderator.includes(memberId))
+  );
+}
+
+async function getAllDiscussionsOfBookClubsByUser(userId: string){
+  let queryConstraints = [where("members", "array-contains", userId)];
+  let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
+  var results = await getDocs(q);
+  let resultsArray = results.docs.map(docToBookClub);
+  let nextDiscussionArray: Discussion[] = [];
+  for await (const bookClub of resultsArray){
+    await getBookClubDocument(bookClub.id).then((fullBookClub) => {
+      if(fullBookClub) {
+        nextDiscussionArray.push(...getNextDiscussionsUntilWeeks(fullBookClub, 2))
+      }
+    })
+  }
+  return nextDiscussionArray;
+}
+
 // serch book clubs by their name, book title
 // and where members contains and not contains given member id
 // (needed to find clubs where user is a member and where not)
@@ -204,6 +248,9 @@ export {
   searchBookClubs,
   addMember,
   removeMember,
+    getBookClubsByModerator,
+    getBookClubsByJoinedMember,
+    getAllDiscussionsOfBookClubsByUser,
 };
 
-export type { BookClub, Discussion, Comment };
+export type { BookClub, Discussion, Comment, Resource };

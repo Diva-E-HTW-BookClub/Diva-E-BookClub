@@ -47,6 +47,7 @@ import { API_URL, REQUEST_CONFIG } from "../constants";
   
     if (res) {
       return {
+        id: res.id,
         title: res.title,
         content: res.content,
         moderator: res.moderator
@@ -63,7 +64,9 @@ import { API_URL, REQUEST_CONFIG } from "../constants";
       });
   }
 
-  export {
-    getResourceDocument, updateResourceDocument, createResourceDocument ,deleteResourceDocument
-  };
-  
+export {
+  getResourceDocument,
+  updateResourceDocument,
+  createResourceDocument,
+  deleteResourceDocument,
+};

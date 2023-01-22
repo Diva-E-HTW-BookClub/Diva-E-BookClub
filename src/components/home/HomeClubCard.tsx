@@ -1,16 +1,16 @@
 import {
+  IonCard,
   IonCol,
   IonGrid,
   IonIcon,
   IonImg,
-  IonItem,
   IonLabel,
   IonRow,
 } from "@ionic/react";
-import "./ClubCard.css";
+import "./HomeClubCard.css";
 import { book, people } from "ionicons/icons";
 
-interface ClubCardProps {
+interface HomeClubCardProps {
   name: string;
   maxMember: number;
   member: number;
@@ -20,7 +20,7 @@ interface ClubCardProps {
   id: string;
 }
 
-export const ClubCard: React.FC<ClubCardProps> = ({
+export const HomeClubCard: React.FC<HomeClubCardProps> = ({
   name,
   maxMember,
   member,
@@ -28,27 +28,34 @@ export const ClubCard: React.FC<ClubCardProps> = ({
   bookTitle,
   authors,
   id,
-}: ClubCardProps) => {
+}: HomeClubCardProps) => {
   const authorsString = () => {
+    let indexLimit = 2;
     let authorsSet = new Set(authors);
     let authorsArray = Array.from(authorsSet);
     let string = "";
     authorsArray.forEach((author, index) => {
-      if (authorsArray.length - 1 === index) {
+      if (indexLimit + 1 < index) {
+        string += "";
+      } else if (indexLimit + 1 === index) {
+        string += ", ...";
+      } else if (indexLimit === index) {
         string += author;
-      } else {
+      } else if (authorsArray.length > 1 && indexLimit !== index) {
         string += author + ", ";
+      } else {
+        string += author;
       }
     });
     return string;
   };
 
   return (
-    <IonItem button routerLink={`/clubs/${id}/view`} detail={false}>
+    <IonCard routerLink={`/clubs/${id}/view`} className="card">
       <IonGrid className="ion-padding-horizontal">
         <IonRow className="ion-align-items-center">
-          <IonCol sizeMd="10" size="9" className="columnClubCard">
-            <div className="clubName">{name}</div>
+          <IonCol sizeMd="10" size="9" className="columnClubCardHome">
+            <div className="clubNameHome">{name}</div>
             <div className="verticalSpacing"></div>
             <div className="flexStartClubCard">
               <IonIcon
@@ -58,7 +65,7 @@ export const ClubCard: React.FC<ClubCardProps> = ({
                 color="medium"
               />
               <IonLabel className="flexbox ion-text-wrap">
-                <h2>{bookTitle}</h2>
+                <h2 className="bookTitleHome">{bookTitle}</h2>
                 <p>{authorsString()}</p>
               </IonLabel>
             </div>
@@ -75,15 +82,15 @@ export const ClubCard: React.FC<ClubCardProps> = ({
               </IonLabel>
             </div>
           </IonCol>
-          <IonCol sizeMd="2" size="3" className="img-column">
+          <IonCol sizeMd="2" size="3" className="img-columnHome">
             <IonImg
               className="clubCardBookCover"
               alt="assets/images/default_book_cover.jpg"
               src={image}
-            />
+            ></IonImg>
           </IonCol>
         </IonRow>
       </IonGrid>
-    </IonItem>
+    </IonCard>
   );
 };
