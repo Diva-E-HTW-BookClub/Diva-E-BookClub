@@ -4,7 +4,6 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonItem,
   IonLabel,
   IonButton,
   IonItemGroup,
@@ -34,22 +33,38 @@ import {
 import { HomeClubCard } from "../../components/home/HomeClubCard";
 import { Pagination } from "swiper";
 import { HomeDiscussionCard } from "../../components/home/HomeDiscussionCard";
-import { sortDiscussionsByDate } from "../../helpers/discussionSort";
+import {
+  getYearArrayOfDiscussions,
+  sortDiscussionsByDate,
+} from "../../helpers/discussionSort";
 
 const HomeTab: React.FC = () => {
-  const [isNewUser, setIsNewUser] = useState<boolean>(false);
+  const [isNewUser, setIsNewUser] = useState<boolean>();
   const user = useSelector((state: any) => state.user.user);
   const [ownClubs, setOwnClubs] = useState<BookClub[]>();
   const [joinedClubs, setJoinedClubs] = useState<BookClub[]>();
   const [nextDiscussions, setNextDiscussions] = useState<Discussion[]>();
+  const [isLoadingClubs, setIsLoadingClubs] = useState<boolean>();
   const [isLoadingDiscussions, setIsLoadingDiscussions] = useState<boolean>();
 
   useEffect(() => {
     getBookClubs();
   }, []);
 
+  useEffect(() => {
+    if (
+      (ownClubs !== undefined && ownClubs.length > 0) ||
+      (joinedClubs !== undefined && joinedClubs.length > 0)
+    ) {
+      setIsNewUser(false);
+    } else {
+      setIsNewUser(true);
+    }
+  }, [ownClubs, joinedClubs]);
+
   async function getBookClubs() {
     setIsLoadingDiscussions(true);
+    setIsLoadingClubs(true);
     await getBookClubsByModerator(user.uid).then((ownBookClubs) => {
       if (ownBookClubs) {
         setOwnClubs(ownBookClubs);
@@ -59,6 +74,7 @@ const HomeTab: React.FC = () => {
       if (joinedBookClubs) {
         setJoinedClubs(joinedBookClubs);
       }
+      setIsLoadingClubs(false);
     });
     await getAllDiscussionsOfBookClubsByUser(user.uid).then(
       (nextDiscussionsArray) => {
@@ -86,6 +102,136 @@ const HomeTab: React.FC = () => {
     }
   }
 
+  const newUserContent = () => {
+    if (isLoadingClubs === false) {
+      return (
+        <div className="ion-padding-horizontal">
+          <IonButton size="default" routerLink="/clubs" expand="block">
+            Join or Create a Club
+          </IonButton>
+        </div>
+      );
+    }
+  };
+
+  const showOwnClubs = () => {
+    if (ownClubs !== undefined && ownClubs.length > 0) {
+      return (
+        <>
+          <div className="h2">Own Clubs</div>
+          <Swiper
+            modules={[Pagination]}
+            className="ion-padding-horizontal"
+            pagination={{ clickable: true }}
+            grabCursor={true}
+            spaceBetween={5}
+            slidesPerView={getNumberOfVisibleSlides()}
+          >
+            {ownClubs.map((club, index) => {
+              return (
+                <SwiperSlide key={`slide_${index}`}>
+                  <HomeClubCard
+                    name={club.name}
+                    maxMember={club.maxMemberNumber}
+                    member={club.members.length}
+                    image={club.book.imageUrl}
+                    bookTitle={club.book.title}
+                    authors={club.book.authors}
+                    id={club.id}
+                  />
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        </>
+      );
+    }
+  };
+
+  const showJoinedClubs = () => {
+    if (joinedClubs !== undefined && joinedClubs.length > 0) {
+      return (
+        <>
+          <div className="h2">Joined Clubs</div>
+          <Swiper
+            modules={[Pagination]}
+            className="ion-padding-horizontal"
+            pagination={{ clickable: true }}
+            grabCursor={true}
+            spaceBetween={5}
+            slidesPerView={getNumberOfVisibleSlides()}
+          >
+            {joinedClubs.map((club, index) => {
+              return (
+                <SwiperSlide key={`slide_${index}`}>
+                  <HomeClubCard
+                    name={club.name}
+                    maxMember={club.maxMemberNumber}
+                    member={club.members.length}
+                    image={club.book.imageUrl}
+                    bookTitle={club.book.title}
+                    authors={club.book.authors}
+                    id={club.id}
+                  />
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        </>
+      );
+    }
+  };
+
+  const showNextDiscussions = () => {
+    if (nextDiscussions !== undefined && nextDiscussions.length > 0) {
+      let discussionYears = getYearArrayOfDiscussions(nextDiscussions);
+      return (
+        <>
+          <div className="h2">Next Discussions</div>
+          {discussionYears.map((year, index) => {
+            return (
+              <IonItemGroup key={index}>
+                <IonItemDivider>{year}</IonItemDivider>
+                <IonList>
+                  {nextDiscussions.map((nextDiscussion, index) => {
+                    if (
+                      nextDiscussion.bookClubId &&
+                      nextDiscussion.bookClubName
+                    ) {
+                      return (
+                        <HomeDiscussionCard
+                          key={index}
+                          bookClubId={nextDiscussion.bookClubId}
+                          bookClubName={nextDiscussion.bookClubName}
+                          discussionId={nextDiscussion.id}
+                          title={nextDiscussion.title}
+                          date={nextDiscussion.date}
+                          startTime={nextDiscussion.startTime}
+                          endTime={nextDiscussion.endTime}
+                          discussionLocation={nextDiscussion.location}
+                          isModerator={true}
+                          isMember={true}
+                        />
+                      );
+                    }
+                  })}
+                </IonList>
+              </IonItemGroup>
+            );
+          })}
+        </>
+      );
+    } else {
+      return (
+        <div className="ion-margin">
+          <IonLabel>
+            <p>There are no next discussions</p>
+          </IonLabel>
+        </div>
+      );
+    }
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -102,84 +248,8 @@ const HomeTab: React.FC = () => {
         <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
           <IonRefresherContent></IonRefresherContent>
         </IonRefresher>
-        {isNewUser && (
-          <>
-            <IonItem lines="none">
-              <IonLabel>
-                There are no upcoming discussions.
-                <br />
-                Join a Club or create your own!
-              </IonLabel>
-            </IonItem>
-            <IonItem lines="none">
-              <IonButton size="default" routerLink="/clubs">
-                Start Now
-              </IonButton>
-            </IonItem>
-          </>
-        )}
-        {!isNewUser && (
-          <>
-            {ownClubs && (
-              <>
-                <div className="h2">Own Clubs</div>
-                <Swiper
-                  modules={[Pagination]}
-                  className="ion-padding-horizontal"
-                  pagination={{ clickable: true }}
-                  grabCursor={true}
-                  spaceBetween={5}
-                  slidesPerView={getNumberOfVisibleSlides()}
-                >
-                  {ownClubs.map((club, index) => {
-                    return (
-                      <SwiperSlide key={`slide_${index}`}>
-                        <HomeClubCard
-                          name={club.name}
-                          maxMember={club.maxMemberNumber}
-                          member={club.members.length}
-                          image={club.book.imageUrl}
-                          bookTitle={club.book.title}
-                          authors={club.book.authors}
-                          id={club.id}
-                        />
-                      </SwiperSlide>
-                    );
-                  })}
-                </Swiper>
-              </>
-            )}
-          </>
-        )}
-        {!isNewUser && joinedClubs && (
-          <>
-            <div className="h2">Joined Clubs</div>
-            <Swiper
-              modules={[Pagination]}
-              className="ion-padding-horizontal"
-              pagination={{ clickable: true }}
-              grabCursor={true}
-              spaceBetween={5}
-              slidesPerView={getNumberOfVisibleSlides()}
-            >
-              {joinedClubs.map((club, index) => {
-                return (
-                  <SwiperSlide key={`slide_${index}`}>
-                    <HomeClubCard
-                      name={club.name}
-                      maxMember={club.maxMemberNumber}
-                      member={club.members.length}
-                      image={club.book.imageUrl}
-                      bookTitle={club.book.title}
-                      authors={club.book.authors}
-                      id={club.id}
-                    />
-                  </SwiperSlide>
-                );
-              })}
-            </Swiper>
-          </>
-        )}
+        {!isNewUser && showOwnClubs()}
+        {!isNewUser && showJoinedClubs()}
         {isLoadingDiscussions && (
           <div className="centeredLoader">
             <IonSpinner className="flexbox"></IonSpinner>
@@ -188,38 +258,8 @@ const HomeTab: React.FC = () => {
             </IonLabel>
           </div>
         )}
-        {nextDiscussions && (
-          <>
-            <div className="h2">Next Discussions</div>
-            <IonItemGroup>
-              <IonItemDivider>2023</IonItemDivider>
-              <IonList>
-                {nextDiscussions.map((nextDiscussion, index) => {
-                  if (
-                    nextDiscussion.bookClubId &&
-                    nextDiscussion.bookClubName
-                  ) {
-                    return (
-                      <HomeDiscussionCard
-                        key={index}
-                        bookClubId={nextDiscussion.bookClubId}
-                        bookClubName={nextDiscussion.bookClubName}
-                        discussionId={nextDiscussion.id}
-                        title={nextDiscussion.title}
-                        date={nextDiscussion.date}
-                        startTime={nextDiscussion.startTime}
-                        endTime={nextDiscussion.endTime}
-                        discussionLocation={nextDiscussion.location}
-                        isModerator={true}
-                        isMember={true}
-                      />
-                    );
-                  }
-                })}
-              </IonList>
-            </IonItemGroup>
-          </>
-        )}
+        {showNextDiscussions()}
+        {isNewUser && newUserContent()}
       </IonContent>
     </IonPage>
   );
