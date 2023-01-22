@@ -67,6 +67,17 @@ io.on("connection", (socket) => {
         io.in(data.discussionId).emit("receive_sum_time", data)
     });
 
+    // TEST
+    socket.on("send_all_Current_Data", (data) => {
+        discussionMap.set(data.discussionId,[[data.emitStates], [discussionMap.get(data.discussionId)[1]],discussionMap.get(data.discussionId)[2],discussionMap.get(data.discussionId)[3]])
+        discussionMap.set(data.discussionId,[[discussionMap.get(data.discussionId)[0]],[data.emitTimes] ,discussionMap.get(data.discussionId)[2]],discussionMap.get(data.discussionId)[3])
+        discussionMap.set(data.discussionId,[[discussionMap.get(data.discussionId)[0]], discussionMap.get(data.discussionId)[1], [data.emitSum],discussionMap.get(data.discussionId)[3]])
+        playingSateServer = data.emitStates;
+        progressTimesServer = data.emitTimes;
+        progressSumServer = data.emitSum;
+        io.in(data.discussionId).emit("receive_all_Data", data)
+    });
+
     socket.on("send_all_Data", (data) => {
         discussionMap.set(data.discussionId,[[data.emitStates], [discussionMap.get(data.discussionId)[1]],discussionMap.get(data.discussionId)[2],discussionMap.get(data.discussionId)[3]])
         playingSateServer = data.emitStates;

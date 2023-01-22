@@ -19,18 +19,20 @@ import {
 } from "@ionic/react";
 import {
   doc,
-  setDoc,
-  updateDoc
 } from "firebase/firestore";
 import { firebaseDB } from "../../firebase/firebaseConfig";
 import io from "socket.io-client"
 import "./LiveDiscussion.css";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { book, pause, play } from "ionicons/icons";
-import { getDiscussionAgenda,getDiscussionDocument, getDiscussionTitle, updateDiscussionAgenda } from "../../firebase/firebaseDiscussions";
+import { getDiscussionAgenda, getDiscussionTitle, updateDiscussionAgenda } from "../../firebase/firebaseDiscussions";
+import {
+  BookClub,
+  getBookClubDocument,
+} from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
-import { useFieldArray, useForm, Controller } from "react-hook-form";
+
 
 
 interface AgendaPartProps {
@@ -41,7 +43,6 @@ interface AgendaPartProps {
 }
 
 const socket = io("http://localhost:3001");
-var isModerator = false;
 var emitTimes:number[] = []
 var emitSum = 0;
 var emitStates:boolean[] = []
@@ -55,6 +56,7 @@ const LiveDiscussion: React.FC = () => {
   const [agendaTitle, setAgendaTitle] = useState<any[]>([]);
   let { bookClubId }: { bookClubId: string } = useParams();
   let { discussionId }: { discussionId: string } = useParams();
+  const [isModerator, setIsModerator] = useState<boolean>(false);
 
   // Liva-Ansicht-Variablen
   const [playingState, setPlayingState] = useState<boolean[]>([false]);
@@ -79,9 +81,7 @@ const LiveDiscussion: React.FC = () => {
 
   const changedPlayingState = doc(firebaseDB, "testCollection", "8hh5w2KA9koJTbyMiDuk");
 
-  const beModerator = () => {
-    isModerator = true;
-  }
+  
 
   async function saveLiveDiscussion(toBeArchived: boolean){
     var elapsedTimeArray = progressTimesReceived;
@@ -90,25 +90,10 @@ const LiveDiscussion: React.FC = () => {
     var elapsedTimeArrayInSeconds = elapsedTimeArray.map(function(x, index){
       return timeLimitArray[index] * x
     })
-    console.log("AgendaPoints:")
-    console.log(bookClubId)
-    console.log(discussionId)
-    console.log(agendaParts.length)
-    console.log(elapsedTimeArrayInSeconds)
-    console.log(nameArray)
-    console.log(timeLimitArray)
-    console.log(maxParticipants)
-    console.log(toBeArchived)
+   
     if(agendaParts.length !=0 ){
     updateDiscussionAgenda(bookClubId, discussionId,agendaParts.length, elapsedTimeArrayInSeconds,nameArray,timeLimitArray, maxParticipants, toBeArchived)
     }
-    /*
-    const databaseRef = doc(firebaseDB, "bookClubs", String(bookClubId), "discussions", String(discussionId))
-    await updateDoc(databaseRef, {
-      agenda: ["hallo", "hallo"],
-      location: "yes"
-    })
-    */
   }
   
   function createPlayingStatesForButton(length: number, index: number) {
@@ -131,9 +116,12 @@ const LiveDiscussion: React.FC = () => {
     setPlayingState(createPlayingStatesForButton(agendaParts.length,buttonNumber))
 
     // Send data to server
-    socket.emit("send_playButton", { emitStates, discussionId });
-    socket.emit("send_time", { emitTimes, discussionId });
-    socket.emit("send_sum_time", { emitSum, discussionId });
+    //socket.emit("send_playButton", { emitStates, discussionId });
+    //socket.emit("send_time", { emitTimes, discussionId });
+    //socket.emit("send_sum_time", { emitSum, discussionId });
+
+    // TEST
+    socket.emit("send_all_Current_Data", {emitStates, emitTimes, emitSum, discussionId});
     }
     saveLiveDiscussion(false)
   }
@@ -175,25 +163,21 @@ const LiveDiscussion: React.FC = () => {
       }
     });
     
-    socket.on("receive_playButton", (data) => {
+
+    // TEST
+    socket.on("receive_all_Data", (data) => {
       if(typeof data.emitStates !== "undefined"){
         setPlayingStateReceived(data.emitStates)
       }
       else{
       setPlayingStateReceived(data)
       }
-    });
-
-    socket.on("receive_time", (data) => {
       if(typeof data.emitTimes !== "undefined"){
         setProgressTimesReceived(data.emitTimes)
       }
       else{
       setProgressTimesReceived(data)
       }
-    });
-
-    socket.on("receive_sum_time", (data) => {
       if(typeof data.emitSum !== "undefined"){
         setProgressSumReceived(data.emitSum)
       }
@@ -263,6 +247,9 @@ return () => clearInterval(interval);
 
 
   async function getAgendaParts() {
+    let bookClub = await getBookClubDocument(bookClubId);
+    // check if the current user is moderator of the club
+    setIsModerator(bookClub?.moderator.includes(user.uid));
     let agendaParts = await getDiscussionAgenda(bookClubId, discussionId);
     let agendaTitle = await getDiscussionTitle(bookClubId, discussionId);
     setAgendaParts(agendaParts)
@@ -286,6 +273,31 @@ return () => clearInterval(interval);
     return finalOutput
   }
 
+  function addUp(numberArray:any,maxTimes:any){
+    var resultSeconds = 0;
+    var resultMinutes = 0;
+    for(var i = 0; i < numberArray.length; i++){
+      var seconds = Math.floor((numberArray[i] * maxTimes[i]));
+      resultSeconds += seconds;
+    }
+    resultMinutes = Math.floor(resultSeconds/60)
+    resultSeconds = resultSeconds%60
+    
+    var resultSecondsString = (resultSeconds < 10) ? '0' + resultSeconds.toString() : resultSeconds.toString()
+    var finalOutput = resultMinutes.toString() + "." + resultSecondsString;
+    return finalOutput;
+  }
+
+  function calculateSum(numberArray:any){
+    var resultSeconds = 0;
+    for(var i = 0; i < numberArray.length; i++){
+      var seconds = Math.floor((numberArray[i] * maxTimes[i]));
+      resultSeconds += seconds;
+    }
+    return resultSeconds
+  }
+
+
   return (
     <IonPage>
       <IonHeader>
@@ -297,16 +309,15 @@ return () => clearInterval(interval);
       <IonContent fullscreen>
         <IonCard>
           <IonCardHeader>
-          <IonCardTitle> {`${isModerator}`}</IonCardTitle>
             <IonCardTitle>Total discussion time</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
             <IonRow>
               <IonCol size="8">
                 <IonProgressBar className={` ${isRed(progressSumReceived, totalTimeLimit) ? 'isRed' : isDarkOrange(progressSumReceived, totalTimeLimit) ?  'isDarkOrange' : isOrange(progressSumReceived, totalTimeLimit) ? 'isOrange' : 'blue'}`} value={progressSumReceived}></IonProgressBar>
-              </IonCol>
+                 </IonCol>
               <IonCol className="timeDisplay" size="4">
-                {`${doubleDigits(progressSumReceived * totalTimeLimit)} / ${doubleDigits(totalTimeLimit)}`}
+                {`${addUp(progressTimesReceived, maxTimes)} / ${doubleDigits(totalTimeLimit)}`}
               </IonCol>
             </IonRow>
           </IonCardContent>
@@ -317,7 +328,9 @@ return () => clearInterval(interval);
               <IonItem className="iten-no-padding" key={index}>
                 <IonCard>
                   <IonCardHeader>
+                    {isModerator &&
                     <IonButton className="playButton" fill="outline" onClick={() => setButtons(index)}>
+                    
                       {!playingStateReceived[index] &&
                         <IonIcon className="button-icon" icon={play}></IonIcon>
                       }
@@ -325,6 +338,7 @@ return () => clearInterval(interval);
                         <IonIcon className="button-icon" icon={pause}></IonIcon>
                       }
                     </IonButton>
+                    }
                     <IonCardTitle className="playTitle">{agendaPart.name}</IonCardTitle>
                   </IonCardHeader>
                   <IonCardContent>
@@ -344,9 +358,6 @@ return () => clearInterval(interval);
             );
           })}
         </IonList>
-        <IonButton fill="outline" onClick={() => beModerator()}>
-              Moderator
-        </IonButton>
         <IonButton routerLink={"/clubs/" + bookClubId+ "/view"} fill="outline" onClick={() => saveLiveDiscussion(true)}>
               End discussion
         </IonButton>
