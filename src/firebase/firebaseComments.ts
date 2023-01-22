@@ -10,6 +10,7 @@ import {
     updateDoc,
   } from "firebase/firestore";
 import { API_URL, REQUEST_CONFIG } from "../constants";
+import reportWebVitals from "../reportWebVitals";
   import { firebaseDB } from "./firebaseConfig";
 
 async function createCommentDocument(bookClubId: string, discussionId: string, data: any) {
@@ -51,9 +52,9 @@ async function getCommentDocument(bookClubId:string, discussionId:string, commen
     return {
       id: res.id,
       passage: res.passage,
-      quote: res.quote,
+      moderator: res.moderator,
       text: res.text,
-      photo: res.photo
+      photo: res.photo,
     }
   }
 }

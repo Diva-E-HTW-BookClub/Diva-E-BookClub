@@ -27,7 +27,7 @@ type Comment = {
   text: string;
   passage: string;
   photo: string;
-  owner: string;
+  moderator: string;
 };
 type Book = {
   title: string;
@@ -133,39 +133,47 @@ async function getBookClubDocument(bookClubId: string) {
 }
 
 async function getBookClubsByModerator(moderatorId: string){
-  let queryConstraints = [where("moderator", "array-contains", moderatorId)];
-  let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
-  var results = await getDocs(q);
-  return results.docs.map(docToBookClub);
+  let params =  new URLSearchParams({"memberId" : moderatorId})
+  let url = API_URL+"bookClub/byModerator?" + params
+  const res = await axios.get(url, REQUEST_CONFIG)
+    .then(response => response.data)
+    .then(data => data.result)
+    .catch(error => {
+      console.log(error);
+    });
+  console.log(res)
+  return res;
 }
 
 async function getBookClubsByJoinedMember(memberId: string){
-  let queryConstraints = [
-      where("members", "array-contains", memberId),
-  ];
-  let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
-  var results = await getDocs(q);
-  return (
-      results.docs
-          .map(docToBookClub)
-          // remove clubs where our user is a moderator
-          .filter((bookClub) => !bookClub.moderator.includes(memberId))
-  );
+
+  let params =  new URLSearchParams({"memberId" : memberId})
+  let url = API_URL+"bookClub/byJoinedMember?" + params
+  const res = await axios.get(url, REQUEST_CONFIG)
+    .then(response => response.data)
+    .then(data => data.result)
+    .catch(error => {
+      console.log(error);
+    });
+  return res;
 }
 
 async function getAllDiscussionsOfBookClubsByUser(userId: string){
-  let queryConstraints = [where("members", "array-contains", userId)];
-  let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
-  var results = await getDocs(q);
-  let resultsArray = results.docs.map(docToBookClub);
+  let params =  new URLSearchParams({"memberId" : userId})
+  let url = API_URL+"bookClub/fullClubByMember?" + params
+  const res = await axios.get(url, REQUEST_CONFIG)
+    .then(response => response.data)
+    .then(data => data.result)
+    .catch(error => {
+      console.log(error);
+    });
   let nextDiscussionArray: Discussion[] = [];
-  for await (const bookClub of resultsArray){
-    await getBookClubDocument(bookClub.id).then((fullBookClub) => {
-      if(fullBookClub) {
-        nextDiscussionArray.push(...getNextDiscussionsUntilWeeks(fullBookClub, 2))
-      }
-    })
+  for (const bookClub of res){
+    if(bookClub) {
+      nextDiscussionArray.push(...getNextDiscussionsUntilWeeks(bookClub, 2))
+    }
   }
+
   return nextDiscussionArray;
 }
 
