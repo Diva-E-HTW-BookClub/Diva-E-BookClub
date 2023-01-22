@@ -45,7 +45,7 @@ const ClubsTab: React.FC = () => {
   // displays book clubs when the tab loads
   // using default values of selected input text, filter, and segment
   useEffect(() => {
-    getBookClubs(inputText, selectedFilter, selectedSegment);
+    getBookClubs(inputText);
   }, []);
 
   // displays book clubs when user types in search bar
@@ -53,7 +53,7 @@ const ClubsTab: React.FC = () => {
   async function search(event: any) {
     let inputTextValue = event.target.value;
     setInputText(inputTextValue);
-    getBookClubs(inputTextValue, selectedFilter, selectedSegment);
+    getBookClubs(inputTextValue);
   }
 
   // displays book clubs when user selects the filter (name or book title)
@@ -61,7 +61,7 @@ const ClubsTab: React.FC = () => {
   async function selectFilter(event: any) {
     let filterValue = event.detail.value;
     setSelectedFilter(filterValue);
-    getBookClubs(inputText, filterValue, selectedSegment);
+    getBookClubs(inputText);
   }
 
   // displays book clubs when user selects the segment (your or new)
@@ -69,17 +69,15 @@ const ClubsTab: React.FC = () => {
   async function selectSegment(event: any) {
     let segmentValue = event.detail.value;
     setSelectedSegment(segmentValue);
-    getBookClubs(inputText, selectedFilter, segmentValue);
+    getBookClubs(inputText);
   }
 
   // called when user scrolls all the way down
   // displays next 10 clubs adding them to the book clubs list
   async function scroll(event: any) {
     let newBookClubs = await searchBookClubs(
-      selectedFilter,
       inputText,
       getCurrentUserId(),
-      selectedSegment === "your",
       10,
       bookClubs[bookClubs.length - 1].id
     );
@@ -90,12 +88,10 @@ const ClubsTab: React.FC = () => {
   }
 
   // finds first 10 book clubs in firestore based on input text, filter and segment parameters
-  async function getBookClubs(text: string, filter: string, segment: string) {
+  async function getBookClubs(text: string) {
     let bookClubs = await searchBookClubs(
-      filter,
       text,
       getCurrentUserId(),
-      segment === "your",
       10
     );
     // rewrites book clubs state with new values
@@ -116,36 +112,12 @@ const ClubsTab: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonSearchbar
-          className="ion-padding-horizontal"
-          placeholder={`Enter club ${selectedFilter}`}
+          class="custom"
+          placeholder={`Search`}
           debounce={1000}
           onIonInput={search}
         ></IonSearchbar>
-        <div className="ion-padding-horizontal">
-          <IonItem lines="none">
-            <IonLabel>Search by</IonLabel>
-            <IonSelect
-              interface="popover"
-              value={selectedFilter}
-              onIonChange={selectFilter}
-            >
-              <IonSelectOption value="name">Name</IonSelectOption>
-              <IonSelectOption value="book">Book</IonSelectOption>
-            </IonSelect>
-          </IonItem>
-        </div>
-        <div className="ion-padding-horizontal">
-          <IonSegment value={selectedSegment} onIonChange={selectSegment}>
-            <IonSegmentButton value="your">
-              <IonLabel>Your</IonLabel>
-            </IonSegmentButton>
-            <IonSegmentButton value="new">
-              <IonLabel>New</IonLabel>
-            </IonSegmentButton>
-          </IonSegment>
-        </div>
-        <hr className="separator"></hr>
-        <IonList>
+        <IonList className="ion-no-padding">
           {bookClubs.map((bookClub) => {
             return (
               <ClubCard

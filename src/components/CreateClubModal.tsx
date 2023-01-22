@@ -171,7 +171,7 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
             },
             discussions: [],
             resources: [],
-            owner: userId,
+            owner: userId
         }).then((bookClubId) => {
             cancelModal()
             setTimeout(() => history.push(`/clubs/${bookClubId}/view`), 200);
@@ -193,8 +193,8 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
                         </IonButtons>
                     </IonToolbar>
                 </IonHeader>
-                <IonContent fullscreen>
-                    <form id="createClub" onSubmit={handleSubmit(submitData)}>
+                <IonContent className="ion-no-padding">
+                    <form id="createClub" className="ion-padding" onSubmit={handleSubmit(submitData)}>
                         <IonItem className={errors.name ? "ion-invalid" : "ion-valid"}>
                             <IonLabel position="stacked">Club Name</IonLabel>
                             <IonInput
@@ -221,7 +221,7 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
                             </IonNote>
                         </IonItem>
                     </form>
-                    <IonSearchbar className="ion-no-padding" placeholder="Find a book" debounce={1000} onIonInput={search}></IonSearchbar>
+                    <IonSearchbar class="custom" placeholder="Find a book" debounce={1000} onIonInput={search}></IonSearchbar>
                     <IonList lines="none">
                         {books.map((book, index) => {
                             return (
