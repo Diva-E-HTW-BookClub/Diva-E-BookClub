@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import {
   compareDatesAscending,
+  getDistanceInMinutes,
   datetimeToUtcISOString,
   formatToTimezonedISOString,
   mergeISODateAndISOTime,
@@ -105,7 +106,10 @@ export const CreateDiscussionModal: React.FC<CreateDiscussionModalProps> = ({
       endTime: utcEndTime,
       location: data.location,
       participants: [],
-      agenda: [],
+      agenda: [{elapsedTime: 0, name: "Total Discussion", timeLimit: getDistanceInMinutes(
+        utcStartTime,
+        utcEndTime
+      )*60}],
       moderator: userId,
     }).then(() => {
       setIsOpen(false);

@@ -126,10 +126,11 @@ console.log("ID" + discussionId)
       <IonHeader>
         <IonToolbar>
           <IonTitle>Archivierte Ansicht: {agendaTitle}</IonTitle>
-          <IonTitle>Maximale Teilnehmer: {maxParticipants}</IonTitle>
+          
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+      <div className="divider-small"></div>
         <IonCard>
           <IonCardHeader>
             <IonCardTitle>Total discussion time</IonCardTitle>
@@ -171,7 +172,10 @@ console.log("ID" + discussionId)
             );
           })}
         </IonList>
-        
+        <div className="divider-small"></div>
+        <IonTitle>Maximale Teilnehmer: {maxParticipants}</IonTitle>
+        <div className="divider-small"></div>
+
       </IonContent>
     </IonPage>
   );

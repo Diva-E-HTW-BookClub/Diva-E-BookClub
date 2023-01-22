@@ -300,7 +300,7 @@ const Agenda: React.FC = () => {
           )}
         </form>
         {isReadOnly && (
-          <IonButton
+          <IonButton type="submit"
             routerLink={
               "/clubs/" + bookClubId + "/discussions/" + discussionId + "/live"
             }
