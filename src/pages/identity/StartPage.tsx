@@ -19,11 +19,11 @@ const StartPage: React.FC = () => {
       </IonHeader>
       <IonContent fullscreen class="ion-padding">
         <h1>WELCOME TO BOOK CLUB APP</h1>
-        <p>Create an account</p>
+        <p className="font-center">Create an account</p>
         <IonButton expand="block" size="default" class="ion-margin-bottom" routerLink="/register">
           REGISTER
         </IonButton>
-        <p>Already have an account?</p>
+        <p className="font-center">Already have an account?</p>
         <IonButton expand="block" size="default" routerLink="/login">
           LOG IN
         </IonButton>

@@ -166,7 +166,7 @@ const RegisterPage: React.FC = () => {
             {isSubmitting ? <IonSpinner></IonSpinner> : "REGISTER"}
           </IonButton>
           <IonItem lines="none">
-            <p>
+            <p className="font-center">
               Already have an account?
               <IonRouterLink routerDirection="forward" routerLink="/login">
                 {" "}
