@@ -122,6 +122,10 @@
   font-family: 'Open Sans';
 }
 
+ion-label{
+  font-family: 'Open Sans' !important;
+}
+
 .font-center{
   text-align: center;
 }
