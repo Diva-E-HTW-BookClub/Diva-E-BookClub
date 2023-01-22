@@ -18,6 +18,7 @@ import {
 import { firebaseDB } from "./firebaseConfig";
 import { deleteDiscussionDocument } from "./firebaseDiscussions";
 import { deleteResourceDocument } from "./firebaseResource";
+import {getNextDiscussionsUntilWeeks} from "../helpers/discussionSort";
 
 type Comment = {
   id: string,
@@ -43,6 +44,8 @@ type Discussion = {
   agenda: [];
   moderator: string;
   isArchived: boolean;
+  bookClubId?: string;
+  bookClubName?: string;
 };
 
 type Resource = {
@@ -126,7 +129,7 @@ async function getBookClubDocument(bookClubId: string) {
       location: discussionData.location,
       agenda: discussionData.agenda,
       moderator: discussionData.moderator,
-      isArchived: discussionData.isArchived
+      isArchived: discussionData.isArchived,
     });
   });
 
@@ -150,7 +153,7 @@ async function getBookClubDocument(bookClubId: string) {
 
   if (bookClubData) {
     return {
-      id: bookClubData.id,
+      id: bookClubId,
       name: bookClubData.name,
       moderator: bookClubData.moderator,
       members: bookClubData.members,
@@ -161,6 +164,43 @@ async function getBookClubDocument(bookClubId: string) {
       owner: bookClubData.owner,
     };
   }
+}
+
+async function getBookClubsByModerator(moderatorId: string){
+  let queryConstraints = [where("moderator", "array-contains", moderatorId)];
+  let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
+  var results = await getDocs(q);
+  return results.docs.map(docToBookClub);
+}
+
+async function getBookClubsByJoinedMember(memberId: string){
+  let queryConstraints = [
+      where("members", "array-contains", memberId),
+  ];
+  let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
+  var results = await getDocs(q);
+  return (
+      results.docs
+          .map(docToBookClub)
+          // remove clubs where our user is a moderator
+          .filter((bookClub) => !bookClub.moderator.includes(memberId))
+  );
+}
+
+async function getAllDiscussionsOfBookClubsByUser(userId: string){
+  let queryConstraints = [where("members", "array-contains", userId)];
+  let q = query(collection(firebaseDB, "bookClubs"), ...queryConstraints);
+  var results = await getDocs(q);
+  let resultsArray = results.docs.map(docToBookClub);
+  let nextDiscussionArray: Discussion[] = [];
+  for await (const bookClub of resultsArray){
+    await getBookClubDocument(bookClub.id).then((fullBookClub) => {
+      if(fullBookClub) {
+        nextDiscussionArray.push(...getNextDiscussionsUntilWeeks(fullBookClub, 2))
+      }
+    })
+  }
+  return nextDiscussionArray;
 }
 
 // serch book clubs by their name, book title
@@ -266,6 +306,9 @@ export {
   searchBookClubs,
   addMember,
   removeMember,
+    getBookClubsByModerator,
+    getBookClubsByJoinedMember,
+    getAllDiscussionsOfBookClubsByUser,
 };
 
 export type { BookClub, Discussion, Comment, Resource };

@@ -1,5 +1,5 @@
-import { Discussion } from "../firebase/firebaseBookClub";
-import { compareDatesAscending, getYearValue } from "./datetimeFormatter";
+import {BookClub, Discussion} from "../firebase/firebaseBookClub";
+import {compareDatesAscending, formatToTimezonedISOString, getYearValue} from "./datetimeFormatter";
 
 function sortDiscussionsByDate(discussions: Discussion[]) {
   return discussions.sort((a, b) => {
@@ -46,10 +46,35 @@ function getYearArrayOfDiscussions(discussions: Discussion[]) {
   return years;
 }
 
+function getNextDiscussionsUntilWeeks(bookClub: BookClub, weeks: number) {
+  var discussionArray: Discussion[] = [];
+  bookClub.discussions.forEach((discussion) => {
+    discussionArray.push({
+      id: discussion.id,
+      title: discussion.title,
+      participants: discussion.participants,
+      date: discussion.date,
+      startTime: discussion.startTime,
+      endTime: discussion.endTime,
+      location: discussion.location,
+      agenda: discussion.agenda,
+      moderator: discussion.moderator,
+      isArchived: discussion.isArchived,
+      bookClubName: bookClub.name,
+      bookClubId: bookClub.id,
+    });
+  });
+  let upcomingDiscussions = getUpcomingDiscussions(discussionArray);
+  let endDate = new Date();
+  endDate.setDate(endDate.getDate() + (weeks * 7));
+  return upcomingDiscussions.filter((discussion) => compareDatesAscending(formatToTimezonedISOString(endDate), discussion.startTime));
+}
+
 export {
   sortDiscussionsByDate,
   getUpcomingDiscussions,
   getPastDiscussions,
   getDiscussionsByYear,
   getYearArrayOfDiscussions,
+    getNextDiscussionsUntilWeeks,
 };
