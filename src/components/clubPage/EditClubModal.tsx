@@ -33,7 +33,7 @@ type FormValues = {
 
 interface EditClubModalProps {
   bookClubId: string;
-  bookClubData?: BookClub;
+  bookClubData: BookClub;
   onDismiss: () => any;
 }
 
@@ -78,6 +78,7 @@ export const EditClubModal: React.FC<EditClubModalProps> = ({
   }
 
   async function submitData(data: any) {
+    data.book = bookClubData.book;
     await updateBookClubDocument(bookClubId, data).then(() => {
       setIsOpen(false);
       onDismiss();

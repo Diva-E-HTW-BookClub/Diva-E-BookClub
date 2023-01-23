@@ -179,18 +179,14 @@ async function getAllDiscussionsOfBookClubsByUser(userId: string){
 // and where members contains and not contains given member id
 // (needed to find clubs where user is a member and where not)
 async function searchBookClubs(
-  filter: string,
   inputText: string,
   memberId: string,
-  includeMember: boolean,
   resultsLimit: number,
   lastBookClubId?: string
 ) {
   let params =  new URLSearchParams({
-    "filter" : filter,
     "inputText" : inputText,
     "memberId" : memberId,
-    "includeMember" : String(includeMember),
     "resultsLimit" : String(resultsLimit),
   })
   if (lastBookClubId){
@@ -203,26 +199,7 @@ async function searchBookClubs(
     .catch(error => {
       console.log(error);
     });
-
-
   return res
-
-}
-
-// convert document from firestore to book club
-function docToBookClub(doc: any) {
-  let data = doc;
-  return {
-    id: doc.id,
-    name: data.name,
-    moderator: data.moderator,
-    members: data.members,
-    maxMemberNumber: data.maxMemberNumber,
-    book: data.book,
-    discussions: data.discussions,
-    resources: data.resources,
-    owner: data.owner,
-  };
 }
 
 // https://firebase.google.com/docs/firestore/manage-data/add-data#update_elements_in_an_array
