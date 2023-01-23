@@ -64,7 +64,7 @@ const ProfileTab: React.FC = () => {
                   Edit Profile
                 </IonButton>
               </div>
-              <IonButton size="default" onClick={logoutUser}>
+              <IonButton size="default" onClick={logoutUser} >
                 logout
               </IonButton>
             </IonItem>

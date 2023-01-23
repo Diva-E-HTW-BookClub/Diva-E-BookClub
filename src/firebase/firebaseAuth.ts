@@ -78,6 +78,7 @@ async function loginUser(email: string, password: string) {
 async function logoutUser() {
   signOut(auth)
     .then(() => {
+      window.location.reload();
       //Success
     })
     .catch((error) => {
