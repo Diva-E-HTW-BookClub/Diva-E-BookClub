@@ -64,30 +64,19 @@ return <IonApp>
               <Route exact path="/start">
                 <StartPage />
               </Route>
-              <Route exact path="/home">
-                <HomeTab />
-              </Route>
-              <Route exact path="/clubs">
-                <ClubsTab />
-              </Route>
-              <Route path="/start">
-                <StartPage/>
-              </Route>
-              <Route path="/profile" >
-                <ProfileTab/>
-              </Route>
-              <Route exact path="/discussions/live">
-                <LiveDiscussion />
-              </Route>
               <Route exact path="/">
                 <Redirect to="/start"/>
               </Route>
 
+              <PrivateRoute path="/clubs" component={ClubsTab} exact/>
+              <PrivateRoute path="/home" component={HomeTab} exact/>
+              <PrivateRoute path="/profile" component={ProfileTab} exact/>
               <PrivateRoute path="/clubs/:bookClubId/view" component={ClubPage} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments" component={Comments} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/agenda" component={Agenda} exact/>
               <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/live" component={LiveDiscussion}  exact/>
-              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/archived" component={ArchivedLiveDiscussion}  exact/>
+              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/archived" component={ArchivedLiveDiscussion}  exact/>  
+              <PrivateRoute path="/discussions/live" component={LiveDiscussion}  exact/>
 
             </IonRouterOutlet>
             <IonTabBar slot="bottom">
@@ -114,14 +103,14 @@ const App: React.FC = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    getCurrentUser().then((user: any) => {
-      if (user) {
-        dispatch(setUserState(user))
+    getCurrentUser().then((currentUser) => {
+      if (currentUser) {
+        dispatch(setUserState(currentUser))
         //console.log("logged in :)")
       } else {
         //console.log("not logged in :(")
       }
-      setBusy(false)
+        setBusy(false)
     })
   }, [])
   //Spinner that is displayed while content is loading

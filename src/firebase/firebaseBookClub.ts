@@ -70,8 +70,6 @@ type BookClub = {
 };
 
 async function createBookClubDocument(data: BookClub) {
-  let user_uid 
-  await getCurrentUser().then((user: any) => {user_uid = user.uid})
   let url = API_URL+"bookClub"
   const res = await axios.post(url, data, REQUEST_CONFIG)
     .then(response => response.data)
