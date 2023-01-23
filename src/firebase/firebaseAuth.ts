@@ -12,8 +12,8 @@ import { firebaseApp, provideAuth } from "./firebaseConfig";
 
 const auth = provideAuth();
 
-function getCurrentUser() {
-  return new Promise((resolve, reject) =>{
+async function getCurrentUser() {
+  return await new Promise((resolve, reject) =>{
     const unsubscribe = auth.onAuthStateChanged(function(user) {
         if(user) {
           resolve(user)
@@ -26,23 +26,7 @@ function getCurrentUser() {
   
 }
 
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // User is signed in, see docs for a list of available properties
-    // https://firebase.google.com/docs/reference/js/firebase.User
-    const uid = user.uid;
-    // ...
-    //Redux - Statemanager for react
-    console.log("signed in");
-  } else {
-    // User is signed out
-    // ...
-    console.log("not signed in");
-  }
-});
-
 async function registerUser(email: string, password: string) {
-  const auth = getAuth(firebaseApp);
   return createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Registered
@@ -77,7 +61,6 @@ async function loginUser(email: string, password: string) {
 }
 
 async function logoutUser() {
-  const auth = getAuth(firebaseApp);
   signOut(auth)
     .then(() => {
       //Success

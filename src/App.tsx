@@ -114,17 +114,16 @@ const App: React.FC = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    let currentUser = getCurrentUser()
-    console.log(currentUser)
-    if (currentUser) {
-      console.log("1")
-      dispatch(setUserState(currentUser))
-      //console.log("logged in :)")
-    } else {
-      //console.log("not logged in :(")
-    }
-      setBusy(false)
-    
+    getCurrentUser().then((currentUser) => {
+      if (currentUser) {
+        console.log(currentUser)
+        dispatch(setUserState(currentUser))
+        //console.log("logged in :)")
+      } else {
+        //console.log("not logged in :(")
+      }
+        setBusy(false)
+    })
   }, [])
   //Spinner that is displayed while content is loading
   return <IonApp>{busy ? <IonSpinner /> : <RoutingSystem />}</IonApp>

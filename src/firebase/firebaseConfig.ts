@@ -14,6 +14,7 @@ const firebaseConfig = {
   measurementId: "G-XMMQYQLYFT",
 };
 
+const firebaseApp = initializeApp(firebaseConfig);
 function provideAuth() {
   let auth
   if (Capacitor.isNativePlatform()) {
@@ -26,7 +27,6 @@ function provideAuth() {
   return auth
 }
 // Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
 
 // Initialize Cloud Firestore and get a reference to the service
 const firebaseDB = getFirestore(firebaseApp);
