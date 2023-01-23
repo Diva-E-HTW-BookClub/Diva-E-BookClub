@@ -1,6 +1,86 @@
 
 /* General Css for the Diva-E Book Club App
 
+/* open-sans-300 - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: url('../../fonts/open-sans-v34-latin-300.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('../../fonts/open-sans-v34-latin-300.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../../fonts/open-sans-v34-latin-300.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../../fonts/open-sans-v34-latin-300.woff') format('woff'), /* Modern Browsers */
+       url('../../fonts/open-sans-v34-latin-300.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../../fonts/open-sans-v34-latin-300.svg#OpenSans') format('svg'); /* Legacy iOS */
+}
+/* open-sans-regular - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../../fonts/open-sans-v34-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('../../fonts/open-sans-v34-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../../fonts/open-sans-v34-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../../fonts/open-sans-v34-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('../../fonts/open-sans-v34-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../../fonts/open-sans-v34-latin-regular.svg#OpenSans') format('svg'); /* Legacy iOS */
+}
+/* open-sans-700 - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../../fonts/open-sans-v34-latin-700.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('../../fonts/open-sans-v34-latin-700.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../../fonts/open-sans-v34-latin-700.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../../fonts/open-sans-v34-latin-700.woff') format('woff'), /* Modern Browsers */
+       url('../../fonts/open-sans-v34-latin-700.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../../fonts/open-sans-v34-latin-700.svg#OpenSans') format('svg'); /* Legacy iOS */
+}
+/* open-sans-800 - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 800;
+  src: url('../../fonts/open-sans-v34-latin-800.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('../../fonts/open-sans-v34-latin-800.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../../fonts/open-sans-v34-latin-800.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../../fonts/open-sans-v34-latin-800.woff') format('woff'), /* Modern Browsers */
+       url('../../fonts/open-sans-v34-latin-800.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../../fonts/open-sans-v34-latin-800.svg#OpenSans') format('svg'); /* Legacy iOS */
+}
+/* open-sans-italic - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: url('../../fonts/open-sans-v34-latin-italic.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('../../fonts/open-sans-v34-latin-italic.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../../fonts/open-sans-v34-latin-italic.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../../fonts/open-sans-v34-latin-italic.woff') format('woff'), /* Modern Browsers */
+       url('../../fonts/open-sans-v34-latin-italic.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../../fonts/open-sans-v34-latin-italic.svg#OpenSans') format('svg'); /* Legacy iOS */
+}
+/* open-sans-800italic - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 800;
+  src: url('../../fonts/open-sans-v34-latin-800italic.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('../../fonts/open-sans-v34-latin-800italic.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../../fonts/open-sans-v34-latin-800italic.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../../fonts/open-sans-v34-latin-800italic.woff') format('woff'), /* Modern Browsers */
+       url('../../fonts/open-sans-v34-latin-800italic.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../../fonts/open-sans-v34-latin-800italic.svg#OpenSans') format('svg'); /* Legacy iOS */
+}
+
+
 /** Ionic CSS Variables **/
 :root {
   /* Set the background of the entire app */
@@ -17,12 +97,13 @@
 }
 
 :root {
-  --ion-color-favorite: #8fa169;
+  --ion-color-favorite: #D9D9D9;
   --ion-color-favorite-rgb: 255, 255, 190;
   --ion-color-favorite-contrast: #5d6944;
   --ion-color-favorite-contrast-rgb: 255, 255, 255;
   --ion-color-favorite-shade: #5d6944;
   --ion-color-favorite-tint: #3b432b;
+    --ion-color-favorite-danger: #ff4961;
 }
 
 .ion-color-favorite {
@@ -32,10 +113,19 @@
   --ion-color-contrast-rgb: var(--ion-color-favorite-contrast-rgb);
   --ion-color-shade: var(--ion-color-favorite-shade);
   --ion-color-tint: var(--ion-color-favorite-tint);
+    --ion-color-danger: var(--ion-color-favorite-danger);
 }
-.tab {
-  background: var(--ion-color-favorite);
-  color: var(--ion-color-favorite-tint);
+
+*{
+  font-family: 'Open Sans';
+}
+
+ion-label{
+  font-family: 'Open Sans' !important;
+}
+
+.font-center{
+  text-align: center;
 }
 
 .divider {
@@ -72,6 +162,13 @@
 
 .timeDisplay{
   padding-left:10px;
+}
+
+ion-searchbar.custom {
+  --background: #e3e3e3;
+  --color: rgb(0, 0, 0);
+  --border-radius: 15px;
+  --box-shadow: 0;
 }
 
 *{

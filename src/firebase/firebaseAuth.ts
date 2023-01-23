@@ -8,12 +8,12 @@ import {
   User,
 } from "firebase/auth";
 
-import { firebaseApp } from "./firebaseConfig";
+import { firebaseApp, provideAuth } from "./firebaseConfig";
 
-const auth = getAuth();
+const auth = provideAuth();
 
-function getCurrentUser() {
-  return new Promise((resolve, reject) =>{
+async function getCurrentUser() {
+  return await new Promise((resolve, reject) =>{
     const unsubscribe = auth.onAuthStateChanged(function(user) {
         if(user) {
           resolve(user)
@@ -42,7 +42,6 @@ onAuthStateChanged(auth, (user) => {
 });
 
 async function registerUser(email: string, password: string) {
-  const auth = getAuth(firebaseApp);
   return createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Registered
@@ -77,9 +76,9 @@ async function loginUser(email: string, password: string) {
 }
 
 async function logoutUser() {
-  const auth = getAuth(firebaseApp);
   signOut(auth)
     .then(() => {
+      window.location.reload();
       //Success
     })
     .catch((error) => {

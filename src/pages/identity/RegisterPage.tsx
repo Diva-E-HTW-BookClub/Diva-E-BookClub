@@ -56,6 +56,7 @@ const RegisterPage: React.FC = () => {
       // if result has no errors redirect to home page
       if (result === "") {
         history.push("/home");
+        window.location.reload();
       } else if (result === "auth/email-already-in-use") {
         setError("email", {
           type: "custom",
@@ -166,7 +167,7 @@ const RegisterPage: React.FC = () => {
             {isSubmitting ? <IonSpinner></IonSpinner> : "REGISTER"}
           </IonButton>
           <IonItem lines="none">
-            <p>
+            <p className="font-center">
               Already have an account?
               <IonRouterLink routerDirection="forward" routerLink="/login">
                 {" "}

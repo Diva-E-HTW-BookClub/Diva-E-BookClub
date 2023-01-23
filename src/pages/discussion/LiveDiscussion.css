@@ -46,3 +46,21 @@ ion-item {
   --inner-padding-end: 0px;
   --inner-padding-start: 0px;
 }
+
+.button-icon {
+  color:#A5A58D;
+}
+.live{
+  position: absolute;
+  left: 50%;
+  margin-top: 40px;
+  transform: translate(-50%, 50%);
+}
+.playTitle{
+  font-weight: lighter;
+  font-size: large;
+  font-style: italic;
+}
+.cards{
+  margin-top: 5%
+}

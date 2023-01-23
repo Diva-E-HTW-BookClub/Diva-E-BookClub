@@ -125,11 +125,11 @@ const ClubPage: React.FC = () => {
             <IonBackButton defaultHref="/clubs" text="Clubs"></IonBackButton>
           </IonButtons>
           <IonTitle>{clubName}</IonTitle>
-          {isModerator && (
+          {(
             <IonButtons slot="end">
               <EditClubModal
                 bookClubId={bookClubId}
-                bookClubData={bookClubData}
+                bookClubData={bookClubData!}
                 onDismiss={getBookClub}
               />
             </IonButtons>

@@ -308,7 +308,7 @@ return () => clearInterval(interval);
       </IonHeader>
       <IonContent fullscreen>
       <div className="divider-small"></div>
-        <IonCard>
+        <IonCard className="cards">
           <IonCardHeader>
             <IonCardTitle>Total discussion time</IonCardTitle>
           </IonCardHeader>
@@ -330,7 +330,7 @@ return () => clearInterval(interval);
                 <IonCard>
                   <IonCardHeader>
                     {isModerator &&
-                    <IonButton className="playButton" fill="outline" onClick={() => setButtons(index)}>
+                    <IonButton className="playButton" fill="solid" color="favorite" onClick={() => setButtons(index)}>
                     
                       {!playingStateReceived[index] &&
                         <IonIcon className="button-icon" icon={play}></IonIcon>
@@ -362,7 +362,7 @@ return () => clearInterval(interval);
         <div className="divider-small"></div>
         <IonTitle>Aktuelle Teilnehmer: {participantCount}</IonTitle>
         <div className="divider-small"></div>
-        <IonButton routerLink={"/clubs/" + bookClubId+ "/view"} fill="outline" onClick={() => saveLiveDiscussion(true)}>
+        <IonButton className="live" routerLink={"/clubs/" + bookClubId+ "/view"} fill="outline" onClick={() => saveLiveDiscussion(true)}>
               End discussion
         </IonButton>
       </IonContent>

@@ -33,6 +33,8 @@ import {
   getTimezonedDate,
 } from "../helpers/datetimeFormatter";
 
+import "./Agenda.css";
+
 type FormValues = {
   agenda: {
     name: string;
@@ -144,7 +146,7 @@ const Agenda: React.FC = () => {
 
   const inputFields = () => {
     return (
-      <>
+      <div className="inputFields">
         {fields.map((field, index) => {
           return (
             <IonItem key={field.id}>
@@ -194,7 +196,7 @@ const Agenda: React.FC = () => {
             </IonItem>
           );
         })}
-      </>
+      </div>
     );
   };
 
@@ -215,7 +217,7 @@ const Agenda: React.FC = () => {
  
 
   return (
-    <IonPage>
+    <IonPage className="parent">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -229,15 +231,21 @@ const Agenda: React.FC = () => {
           <IonList>
             <IonListHeader>
               <IonLabel>
-                <h1>{discussionData.title}</h1>
-                <h2>{getTimezonedDate(discussionData.date)}</h2>
-                <p>
-                  {getTimeSlotString(
-                    discussionData.startTime,
-                    discussionData.endTime
-                  )}
-                </p>
+                <h1 className="agendaTitle">{discussionData.title }</h1>
               </IonLabel>
+              <div className="agendaDate">
+                <IonLabel>
+                  <h2 id="date">{getTimezonedDate(discussionData.date)}</h2>
+                </IonLabel>
+                <IonLabel>
+                  <p>
+                    {getTimeSlotString(
+                        discussionData.startTime,
+                        discussionData.endTime
+                    )}
+                  </p>
+                </IonLabel>
+              </div>
             </IonListHeader>
             {inputFields()}
           </IonList>
@@ -281,21 +289,21 @@ const Agenda: React.FC = () => {
             </IonText>
           </IonItem>
           {isModerator && isReadOnly && (
-            <IonButton onClick={() => setIsReadOnly(!isReadOnly)}>
-              Edit
-            </IonButton>
+                <IonButton className="edit" onClick={() => setIsReadOnly(!isReadOnly)}>
+                  Edit
+                </IonButton>
           )}
           {!isReadOnly && (
             <>
-              <IonButton fill="outline" onClick={cancelEdit}>
-                Cancel
-              </IonButton>
-              <IonButton type="submit">Save</IonButton>
+                <IonButton className="edit" fill="outline" onClick={cancelEdit}>
+                  Cancel
+                </IonButton>
+                <IonButton className="liveButton" type="submit">Save</IonButton>
             </>
           )}
         </form>
         {isReadOnly && (
-          <IonButton type="submit"
+          <IonButton className="liveButton" type="submit"
             routerLink={
               "/clubs/" + bookClubId + "/discussions/" + discussionId + "/live"
             }
