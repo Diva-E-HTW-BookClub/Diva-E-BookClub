@@ -51,6 +51,43 @@ Run the App in Android Studio and it will be started on the emulator.
 
 See [Development for Android](https://ionicframework.com/docs/developing/android) for more information.
 
+## Run App on iOS
+
+### Start on simulator
+
+#### Requirements:
+
+- Mac (& iPhone if you want to install on external device)
+- Xcode (with version compatible with your iPhones iOS version if wanted to start on external device. Check versions [here](https://developer.apple.com/support/xcode/) under "Minimum requirements and supported SDKs")
+- Developer Mode on iPhone enabled. Tutorial on that [here](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device).
+
+**Note**: DON'T update or install Xcode through the App Store as it won't ever finish and possibly shut down your Mac due to overheating. Use this [website](https://developer.apple.com/download/all/?q=xcode) instead, download the version you need and install it manually.
+
+#### Preparing for iOS
+
+1. `cd` into project folder.
+2. If directory called "ios" exists, delete this first.
+3. Run `ionic build`. This creates a new build of the current state of the app (changes after that require a new build to be created).
+4. Run `ionic capacitor add ios`. This creates the capacitor app files for the iOS Platform from the previously created build in a new directory called "ios" (automatically instantiated).
+5. Run `ionic capacitor open ios` to open Xcode with the capacitor app. It takes some time to index all the files.
+6. Once the Project had been opened once with the current build, you can simply select the project in Xcode to open it again. Although if you would like to change the used build the above steps have to be repeated.
+
+#### Run in the Simulator
+
+In Xcode press the "Run" Button to start the App (if needed select a device for the Simulator in the centered bar next to the project name). This opens the Simulator and starts the app (can take some time!). 
+
+For a quick view of the app in the simulator you can skip opening Xcode and just run `ionic capacitor run ios` after you completed Step 3 of the preparation.
+
+#### Install and run on external device
+
+1. Connect your iPhone that has developer mode enabled to your mac via USB and select "Trust this Device" on your iPhone once prompted with the popup.
+2. In Xcode click on where you can select the Simulator. Your iPhone should show up under "Devices". Select it let it check for errors.
+3. An error might prompt you to select a Team Name for your Project and to change your bundle or organization identifier. You can do so and change it to your name.
+4. If the errors are resolved, hit "Run" and leave the iPhone connected to your mac. It should install the App onto your iPhone and run it.
+5. Once completed you can disconnect your iPhone from your Mac and close Xcode. The build of the app can now be used anytime. 
+
+Please contact me (Sönke) if you run into any problems (there can be many, it's Apple...)
+
 ## Formatting
 
 This projects uses Prettier with ESLint. To manually format a single file use
