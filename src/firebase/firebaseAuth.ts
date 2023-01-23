@@ -8,9 +8,9 @@ import {
   User,
 } from "firebase/auth";
 
-import { firebaseApp } from "./firebaseConfig";
+import { firebaseApp, provideAuth } from "./firebaseConfig";
 
-const auth = getAuth();
+const auth = provideAuth();
 
 function getCurrentUser() {
   return new Promise((resolve, reject) =>{
