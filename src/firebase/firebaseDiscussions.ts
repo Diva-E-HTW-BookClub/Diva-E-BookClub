@@ -127,13 +127,12 @@ async function addDiscussionAgenda(
 async function getDiscussionAgenda(bookClubId: string, discussionId: string) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId})
   let url = API_URL+"bookClub/discussion?" + params
-  let res = await axios.post(url, REQUEST_CONFIG)
+  let res = await axios.get(url, REQUEST_CONFIG)
     .then(response => response.data)
     .then(data => data.result)
     .catch(error => {
         console.log(error);
     });
-
   if (res) {
     return res.agenda;
   }
@@ -162,11 +161,11 @@ async function updateDiscussionAgenda(
   names: any,
   timeLimits: any,
   maxParticipants: number,
-  saveArchive: boolean
+  saveArchive: boolean,
 ) {
   let params =  new URLSearchParams({"bookClubId" : bookClubId, "discussionId":discussionId, "amountOfChapter": String(amountOfChapter), 
-  "elapsedTimes": elapsedTimes, "names":names, "timeLimits": timeLimits, "maxParticipants" : String(maxParticipants), "saveArchive": String(saveArchive)})
-  let url = API_URL+"/bookClub/discussion/agenda?" + params
+  "elapsedTimes": JSON.stringify(elapsedTimes), "names": JSON.stringify(names), "timeLimits": JSON.stringify(timeLimits), "maxParticipants" : String(maxParticipants), "saveArchive": String(saveArchive)})
+  let url = API_URL+"bookClub/discussion/agenda?" + params
   const res = await axios.patch(url, REQUEST_CONFIG)
     .then(response => response.data)
     .then(data => data.result)

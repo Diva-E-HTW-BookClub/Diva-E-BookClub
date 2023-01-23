@@ -32,6 +32,7 @@ import {
   getBookClubDocument,
 } from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
+import { API_URL } from "../../constants";
 
 
 
@@ -42,7 +43,9 @@ interface AgendaPartProps {
   timeLimit: number
 }
 
-const socket = io("http://localhost:3001");
+const socket = io(API_URL, {
+  "transports": ['websocket']
+});
 var emitTimes:number[] = []
 var emitSum = 0;
 var emitStates:boolean[] = []
@@ -349,7 +352,7 @@ return () => clearInterval(interval);
                         <IonProgressBar className={` ${isRed(progressTimesReceived[index], agendaPart.timeLimit) ? 'isRed' : isDarkOrange(progressTimesReceived[index], agendaPart.timeLimit) ?  'isDarkOrange' : isOrange(progressTimesReceived[index], agendaPart.timeLimit) ? 'isOrange' : 'blue'}`} value={progressTimesReceived[index]}></IonProgressBar>
                         </IonCol>
                         <IonCol className="timeDisplay" size="4">
-                          {`${doubleDigits(progressTimesReceived[index] * agendaPart.timeLimit)} / ${doubleDigits(agendaPart.timeLimit)}`}
+                          {`${doubleDigits(progressTimesReceived[index] * agendaPart.timeLimit)} / ${doubleDigits(agendaPart.timeLimit)} min`}
                            </IonCol>
                       </IonRow>
                     </IonGrid>

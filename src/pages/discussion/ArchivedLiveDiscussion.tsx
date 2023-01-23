@@ -28,6 +28,7 @@ import { useSelector } from "react-redux";
 import { pause, play } from "ionicons/icons";
 import { getDiscussionAgenda,getDiscussionTitle, getDiscussionMaxParticipants,  } from "../../firebase/firebaseDiscussions";
 import { useParams } from "react-router";
+import { API_URL } from "../../constants";
 
 interface AgendaPartProps {
   id: number,
@@ -36,7 +37,9 @@ interface AgendaPartProps {
   timeLimit: number
 }
 
-const socket = io("http://localhost:3001");
+const socket = io(API_URL, {
+  "transports": ['websocket']
+});
 var isModerator = false;
 var emitTimes:number[] = []
 var emitSum = 0;
