@@ -225,11 +225,6 @@ const Agenda: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Agenda</IonTitle>
-          </IonToolbar>
-        </IonHeader>
         <form onSubmit={handleSubmit(submitData)}>
           <IonList>
             <IonListHeader>
