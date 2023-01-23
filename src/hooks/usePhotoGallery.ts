@@ -12,7 +12,7 @@ export function usePhotoGallery() {
     const photo = await Camera.getPhoto({
       resultType: CameraResultType.Uri,
       source: CameraSource.Prompt,
-      quality: 10,
+      quality: 20,
     });
     return photo.webPath;
   };
@@ -42,7 +42,5 @@ export async function base64FromPath(path: string): Promise<string> {
 }
 
 export function getFileSizeFromBase64(base64String: string){
-  let length = base64String.length - 'data:image/png;base64,'.length;
-  //calc size in bytes
-  return 4 * Math.ceil((length / 4) * 3);
+  return new Blob([base64String]).size
 }
