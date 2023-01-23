@@ -166,6 +166,13 @@ ion-label{
   padding-left:10px;
 }
 
+ion-searchbar.custom {
+  --background: #e3e3e3;
+  --color: rgb(0, 0, 0);
+  --border-radius: 15px;
+  --box-shadow: 0;
+}
+
 *{
   box-sizing: border-box;
 }
