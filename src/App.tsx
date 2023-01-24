@@ -50,7 +50,7 @@ import { setUserState } from "./reducers/actions";
 
 setupIonicReact();
 const RoutingSystem: React.FC = () => {
-  const condition = useSelector((state:any) => state.user.user)
+  const isLoggedIn = useSelector((state:any) => state.user.user)
 
 return <IonApp>
         <IonReactRouter>
@@ -66,7 +66,7 @@ return <IonApp>
             </Route>
             <Route path="/tabs" render={() => <TabRouting />}/>
             <Route exact path="/">
-              {condition ? <Redirect to="/tabs" /> : <Redirect to="/start" />}
+              {isLoggedIn ? <Redirect to="/tabs" /> : <Redirect to="/start" />}
             </Route>
           </IonRouterOutlet>
         </IonReactRouter>
@@ -74,10 +74,10 @@ return <IonApp>
 }
 
 export const TabRouting: React.FC = () => {
-  const condition = useSelector((state:any) => state.user.user)
+  const isLoggedIn = useSelector((state:any) => state.user.user)
 
   const authRouteCheck = (component: JSX.Element) => {
-    return condition ? component : <Redirect to="/login"/>;
+    return isLoggedIn ? component : <Redirect to="/login"/>;
   }
 
   return (
