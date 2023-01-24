@@ -50,6 +50,8 @@ import { setUserState } from "./reducers/actions";
 
 setupIonicReact();
 const RoutingSystem: React.FC = () => {
+  const condition = useSelector((state:any) => state.user.user)
+
 return <IonApp>
         <IonReactRouter>
           <IonRouterOutlet>
@@ -63,6 +65,9 @@ return <IonApp>
               <StartPage />
             </Route>
             <Route path="/tabs" render={() => <TabRouting />}/>
+            <Route exact path="/">
+              {condition ? <Redirect to="/tabs" /> : <Redirect to="/start" />}
+            </Route>
           </IonRouterOutlet>
         </IonReactRouter>
       </IonApp>
