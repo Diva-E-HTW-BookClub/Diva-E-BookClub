@@ -221,7 +221,7 @@ const Agenda: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref={"/clubs/" + bookClubId + "/view"} />
+            <IonBackButton defaultHref={"/tabs/clubs/" + bookClubId + "/view"} />
           </IonButtons>
           <IonTitle>Agenda</IonTitle>
         </IonToolbar>
@@ -305,7 +305,7 @@ const Agenda: React.FC = () => {
         {isReadOnly && (
           <IonButton className="liveButton" type="submit"
             routerLink={
-              "/clubs/" + bookClubId + "/discussions/" + discussionId + "/live"
+              "/tabs/clubs/" + bookClubId + "/discussions/" + discussionId + "/live"
             }
           >
             Live

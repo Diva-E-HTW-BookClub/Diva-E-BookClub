@@ -1,6 +1,6 @@
 import { Redirect, Route } from "react-router-dom";
 import {
-  IonApp,
+  IonApp, IonContent,
   IonIcon,
   IonLabel,
   IonRouterOutlet,
@@ -44,58 +44,72 @@ import "@ionic/react/css/display.css";
 import "./theme/variables.css";
 import "./theme/general.css";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import { getCurrentUser } from "./firebase/firebaseAuth";
 import { setUserState } from "./reducers/actions";
-import PrivateRoute from "./routes/PrivateRoutes";
 
 setupIonicReact();
 const RoutingSystem: React.FC = () => {
 return <IonApp>
         <IonReactRouter>
-          <IonTabs>
-            <IonRouterOutlet>
-              <Route exact path="/login">
-                <LoginPage />
-              </Route>
-              <Route exact path="/register">
-                <RegisterPage />
-              </Route>
-              <Route exact path="/start">
-                <StartPage />
-              </Route>
-              <Route exact path="/">
-                <Redirect to="/start"/>
-              </Route>
-
-              <PrivateRoute path="/clubs" component={ClubsTab} exact/>
-              <PrivateRoute path="/home" component={HomeTab} exact/>
-              <PrivateRoute path="/profile" component={ProfileTab} exact/>
-              <PrivateRoute path="/clubs/:bookClubId/view" component={ClubPage} exact/>
-              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/comments" component={Comments} exact/>
-              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/agenda" component={Agenda} exact/>
-              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/live" component={LiveDiscussion}  exact/>
-              <PrivateRoute path="/clubs/:bookClubId/discussions/:discussionId/archived" component={ArchivedLiveDiscussion}  exact/>  
-              <PrivateRoute path="/discussions/live" component={LiveDiscussion}  exact/>
-
-            </IonRouterOutlet>
-            <IonTabBar slot="bottom">
-              <IonTabButton tab="home" href="/home">
-                <IonIcon icon={homeSharp} />
-                <IonLabel>Home</IonLabel>
-              </IonTabButton>
-              <IonTabButton tab="clubs" href="/clubs">
-                <IonIcon icon={chatbubblesSharp} />
-                <IonLabel>Clubs</IonLabel>
-              </IonTabButton>
-              <IonTabButton tab="profile" href="/profile">
-                <IonIcon icon={personSharp} />
-                <IonLabel>Profile</IonLabel>
-              </IonTabButton>
-            </IonTabBar>
-          </IonTabs>
+          <IonRouterOutlet>
+            <Route exact path="/login">
+              <LoginPage />
+            </Route>
+            <Route exact path="/register">
+              <RegisterPage />
+            </Route>
+            <Route exact path="/start">
+              <StartPage />
+            </Route>
+            <Route path="/tabs" render={() => <TabRouting />}/>
+          </IonRouterOutlet>
         </IonReactRouter>
       </IonApp>
+}
+
+export const TabRouting: React.FC = () => {
+  const condition = useSelector((state:any) => state.user.user)
+
+  const authRouteCheck = (component: JSX.Element) => {
+    return condition ? component : <Redirect to="/login"/>;
+  }
+
+  return (
+  <IonContent>
+    <IonTabs>
+      <IonRouterOutlet>
+        <Route exact path="/tabs">
+          <Redirect to="/tabs/home"/>
+        </Route>
+        <Route path="/tabs/clubs" render={() => authRouteCheck(<ClubsTab/>)} exact/>
+        <Route path="/tabs/home" render={() => authRouteCheck(<HomeTab/>)} exact/>
+        <Route path="/tabs/profile" render={() => authRouteCheck(<ProfileTab/>)} exact/>
+        <Route path="/tabs/clubs/:bookClubId/view" render={() => authRouteCheck(<ClubPage/>)} exact/>
+        <Route path="/tabs/clubs/:bookClubId/discussions/:discussionId/comments" render={() => authRouteCheck(<Comments/>)} exact/>
+        <Route path="/tabs/clubs/:bookClubId/discussions/:discussionId/agenda" render={() => authRouteCheck(<Agenda/>)} exact/>
+        <Route path="/tabs/clubs/:bookClubId/discussions/:discussionId/live" render={() => authRouteCheck(<LiveDiscussion/>)} exact/>
+        <Route path="/tabs/clubs/:bookClubId/discussions/:discussionId/archived"
+               render={() => authRouteCheck(<ArchivedLiveDiscussion/>)} exact/>
+        <Route path="/tabs/discussions/live" render={() => authRouteCheck(<LiveDiscussion/>)} exact/>
+      </IonRouterOutlet>
+      <IonTabBar slot="bottom">
+        <IonTabButton tab="home" href="/tabs/home">
+          <IonIcon icon={homeSharp}/>
+          <IonLabel>Home</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="clubs" href="/tabs/clubs">
+          <IonIcon icon={chatbubblesSharp}/>
+          <IonLabel>Clubs</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="profile" href="/tabs/profile">
+          <IonIcon icon={personSharp}/>
+          <IonLabel>Profile</IonLabel>
+        </IonTabButton>
+      </IonTabBar>
+    </IonTabs>
+  </IonContent>
+  )
 }
 
 const App: React.FC = () => {

@@ -87,7 +87,7 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
     return (
       <div
         className="calendarDate"
-        onClick={() => history.push("/clubs/" + bookClubId + "/view")}
+        onClick={() => history.push("/tabs/clubs/" + bookClubId + "/view")}
       >
         <IonLabel>
           <p>{getMonthName(date)}</p>
@@ -101,7 +101,7 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
     <IonItem button detail={false}>
       <div className="ion-padding-start">{calendarDate(date)}</div>
       <div className="spacing"></div>
-      <IonLabel onClick={() => history.push("/clubs/" + bookClubId + "/view")}>
+      <IonLabel onClick={() => history.push("/tabs/clubs/" + bookClubId + "/view")}>
         <div className="title">{bookClubName}</div>
         <div className="time">{getTimeSlotString(startTime, endTime)}</div>
       </IonLabel>

@@ -85,8 +85,8 @@ const ClubPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons onClick={() => history.push("/clubs")} slot="start">
-            <IonBackButton defaultHref="/clubs" text="Clubs"></IonBackButton>
+          <IonButtons slot="start">
+            <IonBackButton defaultHref="/tabs/clubs"></IonBackButton>
           </IonButtons>
           <IonTitle>{clubName}</IonTitle>
           {(

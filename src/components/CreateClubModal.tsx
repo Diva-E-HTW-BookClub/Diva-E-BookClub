@@ -174,7 +174,7 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
             owner: userId
         }).then((bookClubId) => {
             cancelModal()
-            setTimeout(() => history.push(`/clubs/${bookClubId}/view`), 200);
+            setTimeout(() => history.push(`/tabs/clubs/${bookClubId}/view`), 200);
         });
     }
 
