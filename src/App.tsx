@@ -96,7 +96,6 @@ export const TabRouting: React.FC = () => {
         <Route path="/tabs/clubs/:bookClubId/discussions/:discussionId/live" render={() => authRouteCheck(<LiveDiscussion/>)} exact/>
         <Route path="/tabs/clubs/:bookClubId/discussions/:discussionId/archived"
                render={() => authRouteCheck(<ArchivedLiveDiscussion/>)} exact/>
-        <Route path="/tabs/discussions/live" render={() => authRouteCheck(<LiveDiscussion/>)} exact/>
       </IonRouterOutlet>
       <IonTabBar slot="bottom">
         <IonTabButton tab="home" href="/tabs/home">
