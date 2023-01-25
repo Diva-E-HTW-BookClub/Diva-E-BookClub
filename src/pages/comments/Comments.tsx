@@ -35,11 +35,6 @@ const Comments: React.FC = () => {
 
   async function getCommentData() {
     let commentData = await getDiscussionComments(bookClubId, discussionId);
-    commentData = await Promise.all(commentData.map(async (comment: any) => {
-      const username = await getUsername(comment.moderator);
-      comment.username = username;
-      return comment;
-    }));
     setCommentData(commentData);
   }
 

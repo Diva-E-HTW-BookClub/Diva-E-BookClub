@@ -1,3 +1,4 @@
+import axios from "axios";
 import { resolve } from "dns";
 import {
   onAuthStateChanged,
@@ -7,6 +8,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { API_URL, REQUEST_CONFIG } from "../constants";
 
 import { firebaseApp, provideAuth, firebaseDB } from "./firebaseConfig";
 
@@ -66,14 +68,25 @@ async function registerUser(email: string, password: string, username: string) {
 }
 
 async function saveUser(userId: string, username: string) {
-  return setDoc(doc(firebaseDB, "users", userId), {
+  let params = new URLSearchParams({ "userId": userId })
+  let url = API_URL + "profile/username?" + params
+  axios.post(url, {
     username: username
-  });
+  }, REQUEST_CONFIG)
+    .catch(error => {
+      console.log(error);
+    });
 }
 
 async function getUsername(userId: string) {
-  let document = await getDoc(doc(firebaseDB, "users", userId));
-  return document.data()?.username;
+  let params = new URLSearchParams({ "userId": userId })
+  let url = API_URL + "profile/username?" + params
+  return await axios.get(url, REQUEST_CONFIG)
+    .then(response => response.data)
+    .then(data => data.username)
+    .catch(error => {
+        console.log(error);
+    });
 }
 
 async function loginUser(email: string, password: string) {

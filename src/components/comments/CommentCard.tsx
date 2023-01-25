@@ -103,9 +103,9 @@ export const CommentCard: React.FC<CommentCardProps> = ({
           <IonItem lines="none">
             <IonIcon size="large" icon={personCircleOutline}></IonIcon>
             <div className="spacing"></div>
-            <IonLabel>
-              <div className="username">{username}</div>
-              <div className="passage">{passage}</div>
+            <IonLabel class="ion-text-wrap">
+              <div className="username"><b>{username}</b></div>
+              <div className="ion-text-wrap"><p>commented on "{passage}"</p></div>
             </IonLabel>
             {user.uid === moderator && (
               <>
