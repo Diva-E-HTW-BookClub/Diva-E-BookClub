@@ -32,7 +32,7 @@ import {
   getBookClubDocument,
 } from "../../firebase/firebaseBookClub";
 import { useParams } from "react-router";
-import { API_URL } from "../../constants";
+import { SOCKET_IO_URL } from "../../constants";
 
 
 
@@ -43,7 +43,7 @@ interface AgendaPartProps {
   timeLimit: number
 }
 
-const socket = io(API_URL, {
+const socket = io(SOCKET_IO_URL, {
   "transports": ['websocket']
 });
 var emitTimes:number[] = []
@@ -80,11 +80,7 @@ const LiveDiscussion: React.FC = () => {
       timeLimit: number;
       elapsedTime: number;
     }[];
-  };
-
-  const changedPlayingState = doc(firebaseDB, "testCollection", "8hh5w2KA9koJTbyMiDuk");
-
-  
+  }; 
 
   async function saveLiveDiscussion(toBeArchived: boolean){
     var elapsedTimeArray = progressTimesReceived;
@@ -165,6 +161,7 @@ const LiveDiscussion: React.FC = () => {
         setProgressSumReceived(data[0])
       }
     });
+
     
 
     // TEST
