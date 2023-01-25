@@ -52,7 +52,7 @@ const RegisterPage: React.FC = () => {
 
   async function submitData(data: any) {
     setIsSubmitting(true);
-    await registerUser(data.email, data.password).then((result) => {
+    await registerUser(data.email, data.password, data.username).then((result) => {
       // if result has no errors redirect to home page
       if (result === "") {
         history.push("/home");

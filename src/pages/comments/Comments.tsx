@@ -21,6 +21,7 @@ import { getDiscussionComments } from "../../firebase/firebaseComments";
 import { useParams } from "react-router";
 import { ModalHandle } from "../../components/resources/EditResourceModal";
 import { CreateCommentModal } from "../../components/comments/CreateCommentModal";
+import { getUsername } from "../../firebase/firebaseAuth";
 
 const Comments: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
@@ -57,7 +58,7 @@ const Comments: React.FC = () => {
                   discussionId={discussionId}
                   bookClubId={bookClubId}
                   key={index}
-                  userName="username"
+                  username={item.username}
                   passage={item.passage}
                   text={item.text}
                   moderator={item.moderator}
