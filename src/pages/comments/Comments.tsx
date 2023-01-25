@@ -42,7 +42,7 @@ const Comments: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/tabs/clubs" />
+            <IonBackButton defaultHref={"/tabs/home/" + bookClubId + "/view"} />
           </IonButtons>
           <IonTitle>Comments</IonTitle>
         </IonToolbar>

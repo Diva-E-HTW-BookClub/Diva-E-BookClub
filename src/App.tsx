@@ -65,6 +65,7 @@ return <IonApp>
               <StartPage />
             </Route>
             <Route path="/tabs" render={() => <TabRouting />}/>
+            <Route path="/live/:bookClubId/discussions/:discussionId/view" render={() => {return isLoggedIn ? <LiveDiscussion/> : <Redirect to="/login"/>}} exact/>
             <Route exact path="/">
               {isLoggedIn ? <Redirect to="/tabs" /> : <Redirect to="/start" />}
             </Route>
@@ -89,11 +90,15 @@ export const TabRouting: React.FC = () => {
         </Route>
         <Route path="/tabs/clubs" render={() => authRouteCheck(<ClubsTab/>)} exact/>
         <Route path="/tabs/home" render={() => authRouteCheck(<HomeTab/>)} exact/>
+        <Route path="/tabs/home/:bookClubId/view" render={() => authRouteCheck(<ClubPage/>)} exact/>
+        <Route path="/tabs/home/:bookClubId/discussions/:discussionId/comments" render={() => authRouteCheck(<Comments/>)} exact/>
+        <Route path="/tabs/home/:bookClubId/discussions/:discussionId/agenda" render={() => authRouteCheck(<Agenda/>)} exact/>
+        <Route path="/tabs/home/:bookClubId/discussions/:discussionId/archived"
+               render={() => authRouteCheck(<ArchivedLiveDiscussion/>)} exact/>
         <Route path="/tabs/profile" render={() => authRouteCheck(<ProfileTab/>)} exact/>
         <Route path="/tabs/clubs/:bookClubId/view" render={() => authRouteCheck(<ClubPage/>)} exact/>
         <Route path="/tabs/clubs/:bookClubId/discussions/:discussionId/comments" render={() => authRouteCheck(<Comments/>)} exact/>
         <Route path="/tabs/clubs/:bookClubId/discussions/:discussionId/agenda" render={() => authRouteCheck(<Agenda/>)} exact/>
-        <Route path="/tabs/clubs/:bookClubId/discussions/:discussionId/live" render={() => authRouteCheck(<LiveDiscussion/>)} exact/>
         <Route path="/tabs/clubs/:bookClubId/discussions/:discussionId/archived"
                render={() => authRouteCheck(<ArchivedLiveDiscussion/>)} exact/>
       </IonRouterOutlet>

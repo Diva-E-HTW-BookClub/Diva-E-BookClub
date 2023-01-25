@@ -34,6 +34,7 @@ import {
 } from "../helpers/datetimeFormatter";
 
 import "./Agenda.css";
+import {useSelector} from "react-redux";
 
 type FormValues = {
   agenda: {
@@ -44,11 +45,11 @@ type FormValues = {
 };
 
 const Agenda: React.FC = () => {
-  //replace isModerator by an API call for a users roll
   const [isModerator, setIsModerator] = useState<boolean>(true);
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
   const [discussionData, setDiscussionData] = useState<Discussion>();
   const [totalTime, setTotalTime] = useState<number>(0);
+  const user = useSelector((state: any) => state.user.user);
 
   let { bookClubId }: { bookClubId: string } = useParams();
   let { discussionId }: { discussionId: string } = useParams();
@@ -85,6 +86,7 @@ const Agenda: React.FC = () => {
   async function getDiscussion() {
     let discussionData = await getDiscussionDocument(bookClubId, discussionId);
     setDiscussionData(discussionData);
+    setIsModerator(discussionData?.moderator.includes(user.uid))
     insertAgendaIntoFields(discussionData);
     calcTotalTime();
   }
@@ -221,7 +223,7 @@ const Agenda: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref={"/tabs/clubs/" + bookClubId + "/view"} />
+            <IonBackButton defaultHref={"/tabs/home/" + bookClubId + "/view"} />
           </IonButtons>
           <IonTitle>Agenda</IonTitle>
         </IonToolbar>
@@ -305,7 +307,7 @@ const Agenda: React.FC = () => {
         {isReadOnly && (
           <IonButton className="liveButton" type="submit"
             routerLink={
-              "/tabs/clubs/" + bookClubId + "/discussions/" + discussionId + "/live"
+              "/live/" + bookClubId + "/discussions/" + discussionId + "/view"
             }
           >
             Live
