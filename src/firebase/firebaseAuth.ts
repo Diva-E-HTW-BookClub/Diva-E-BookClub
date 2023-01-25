@@ -5,25 +5,29 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   signOut,
-  User,
 } from "firebase/auth";
+import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
 
-import { firebaseApp, provideAuth } from "./firebaseConfig";
+import { firebaseApp, provideAuth, firebaseDB } from "./firebaseConfig";
 
 const auth = provideAuth();
 
+type User = {
+  id: string;
+  name: string;
+};
+
 async function getCurrentUser() {
-  return await new Promise((resolve, reject) =>{
-    const unsubscribe = auth.onAuthStateChanged(function(user) {
-        if(user) {
-          resolve(user)
-        } else {
-          resolve(null)
-        }
-        unsubscribe()
-      })
+  return await new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged(function (user) {
+      if (user) {
+        resolve(user)
+      } else {
+        resolve(null)
+      }
+      unsubscribe()
+    })
   })
-  
 }
 
 onAuthStateChanged(auth, (user) => {
@@ -41,13 +45,16 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-async function registerUser(email: string, password: string) {
+async function registerUser(email: string, password: string, username: string) {
   return createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
+    .then(userCredential => {
+      return saveUser(userCredential.user.uid, username);
+    })
+    .then(result => {
       // Registered
       return "";
     })
-    .catch((error) => {
+    .catch(error => {
       // Firebase: Error (auth/invalid-email).
       // Firebase: Password should be at least 6 characters (auth/weak-password).
       // Firebase: Error (auth/email-already-in-use).
@@ -56,6 +63,17 @@ async function registerUser(email: string, password: string) {
       console.log(errorMessage);
       return errorCode;
     });
+}
+
+async function saveUser(userId: string, username: string) {
+  return setDoc(doc(firebaseDB, "users", userId), {
+    username: username
+  });
+}
+
+async function getUsername(userId: string) {
+  let document = await getDoc(doc(firebaseDB, "users", userId));
+  return document.data()?.username;
 }
 
 async function loginUser(email: string, password: string) {
@@ -86,4 +104,4 @@ async function logoutUser() {
     });
 }
 
-export { registerUser, loginUser, logoutUser, getCurrentUser };
+export { registerUser, loginUser, logoutUser, getCurrentUser, getUsername };

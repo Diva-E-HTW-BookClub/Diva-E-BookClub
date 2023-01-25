@@ -11,14 +11,24 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { camera, personCircleOutline } from "ionicons/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./ProfileTab.css";
-import { logoutUser } from "../../firebase/firebaseAuth";
+import { logoutUser, getUsername } from "../../firebase/firebaseAuth";
 import { useSelector } from "react-redux";
 
 const ProfileTab: React.FC = () => {
   const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
-  const user = useSelector((state: any) => state.user.user);
+  const [user, setUser] = useState<any>({});
+  let userIdAndEmail = useSelector((state: any) => state.user.user);
+
+  useEffect(() => {
+    getUsername(userIdAndEmail.uid).then(username => {
+      setUser({
+        email: userIdAndEmail.email,
+        username: username
+      })
+    })
+  }, []);
 
   return (
     <IonPage>
@@ -46,10 +56,7 @@ const ProfileTab: React.FC = () => {
           <>
             <IonItem>
               <IonLabel position="stacked">User Name</IonLabel>
-              <IonInput
-                placeholder="Enter User Name"
-                readonly={true}
-              ></IonInput>
+              <h4>{user.username}</h4>
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">Email Address</IonLabel>
