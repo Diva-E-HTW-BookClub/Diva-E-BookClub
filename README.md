@@ -51,15 +51,13 @@ Run the App in Android Studio and it will be started on the emulator.
 
 See [Development for Android](https://ionicframework.com/docs/developing/android) for more information.
 
-## Run App on iOS
-
-### Start on simulator
+### Run App on iOS
 
 #### Requirements:
 
 - Mac (& iPhone if you want to install on external device)
 - Xcode (with version compatible with your iPhones iOS version if wanted to start on external device. Check versions [here](https://developer.apple.com/support/xcode/) under "Minimum requirements and supported SDKs")
-- Developer Mode on iPhone enabled. Tutorial on that [here](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device).
+- Developer Mode on iPhone enabled. See further down for a tutorial on how to enable the developer mode on your iPhone.
 
 **Note**: DON'T update or install Xcode through the App Store as it won't ever finish and possibly shut down your Mac due to overheating. Use this [website](https://developer.apple.com/download/all/?q=xcode) instead, download the version you need and install it manually.
 
@@ -78,13 +76,17 @@ In Xcode press the "Run" Button to start the App (if needed select a device for 
 
 For a quick view of the app in the simulator you can skip opening Xcode and just run `ionic capacitor run ios` after you completed Step 3 of the preparation.
 
-#### Install and run on external device
+#### Enable Developer Mode on your iPhone, Install and run on external device
 
-1. Connect your iPhone that has developer mode enabled to your mac via USB and select "Trust this Device" on your iPhone once prompted with the popup.
-2. In Xcode click on where you can select the Simulator. Your iPhone should show up under "Devices". Select it let it check for errors.
-3. An error might prompt you to select a Team Name for your Project and to change your bundle or organization identifier. You can do so and change it to your name.
-4. If the errors are resolved, hit "Run" and leave the iPhone connected to your mac. It should install the App onto your iPhone and run it.
-5. Once completed you can disconnect your iPhone from your Mac and close Xcode. The build of the app can now be used anytime. 
+1. Sign in [here](https://idmsa.apple.com/IDMSWebAuth/signin?appIdKey=891bd3417a7776362562d2197f89480a8547b108fd934911bcbea0110d07f757&path=%2Faccount%2F&rv=1) on your Apple Developer Account with the Apple ID used on your iPhone and Mac. DON'T click on "Enroll"! Just log in, thats it. (You can close it afterwards, you just need to have been logged in once)
+2. Connect your iPhone to your Mac and open the project in Xcode.
+3. Select to run the App on your iPhone and run the building process. A pop up will inform you, that you are not a developer.
+4. On your iPhone you can now go into Settings > Privacy & Security > Developer Mode > Enable
+5. Clicking on Enable will have you to restart your iPhone.
+6. Try to run the project through Xcode again on your phone, if prompted with an error in Xcode, click on it and select your personal Team and change the bundle identifier to one lower case word (can be anything you want).
+7. Run it once more. The App should get installed on your phone but wait for Xcode to try to open the App on your device  → It might require you to trust the App Developer (us).
+8. To trust the App, go to Settings > General > VPN & Device Managment. There Click on your Developer App and select Trust.
+9. When you Run the app again (or just start it from the homescreen) everything should be working fine.
 
 Please contact me (Sönke) if you run into any problems (there can be many, it's Apple...)
 
