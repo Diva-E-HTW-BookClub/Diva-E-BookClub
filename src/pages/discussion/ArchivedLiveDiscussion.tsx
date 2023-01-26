@@ -21,13 +21,13 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { firebaseDB } from "../../firebase/firebaseConfig";
-import io from "socket.io-client"
 import "./LiveDiscussion.css";
 import React, { useRef, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { pause, play } from "ionicons/icons";
 import { getDiscussionAgenda,getDiscussionTitle, getDiscussionMaxParticipants,  } from "../../firebase/firebaseDiscussions";
 import { useParams } from "react-router";
+import { API_URL, SOCKET_IO_URL } from "../../constants";
 
 interface AgendaPartProps {
   id: number,
@@ -35,8 +35,6 @@ interface AgendaPartProps {
   elapsedTime: number,
   timeLimit: number
 }
-
-const socket = io("http://localhost:3001");
 var isModerator = false;
 var emitTimes:number[] = []
 var emitSum = 0;
@@ -57,16 +55,6 @@ const LiveDiscussion: React.FC = () => {
   const [progressTimesReceived, setProgressTimesReceived] = useState<number[]>([]);
   const [participantCount, setparticipantCount] = useState(0);
 
-  // Discusscion Room
-  // const [discussionRoom, setDiscussionRoom] = useState("")
-
-
-  const joinDiscussionRoom = () => {
-    if (discussionId !== "") {
-      socket.emit("join_discussion_room", discussionId)
-    }
-  }
-
   const changedPlayingState = doc(firebaseDB, "testCollection", "8hh5w2KA9koJTbyMiDuk");
 
 
@@ -76,8 +64,6 @@ console.log("ID" + discussionId)
   
   useEffect(() => {
     getAgendaParts()
-    joinDiscussionRoom();
-    socket.emit("request_data", { emitSum, discussionId});
     console.log("ID: " + discussionId)
   }, []);
 
