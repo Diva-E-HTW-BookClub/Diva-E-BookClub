@@ -139,7 +139,6 @@ async function getBookClubsByModerator(moderatorId: string){
     .catch(error => {
       console.log(error);
     });
-  console.log(res)
   return res;
 }
 
