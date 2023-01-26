@@ -70,7 +70,7 @@ async function registerUser(email: string, password: string, username: string) {
 async function saveUser(userId: string, username: string) {
   let params = new URLSearchParams({ "userId": userId })
   let url = API_URL + "profile/username?" + params
-  axios.post(url, {
+  await axios.post(url, {
     username: username
   }, REQUEST_CONFIG)
     .catch(error => {
