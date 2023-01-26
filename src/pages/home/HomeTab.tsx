@@ -43,6 +43,7 @@ const HomeTab: React.FC = () => {
   const user = useSelector((state: any) => state.user.user);
   const [ownClubs, setOwnClubs] = useState<BookClub[]>();
   const [joinedClubs, setJoinedClubs] = useState<BookClub[]>();
+  const [weeksOfDiscussions, setWeeksOfDiscussions] = useState<number>(2);
   const [nextDiscussions, setNextDiscussions] = useState<Discussion[]>();
   const [isLoadingClubs, setIsLoadingClubs] = useState<boolean>();
   const [isLoadingDiscussions, setIsLoadingDiscussions] = useState<boolean>();
@@ -76,13 +77,17 @@ const HomeTab: React.FC = () => {
       }
       setIsLoadingClubs(false);
     });
-    await getAllDiscussionsOfBookClubsByUser(user.uid).then(
-      (nextDiscussionsArray) => {
-        if (nextDiscussionsArray) {
-          setNextDiscussions(sortDiscussionsByDate(nextDiscussionsArray));
+    getNextDiscussions(weeksOfDiscussions);
+  }
+
+  async function getNextDiscussions(weeks: number){
+    await getAllDiscussionsOfBookClubsByUser(user.uid, weeks).then(
+        (nextDiscussionsArray) => {
+          if (nextDiscussionsArray) {
+            setNextDiscussions(sortDiscussionsByDate(nextDiscussionsArray));
+          }
+          setIsLoadingDiscussions(false);
         }
-        setIsLoadingDiscussions(false);
-      }
     );
   }
 
@@ -95,8 +100,6 @@ const HomeTab: React.FC = () => {
   function getNumberOfVisibleSlides() {
     if (isPlatform("tablet" || "ipad")) {
       return 2;
-    } else if (isPlatform("desktop")) {
-      return 3;
     } else {
       return 1;
     }

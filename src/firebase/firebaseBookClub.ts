@@ -155,7 +155,7 @@ async function getBookClubsByJoinedMember(memberId: string){
   return res;
 }
 
-async function getAllDiscussionsOfBookClubsByUser(userId: string){
+async function getAllDiscussionsOfBookClubsByUser(userId: string, weeks: number){
   let params =  new URLSearchParams({"memberId" : userId})
   let url = API_URL+"bookClub/fullClubByMember?" + params
   const res = await axios.get(url, REQUEST_CONFIG)
@@ -167,7 +167,7 @@ async function getAllDiscussionsOfBookClubsByUser(userId: string){
   let nextDiscussionArray: Discussion[] = [];
   for (const bookClub of res){
     if(bookClub) {
-      nextDiscussionArray.push(...getNextDiscussionsUntilWeeks(bookClub, 2))
+      nextDiscussionArray.push(...getNextDiscussionsUntilWeeks(bookClub, weeks))
     }
   }
 
