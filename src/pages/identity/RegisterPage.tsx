@@ -78,7 +78,7 @@ const RegisterPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <h1>Welcome to Book Club App</h1>
+        <h1 className="welcome-title">Welcome to Book Club App</h1>
         <form onSubmit={handleSubmit(submitData)}>
           <IonItem>
             <IonLabel position="stacked">Username</IonLabel>
