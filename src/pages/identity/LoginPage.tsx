@@ -47,8 +47,7 @@ const LoginPage: React.FC = () => {
     await loginUser(data.email, data.password).then((result) => {
       // if result has no errors redirect to home page
       if (result === "") {
-        
-        history.push("/home");
+        history.push("/tabs/home");
         window.location.reload();
       } else if (result === "auth/user-not-found") {
         setError("email", { type: "custom", message: "User does not exists" });
