@@ -18,11 +18,11 @@ import {
   IonLabel,
   IonItem,
   IonChip,
-  IonSpinner,
+  IonSpinner, IonButton,
 } from "@ionic/react";
 import "./ClubPage.css";
-import { calendar, documents, fileTray, people } from "ionicons/icons";
-import React, { useEffect, useState } from "react";
+import {calendar, documents, fileTray, people, shareOutline} from "ionicons/icons";
+import React, {useEffect, useRef, useState} from "react";
 import {
   BookClub,
   getBookClubDocument,
@@ -35,14 +35,17 @@ import { ArchiveSegment } from "../../components/clubPage/ArchiveSegment";
 import { UpcomingDiscussionsSegment } from "../../components/clubPage/UpcomingDiscussionsSegment";
 import { ResourcesSegment } from "../../components/clubPage/ResourcesSegment";
 import { EditClubModal } from "../../components/clubPage/EditClubModal";
+import {ModalHandle, ShareModal} from "../../components/clubPage/ShareModal";
 import { CreateDiscussionModal } from "../../components/clubPage/CreateDiscussionModal";
 import {CreateResourceModal} from "../../components/resources/CreateResourceModal";
+import {Share} from "@capacitor/share";
 
 const ClubPage: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
   const user = useSelector((state: any) => state.user.user);
   const [bookClubData, setBookClubData] = useState<BookClub>();
   const [selectedSegment, setSelectedSegment] = useState<string>("calendar");
+  const shareModal = useRef<ModalHandle>(null)
 
   useEffect(() => {
     getBookClub();
@@ -65,6 +68,39 @@ const ClubPage: React.FC = () => {
       }
     }
   };
+
+  const shareClub = async () => {
+    let text = "Check out Blubble and join my Club: \"" + clubName + "\"";
+    let url = "/clubs/" + bookClubId + "/view";
+    await Share.canShare().then(async (result) => {
+      if(result.value){
+        await Share.share({
+          title: "Visit My Book Club on Blubble!",
+          text: text,
+          url: url,
+          dialogTitle: "Invite others to your Club",
+        })
+      }else{
+        if(navigator && navigator.share) {
+          const shareData = {
+            title: "Visit My Book Club on Blubble!",
+            text: text,
+            url: url,
+          }
+          try {
+            await navigator.share(shareData);
+            console.log("successfully shared");
+          } catch (error) {
+            console.log("Error: " + error);
+          }
+        } else {
+          shareModal.current?.open();
+        }
+      }
+    })
+  }
+
+
 
   let clubName = bookClubData?.name;
   let bookTitle = bookClubData?.book.title;
@@ -128,6 +164,9 @@ const ClubPage: React.FC = () => {
                       {!isMember ? "Join" : "Leave"}
                     </IonChip>
                   )}
+                  <IonButton fill="clear" slot="end" onClick={shareClub}>
+                    <IonIcon slot="icon-only" icon={shareOutline}/>
+                  </IonButton>
                 </IonItem>
               </IonCol>
               <IonCol sizeMd="2" size="3" className="img-column">
@@ -212,6 +251,7 @@ const ClubPage: React.FC = () => {
             />
           </>
         )}
+        <ShareModal bookClubId={bookClubId} ref={shareModal} />
       </IonContent>
     </IonPage>
   );

@@ -30,7 +30,7 @@ import { deleteCommentDocument } from "../../firebase/firebaseComments";
 import { EditCommentModal, ModalHandle } from "./EditCommentModal";
 
 interface CommentCardProps {
-  userName: string;
+  username: string;
   passage: string;
   text: string;
   commentId: string;
@@ -42,7 +42,7 @@ interface CommentCardProps {
 }
 
 export const CommentCard: React.FC<CommentCardProps> = ({
-  userName,
+  username,
   passage,
   text,
   commentId,
@@ -71,7 +71,7 @@ export const CommentCard: React.FC<CommentCardProps> = ({
   const actionSheet = () =>
     presentDelete({
       header: "Delete Comment",
-      subHeader: "by " + userName,
+      subHeader: "by " + username,
       backdropDismiss: false,
       buttons: [
         {
@@ -103,9 +103,9 @@ export const CommentCard: React.FC<CommentCardProps> = ({
           <IonItem lines="none">
             <IonIcon size="large" icon={personCircleOutline}></IonIcon>
             <div className="spacing"></div>
-            <IonLabel>
-              <div className="username">{userName}</div>
-              <div className="passage">{passage}</div>
+            <IonLabel class="ion-text-wrap">
+              <div className="username"><b>{username}</b></div>
+              <div className="ion-text-wrap"><p>commented on "{passage}"</p></div>
             </IonLabel>
             {user.uid === moderator && (
               <>

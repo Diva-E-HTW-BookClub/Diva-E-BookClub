@@ -18,7 +18,7 @@ const StartPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen class="ion-padding">
-        <h1>WELCOME TO BOOK CLUB APP</h1>
+        <h1 className="welcome-title">WELCOME TO BOOK CLUB APP</h1>
         <p className="font-center">Create an account</p>
         <IonButton expand="block" size="default" class="ion-margin-bottom" routerLink="/register">
           REGISTER

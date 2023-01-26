@@ -225,7 +225,7 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
           <IonItem lines="none">
             <IonIcon size="small" icon={locationOutline}></IonIcon>
             <div className="spacing"></div>
-            <IonLabel>
+            <IonLabel className="ion-text-wrap">
               <div className="locationBox">{discussionLocation}</div>
             </IonLabel>
             
