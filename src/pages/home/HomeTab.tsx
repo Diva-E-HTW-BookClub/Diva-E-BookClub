@@ -12,7 +12,7 @@ import {
   IonSpinner,
   IonRefresher,
   IonRefresherContent,
-  RefresherEventDetail,
+  RefresherEventDetail, IonSelect, IonSelectOption,
 } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import "./HomeTab.css";
@@ -53,6 +53,10 @@ const HomeTab: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    getNextDiscussions(weeksOfDiscussions);
+  }, [weeksOfDiscussions])
+
+  useEffect(() => {
     if (
       (ownClubs !== undefined && ownClubs.length > 0) ||
       (joinedClubs !== undefined && joinedClubs.length > 0)
@@ -64,7 +68,6 @@ const HomeTab: React.FC = () => {
   }, [ownClubs, joinedClubs]);
 
   async function getBookClubs() {
-    setIsLoadingDiscussions(true);
     setIsLoadingClubs(true);
     await getBookClubsByModerator(user.uid).then((ownBookClubs) => {
       if (ownBookClubs) {
@@ -81,6 +84,7 @@ const HomeTab: React.FC = () => {
   }
 
   async function getNextDiscussions(weeks: number){
+    setIsLoadingDiscussions(true);
     await getAllDiscussionsOfBookClubsByUser(user.uid, weeks).then(
         (nextDiscussionsArray) => {
           if (nextDiscussionsArray) {
@@ -95,6 +99,10 @@ const HomeTab: React.FC = () => {
     await getBookClubs().then(() => {
       event.detail.complete();
     });
+  }
+
+  function userHasClubs() {
+    return !!((ownClubs && ownClubs.length !== 0) || (joinedClubs && joinedClubs.length));
   }
 
   function getNumberOfVisibleSlides() {
@@ -185,18 +193,28 @@ const HomeTab: React.FC = () => {
     }
   };
 
+  const getSelectedOptionByWeeks = () => {
+    switch(weeksOfDiscussions) {
+      case 1: return "1 Week";
+      case 2: return "2 Weeks";
+      case 3: return "3 Weeks";
+      case 4: return "1 Month";
+      case 8: return "2 Months";
+    }
+  }
+
   const showNextDiscussions = () => {
     if (nextDiscussions !== undefined && nextDiscussions.length > 0) {
       let discussionYears = getYearArrayOfDiscussions(nextDiscussions);
       return (
         <>
-          <div className="h2">Next Discussions</div>
           {discussionYears.map((year, index) => {
             return (
               <IonItemGroup key={index}>
                 <IonItemDivider>{year}</IonItemDivider>
                 <IonList>
                   {nextDiscussions.map((nextDiscussion, index) => {
+                    //bookClubId && bookClubName are promise type
                     if (
                       nextDiscussion.bookClubId &&
                       nextDiscussion.bookClubName
@@ -224,11 +242,22 @@ const HomeTab: React.FC = () => {
           })}
         </>
       );
+    } else if(!userHasClubs()){
+      return (
+          <div className="ion-margin">
+            <IonLabel>
+              <p>There is nothing here yet...</p>
+            </IonLabel>
+          </div>
+      )
     } else {
       return (
         <div className="ion-margin">
           <IonLabel>
-            <p>There are no next discussions</p>
+            <p>There are no next Discussions planned
+              <br/>
+              for the next {getSelectedOptionByWeeks()}
+            </p>
           </IonLabel>
         </div>
       );
@@ -253,13 +282,25 @@ const HomeTab: React.FC = () => {
         </IonRefresher>
         {!isNewUser && showOwnClubs()}
         {!isNewUser && showJoinedClubs()}
-        {isLoadingDiscussions && (
-          <div className="centeredLoader">
-            <IonSpinner className="flexbox"></IonSpinner>
-            <IonLabel className="flexbox ion-text-wrap">
-              Checking for next Discussions
-            </IonLabel>
-          </div>
+        {!isNewUser && (ownClubs || joinedClubs) && (
+            <>
+              <div className="ion-padding-horizontal">
+                <div className="flexBetween">
+                  <div className="nextDiscussionsTitle flexbox">Next Discussions</div>
+                  {isLoadingDiscussions && <IonSpinner className="flexbox"></IonSpinner>}
+                </div>
+                <div className="flexBetween">
+                  <div className="flexbox">Filter by:</div>
+                  <IonSelect className="flexbox" onIonChange={(event) => setWeeksOfDiscussions(event.detail.value)} value={weeksOfDiscussions}>
+                    <IonSelectOption value={1}>1 Week</IonSelectOption>
+                    <IonSelectOption value={2}>2 Weeks</IonSelectOption>
+                    <IonSelectOption value={3}>3 Weeks</IonSelectOption>
+                    <IonSelectOption value={4}>1 Month</IonSelectOption>
+                    <IonSelectOption value={8}>2 Months</IonSelectOption>
+                  </IonSelect>
+                </div>
+              </div>
+            </>
         )}
         {showNextDiscussions()}
         {isNewUser && newUserContent()}
