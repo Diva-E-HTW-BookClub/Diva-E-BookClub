@@ -232,9 +232,7 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
             <IonButton
               fill="clear"
               routerLink={
-                "/clubs/" +
-                bookClubId +
-                "/discussions/" +
+                "discussions/" +
                 discussionId +
                 "/comments"
               }
@@ -245,9 +243,7 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
             <IonButton
               fill="clear"
               routerLink={
-                "/clubs/" +
-                bookClubId +
-                "/discussions/" +
+                "discussions/" +
                 discussionId +
                 "/archived"
               }
@@ -259,9 +255,7 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
             <IonButton
               fill="clear"
               routerLink={
-                "/clubs/" +
-                bookClubId +
-                "/discussions/" +
+                "discussions/" +
                 discussionId +
                 "/agenda"
               }

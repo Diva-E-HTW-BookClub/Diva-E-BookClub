@@ -109,7 +109,7 @@ const HomeTab: React.FC = () => {
     if (isLoadingClubs === false) {
       return (
         <div className="ion-padding-horizontal">
-          <IonButton className="startButton" size="default" routerLink="/clubs" expand="block">
+          <IonButton className="startButton" size="default" routerLink="/tabs/clubs" expand="block">
             Join or Create a Club
           </IonButton>
         </div>

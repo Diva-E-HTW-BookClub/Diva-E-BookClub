@@ -44,7 +44,7 @@ export const ClubCard: React.FC<ClubCardProps> = ({
   };
 
   return (
-    <IonItem button routerLink={`/clubs/${id}/view`} detail={false}>
+    <IonItem button routerLink={`/tabs/clubs/${id}/view`} detail={false}>
       <IonGrid className="ion-padding-horizontal">
         <IonRow className="ion-align-items-center">
           <IonCol sizeMd="10" size="9" className="columnClubCard">

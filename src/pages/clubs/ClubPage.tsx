@@ -35,7 +35,6 @@ import { ArchiveSegment } from "../../components/clubPage/ArchiveSegment";
 import { UpcomingDiscussionsSegment } from "../../components/clubPage/UpcomingDiscussionsSegment";
 import { ResourcesSegment } from "../../components/clubPage/ResourcesSegment";
 import { EditClubModal } from "../../components/clubPage/EditClubModal";
-import { useHistory } from "react-router-dom";
 import {ModalHandle, ShareModal} from "../../components/clubPage/ShareModal";
 import { CreateDiscussionModal } from "../../components/clubPage/CreateDiscussionModal";
 import {CreateResourceModal} from "../../components/resources/CreateResourceModal";
@@ -43,24 +42,17 @@ import {Share} from "@capacitor/share";
 
 const ClubPage: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
-
   const user = useSelector((state: any) => state.user.user);
-  const history = useHistory();
   const [bookClubData, setBookClubData] = useState<BookClub>();
   const [selectedSegment, setSelectedSegment] = useState<string>("calendar");
-  const [isModerator, setIsModerator] = useState<boolean>(false);
-  const [isMember, setIsMember] = useState<boolean>(false);
   const shareModal = useRef<ModalHandle>(null)
 
   useEffect(() => {
     getBookClub();
-  }, []);
+  }, [bookClubId]);
 
   async function getBookClub() {
     let bookClub = await getBookClubDocument(bookClubId);
-    // check if the current user is moderator of the club
-    setIsModerator(bookClub?.moderator.includes(user.uid));
-    setIsMember(bookClub?.members.includes(user.uid));
     setBookClubData(bookClub);
   }
 
@@ -116,16 +108,18 @@ const ClubPage: React.FC = () => {
   let bookCoverImg = bookClubData?.book.imageUrl;
   let clubMembers = bookClubData?.members?.length;
   let clubMemberMax = bookClubData?.maxMemberNumber;
+  let isModerator = bookClubData?.moderator.includes(user.uid) || false;
+  let isMember = bookClubData?.members.includes(user.uid) || false;
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons onClick={() => history.push("/clubs")} slot="start">
-            <IonBackButton defaultHref="/clubs" text="Clubs"></IonBackButton>
+          <IonButtons slot="start">
+            <IonBackButton defaultHref="/tabs/home"></IonBackButton>
           </IonButtons>
           <IonTitle>{clubName}</IonTitle>
-          {(
+          {isModerator && (
             <IonButtons slot="end">
               <EditClubModal
                 bookClubId={bookClubId}

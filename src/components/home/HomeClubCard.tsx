@@ -51,7 +51,7 @@ export const HomeClubCard: React.FC<HomeClubCardProps> = ({
   };
 
   return (
-    <IonCard routerLink={`/clubs/${id}/view`} className="card">
+    <IonCard routerLink={`/tabs/home/${id}/view`} className="card">
       <IonGrid className="ion-padding-horizontal">
         <IonRow className="ion-align-items-center">
           <IonCol sizeMd="10" size="9" className="columnClubCardHome">
