@@ -12,7 +12,7 @@ import {
   IonSpinner,
   IonRefresher,
   IonRefresherContent,
-  RefresherEventDetail,
+  RefresherEventDetail, IonSelect, IonSelectOption,
 } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import "./HomeTab.css";
@@ -43,6 +43,7 @@ const HomeTab: React.FC = () => {
   const user = useSelector((state: any) => state.user.user);
   const [ownClubs, setOwnClubs] = useState<BookClub[]>();
   const [joinedClubs, setJoinedClubs] = useState<BookClub[]>();
+  const [weeksOfDiscussions, setWeeksOfDiscussions] = useState<number>(2);
   const [nextDiscussions, setNextDiscussions] = useState<Discussion[]>();
   const [isLoadingClubs, setIsLoadingClubs] = useState<boolean>();
   const [isLoadingDiscussions, setIsLoadingDiscussions] = useState<boolean>();
@@ -50,6 +51,10 @@ const HomeTab: React.FC = () => {
   useEffect(() => {
     getBookClubs();
   }, []);
+
+  useEffect(() => {
+    getNextDiscussions(weeksOfDiscussions);
+  }, [weeksOfDiscussions])
 
   useEffect(() => {
     if (
@@ -63,7 +68,6 @@ const HomeTab: React.FC = () => {
   }, [ownClubs, joinedClubs]);
 
   async function getBookClubs() {
-    setIsLoadingDiscussions(true);
     setIsLoadingClubs(true);
     await getBookClubsByModerator(user.uid).then((ownBookClubs) => {
       if (ownBookClubs) {
@@ -76,13 +80,18 @@ const HomeTab: React.FC = () => {
       }
       setIsLoadingClubs(false);
     });
-    await getAllDiscussionsOfBookClubsByUser(user.uid).then(
-      (nextDiscussionsArray) => {
-        if (nextDiscussionsArray) {
-          setNextDiscussions(sortDiscussionsByDate(nextDiscussionsArray));
+    getNextDiscussions(weeksOfDiscussions);
+  }
+
+  async function getNextDiscussions(weeks: number){
+    setIsLoadingDiscussions(true);
+    await getAllDiscussionsOfBookClubsByUser(user.uid, weeks).then(
+        (nextDiscussionsArray) => {
+          if (nextDiscussionsArray) {
+            setNextDiscussions(sortDiscussionsByDate(nextDiscussionsArray));
+          }
+          setIsLoadingDiscussions(false);
         }
-        setIsLoadingDiscussions(false);
-      }
     );
   }
 
@@ -92,11 +101,13 @@ const HomeTab: React.FC = () => {
     });
   }
 
+  function userHasClubs() {
+    return !!((ownClubs && ownClubs.length !== 0) || (joinedClubs && joinedClubs.length));
+  }
+
   function getNumberOfVisibleSlides() {
     if (isPlatform("tablet" || "ipad")) {
       return 2;
-    } else if (isPlatform("desktop")) {
-      return 3;
     } else {
       return 1;
     }
@@ -182,18 +193,28 @@ const HomeTab: React.FC = () => {
     }
   };
 
+  const getSelectedOptionByWeeks = () => {
+    switch(weeksOfDiscussions) {
+      case 1: return "1 Week";
+      case 2: return "2 Weeks";
+      case 3: return "3 Weeks";
+      case 4: return "1 Month";
+      case 8: return "2 Months";
+    }
+  }
+
   const showNextDiscussions = () => {
     if (nextDiscussions !== undefined && nextDiscussions.length > 0) {
       let discussionYears = getYearArrayOfDiscussions(nextDiscussions);
       return (
         <>
-          <div className="h2">Next Discussions</div>
           {discussionYears.map((year, index) => {
             return (
               <IonItemGroup key={index}>
                 <IonItemDivider>{year}</IonItemDivider>
                 <IonList>
                   {nextDiscussions.map((nextDiscussion, index) => {
+                    //bookClubId && bookClubName are promise type
                     if (
                       nextDiscussion.bookClubId &&
                       nextDiscussion.bookClubName
@@ -221,11 +242,22 @@ const HomeTab: React.FC = () => {
           })}
         </>
       );
+    } else if(!userHasClubs()){
+      return (
+          <div className="ion-margin">
+            <IonLabel>
+              <p>There is nothing here yet...</p>
+            </IonLabel>
+          </div>
+      )
     } else {
       return (
         <div className="ion-margin">
           <IonLabel>
-            <p>There are no next discussions</p>
+            <p>There are no next Discussions planned
+              <br/>
+              for the next {getSelectedOptionByWeeks()}
+            </p>
           </IonLabel>
         </div>
       );
@@ -250,13 +282,25 @@ const HomeTab: React.FC = () => {
         </IonRefresher>
         {!isNewUser && showOwnClubs()}
         {!isNewUser && showJoinedClubs()}
-        {isLoadingDiscussions && (
-          <div className="centeredLoader">
-            <IonSpinner className="flexbox"></IonSpinner>
-            <IonLabel className="flexbox ion-text-wrap">
-              Checking for next Discussions
-            </IonLabel>
-          </div>
+        {!isNewUser && (ownClubs || joinedClubs) && (
+            <>
+              <div className="ion-padding-horizontal">
+                <div className="flexBetween">
+                  <div className="nextDiscussionsTitle flexbox">Next Discussions</div>
+                  {isLoadingDiscussions && <IonSpinner className="flexbox"></IonSpinner>}
+                </div>
+                <div className="flexBetween">
+                  <div className="flexbox">Filter by:</div>
+                  <IonSelect className="flexbox" onIonChange={(event) => setWeeksOfDiscussions(event.detail.value)} value={weeksOfDiscussions}>
+                    <IonSelectOption value={1}>1 Week</IonSelectOption>
+                    <IonSelectOption value={2}>2 Weeks</IonSelectOption>
+                    <IonSelectOption value={3}>3 Weeks</IonSelectOption>
+                    <IonSelectOption value={4}>1 Month</IonSelectOption>
+                    <IonSelectOption value={8}>2 Months</IonSelectOption>
+                  </IonSelect>
+                </div>
+              </div>
+            </>
         )}
         {showNextDiscussions()}
         {isNewUser && newUserContent()}
