@@ -78,14 +78,10 @@ async function saveUser(userId: string, username: string) {
     });
 }
 
-async function updateUser(userId: string, data: any){
-  let params = new URLSearchParams({ "userId": userId })
+async function updateUser(userId: string, username: string){
+  let params = new URLSearchParams({ "userId": userId, "username": username })
   let url = API_URL + "profile/username?" + params
-  await axios.patch(url, {
-    username: data.username,
-    email: data.email,
-    password: data.password,
-  }, REQUEST_CONFIG)
+  await axios.patch(url, REQUEST_CONFIG)
       .catch(error => {
         console.log(error);
       })

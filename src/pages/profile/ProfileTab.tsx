@@ -29,9 +29,9 @@ const ProfileTab: React.FC = () => {
   async function getProfileData () {
     getUsername(userIdAndEmail.uid).then(username => {
       setUser({
+        id: userIdAndEmail.uid,
         email: userIdAndEmail.email,
         username: username,
-        password: userIdAndEmail.password
       })
     })
   }
@@ -95,7 +95,7 @@ const ProfileTab: React.FC = () => {
             <div className="buttonSpacing">
               <IonButton onClick={alert}
                          expand="block">
-                Logout
+                Log Out
               </IonButton>
             </div>
           </>
