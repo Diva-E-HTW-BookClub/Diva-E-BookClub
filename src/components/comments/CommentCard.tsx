@@ -12,7 +12,7 @@ import {
   IonList,
   IonModal,
   IonPopover,
-  IonRow,
+  IonRow, IonSkeletonText,
   IonText,
   IonThumbnail,
   IonToolbar,
@@ -24,13 +24,14 @@ import {
   personCircleOutline,
   trashOutline,
 } from "ionicons/icons";
-import { useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import { useSelector } from "react-redux";
 import { deleteCommentDocument } from "../../firebase/firebaseComments";
 import { EditCommentModal, ModalHandle } from "./EditCommentModal";
+import {getUsername} from "../../firebase/firebaseAuth";
 
 interface CommentCardProps {
-  username: string;
+  //username: string;
   passage: string;
   text: string;
   commentId: string;
@@ -42,7 +43,7 @@ interface CommentCardProps {
 }
 
 export const CommentCard: React.FC<CommentCardProps> = ({
-  username,
+  //username,
   passage,
   text,
   commentId,
@@ -58,6 +59,17 @@ export const CommentCard: React.FC<CommentCardProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [presentDelete] = useIonActionSheet();
   const editModal = useRef<ModalHandle>(null);
+  const [username, setUsername] = useState<string>();
+  const [isLoadingUsername, setIsLoadingUsername] = useState<boolean>(false);
+
+  useEffect(() => {
+    getUserName();
+  }, [])
+
+  async function getUserName() {
+    setIsLoadingUsername(true);
+    await getUsername(moderator).then((username) => {setUsername(username); setIsLoadingUsername(false)})
+  }
 
   const openPopover = (e: any) => {
     popover.current!.event = e;
@@ -97,6 +109,7 @@ export const CommentCard: React.FC<CommentCardProps> = ({
     });
 
   return (
+      <IonItem class="ion-no-padding">
     <IonGrid fixed>
       <IonRow>
         <IonCol className="ion-grid-column">
@@ -104,7 +117,7 @@ export const CommentCard: React.FC<CommentCardProps> = ({
             <IonIcon size="large" icon={personCircleOutline}></IonIcon>
             <div className="spacing"></div>
             <IonLabel class="ion-text-wrap">
-              <div className="username"><b>{username}</b></div>
+              {!isLoadingUsername ? <div className="username"><b>{username}</b></div> : <div className="username"><b><IonSkeletonText animated={true} style={{ 'width': '80px' }}></IonSkeletonText></b></div>}
               <div className="ion-text-wrap"><p>commented on "{passage}"</p></div>
             </IonLabel>
             {user.uid === moderator && (
@@ -192,5 +205,6 @@ export const CommentCard: React.FC<CommentCardProps> = ({
         />
       )}
     </IonGrid>
+      </IonItem>
   );
 };
