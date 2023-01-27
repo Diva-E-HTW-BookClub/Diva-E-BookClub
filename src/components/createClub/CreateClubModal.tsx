@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle, useState} from "react";
+import React, {forwardRef, useImperativeHandle, useRef, useState} from "react";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import {
@@ -6,18 +6,19 @@ import {
     IonButtons, IonChip,
     IonContent,
     IonHeader,
-    IonInfiniteScroll, IonInfiniteScrollContent,
     IonInput,
     IonItem,
-    IonLabel, IonList,
+    IonLabel,
     IonModal,
-    IonNote, IonSearchbar,
+    IonNote,
     IonTitle,
-    IonToolbar, useIonPicker,
+    IonToolbar, useIonPicker, useIonToast,
 } from "@ionic/react";
-import {createBookClubDocument} from "../firebase/firebaseBookClub";
+import {createBookClubDocument} from "../../firebase/firebaseBookClub";
 import {BookCard} from "./BookCard";
 import {useHistory} from "react-router-dom";
+import SelectBookModal from "./SelectBookModal";
+import {alertCircleOutline} from "ionicons/icons";
 
 type FormValues = {
     name: string;
@@ -31,11 +32,10 @@ export type ModalHandle = {
 const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
     const history = useHistory();
     const [isOpen, setIsOpen] = useState(false);
-    const [books, setBooks] = useState<any[]>([]);
+    const [book, setBook] = useState<any>();
     const [maxMember, setMaxMember] = useState<number>(1);
-    const [selectedBookIndex, setSelectedBookIndex] = useState<number>(0);
-    const [query, setQuery] = useState<string>("");
     const user = useSelector((state: any) => state.user.user);
+    const selectBookModal = useRef<ModalHandle>(null);
 
     useImperativeHandle(ref, () => ({
         open() {
@@ -56,58 +56,6 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
         },
         mode: "all",
     });
-
-    // calls HTTP API of OpenLibrary to search books by the given query and offset
-    async function searchBooks(q: string, offset: number) {
-        if (q === "") {
-            return [];
-        }
-        const api = "https://openlibrary.org/search.json";
-        const result = await fetch(`${api}?q=${q}&fields=title,author_name,cover_i&limit=20&offset=${offset}`);
-        const json = await result.json();
-        return json.docs.map(cleanBookData);
-    }
-
-    // handle missing book cover and author
-    function cleanBookData(doc: any) {
-        if (doc.cover_i === undefined) {
-            doc.image = "assets/images/default_book_cover.jpg";
-        } else {
-            doc.image = `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg`;
-        }
-        if (doc.author_name === undefined) {
-            doc.author = "Unknown author";
-        } else {
-            doc.author = doc.author_name[0];
-        }
-        return doc;
-    }
-
-    // called when user scrolls all the way down
-    async function scroll(event: any) {
-        try {
-            let newBooks = await searchBooks(query, books.length);
-            setBooks([...books, ...newBooks]);
-            // needed to make the infinite scroll work
-            event.target.complete();
-        } catch (error) {
-            // catch errors for both fetch and result.json()
-            console.log(error);
-        }
-    }
-
-    // called when user types in the search bar
-    async function search(event: any) {
-        let newQuery = event.target.value;
-        setQuery(newQuery);
-        try {
-            let books = await searchBooks(newQuery, 0);
-            setBooks(books);
-        } catch (error) {
-            // catch errors for both fetch and result.json()
-            console.log(error);
-        }
-    }
 
     const [presentPicker] = useIonPicker();
 
@@ -144,6 +92,17 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
         });
     };
 
+    const [presentToast] = useIonToast();
+
+    const bookErrorToast = () => {
+        presentToast({
+            message: 'Please Select a Book',
+            duration: 2500,
+            icon: alertCircleOutline,
+            color: "danger"
+        })
+    }
+
     function cancelModal() {
         reset({
             name: "",
@@ -151,31 +110,33 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
         });
         setMaxMember(1);
         setIsOpen(false);
-        setBooks([]);
-        setSelectedBookIndex(0);
+        setBook(null);
     }
 
     async function submitData(data: any) {
-        let book = books[selectedBookIndex];
         let userId = user.uid;
-        await createBookClubDocument({
-            id: "",
-            name: data.name,
-            moderator: [userId],
-            members: [userId],
-            maxMemberNumber: data.maxMemberNumber,
-            book: {
-                title: book.title,
-                authors: book.author_name,
-                imageUrl: book.image
-            },
-            discussions: [],
-            resources: [],
-            owner: userId
-        }).then((bookClubId) => {
-            cancelModal()
-            setTimeout(() => history.push(`/tabs/clubs/${bookClubId}/view`), 200);
-        });
+        if(book) {
+            await createBookClubDocument({
+                id: "",
+                name: data.name,
+                moderator: [userId],
+                members: [userId],
+                maxMemberNumber: data.maxMemberNumber,
+                book: {
+                    title: book.title,
+                    authors: book.authors,
+                    imageUrl: book.image
+                },
+                discussions: [],
+                resources: [],
+                owner: userId
+            }).then((bookClubId) => {
+                cancelModal()
+                setTimeout(() => history.push(`/tabs/clubs/${bookClubId}/view`), 200);
+            });
+        }else{
+            bookErrorToast();
+        }
     }
 
     return (
@@ -194,7 +155,15 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
                     </IonToolbar>
                 </IonHeader>
                 <IonContent className="ion-no-padding">
-                    <form id="createClub" className="ion-padding" onSubmit={handleSubmit(submitData)}>
+                    <form id="createClub" className="ion-padding-horizontal" onSubmit={handleSubmit(submitData)}>
+                        {book && <div className="ion-padding-top">
+                            <BookCard image={book.image} title={book.title} author={book.author} />
+                        </div>}
+                        <div className="ion-padding-top">
+                            <IonButton expand="block" onClick={() => selectBookModal.current?.open()}>
+                                Select Book
+                            </IonButton>
+                        </div>
                         <IonItem className={errors.name ? "ion-invalid" : "ion-valid"}>
                             <IonLabel position="stacked">Club Name</IonLabel>
                             <IonInput
@@ -221,25 +190,7 @@ const CreateClubModal = forwardRef<ModalHandle>((props,ref) => {
                             </IonNote>
                         </IonItem>
                     </form>
-                    <IonSearchbar class="custom" placeholder="Find a book" debounce={1000} onIonInput={search}></IonSearchbar>
-                    <IonList lines="none">
-                        {books.map((book, index) => {
-                            return (
-                                <div onClick={() => setSelectedBookIndex(index)}>
-                                    <BookCard
-                                        key={index}
-                                        image={book.image}
-                                        title={book.title}
-                                        author={book.author}
-                                        selected={selectedBookIndex === index}
-                                    />
-                                </div>
-                            );
-                        })}
-                    </IonList>
-                    <IonInfiniteScroll onIonInfinite={scroll}>
-                        <IonInfiniteScrollContent></IonInfiniteScrollContent>
-                    </IonInfiniteScroll>
+                    <SelectBookModal setBook={setBook} ref={selectBookModal}></SelectBookModal>
                 </IonContent>
             </IonModal>
     );
