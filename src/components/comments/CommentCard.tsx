@@ -31,7 +31,7 @@ import { EditCommentModal, ModalHandle } from "./EditCommentModal";
 import {getUsername} from "../../firebase/firebaseAuth";
 
 interface CommentCardProps {
-  //username: string;
+  username: string;
   passage: string;
   text: string;
   commentId: string;
@@ -43,7 +43,7 @@ interface CommentCardProps {
 }
 
 export const CommentCard: React.FC<CommentCardProps> = ({
-  //username,
+  username,
   passage,
   text,
   commentId,
@@ -59,9 +59,10 @@ export const CommentCard: React.FC<CommentCardProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [presentDelete] = useIonActionSheet();
   const editModal = useRef<ModalHandle>(null);
-  const [username, setUsername] = useState<string>();
-  const [isLoadingUsername, setIsLoadingUsername] = useState<boolean>(false);
+  //const [username, setUsername] = useState<string>();
+  //const [isLoadingUsername, setIsLoadingUsername] = useState<boolean>(false);
 
+  /*
   useEffect(() => {
     getUserName();
   }, [])
@@ -70,6 +71,7 @@ export const CommentCard: React.FC<CommentCardProps> = ({
     setIsLoadingUsername(true);
     await getUsername(moderator).then((username) => {setUsername(username); setIsLoadingUsername(false)})
   }
+   */
 
   const openPopover = (e: any) => {
     popover.current!.event = e;
@@ -117,7 +119,7 @@ export const CommentCard: React.FC<CommentCardProps> = ({
             <IonIcon size="large" icon={personCircleOutline}></IonIcon>
             <div className="spacing"></div>
             <IonLabel class="ion-text-wrap">
-              {!isLoadingUsername ? <div className="username"><b>{username}</b></div> : <div className="username"><b><IonSkeletonText animated={true} style={{ 'width': '80px' }}></IonSkeletonText></b></div>}
+              {/*!isLoadingUsername ? */<div className="username"><b>{username}</b></div>/* : <div className="username"><b><IonSkeletonText animated={true} style={{ 'width': '80px' }}></IonSkeletonText></b></div>*/}
               <div className="ion-text-wrap"><p>commented on "{passage}"</p></div>
             </IonLabel>
             {user.uid === moderator && (

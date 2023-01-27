@@ -55,7 +55,7 @@ const Comments: React.FC = () => {
                   discussionId={discussionId}
                   bookClubId={bookClubId}
                   key={index}
-                  //username={item.username}
+                  username={item.username}
                   passage={item.passage}
                   text={item.text}
                   moderator={item.moderator}
