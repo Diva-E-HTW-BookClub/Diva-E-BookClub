@@ -2,7 +2,8 @@ import {
   IonCard,
   IonCol,
   IonGrid,
-  IonImg, IonLabel,
+  IonImg,
+  IonLabel,
   IonRow,
 } from "@ionic/react";
 

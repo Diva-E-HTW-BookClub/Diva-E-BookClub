@@ -1,13 +1,13 @@
 .bookItemRow {
-    padding-top: 7px;
-    padding-bottom: 8px;
+  padding-top: 7px;
+  padding-bottom: 8px;
 }
 
 .bookItemBookCover {
-    max-width: 110px;
-    filter: drop-shadow(0rem 0.3rem 0.3rem rgba(0, 0, 0, 0.65));
+  max-width: 110px;
+  filter: drop-shadow(0rem 0.3rem 0.3rem rgba(0, 0, 0, 0.65));
 }
 
 ion-img::part(image) {
-    max-height: 105px;
+  max-height: 105px;
 }
