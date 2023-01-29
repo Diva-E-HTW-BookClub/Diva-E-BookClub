@@ -37,6 +37,7 @@ import {
   getYearArrayOfDiscussions,
   sortDiscussionsByDate,
 } from "../../helpers/discussionSort";
+import { useHistory } from "react-router";
 
 const HomeTab: React.FC = () => {
   const [isNewUser, setIsNewUser] = useState<boolean>();
@@ -47,6 +48,23 @@ const HomeTab: React.FC = () => {
   const [nextDiscussions, setNextDiscussions] = useState<Discussion[]>();
   const [isLoadingClubs, setIsLoadingClubs] = useState<boolean>();
   const [isLoadingDiscussions, setIsLoadingDiscussions] = useState<boolean>();
+  const history = useHistory();
+
+  // for some reason ionBackButton event is published twice when we click on the hardware back button once
+  // the method below listens to hardware back button events and prevents any other default listener from receiving it
+  // it counts the event when it receives it and goes one step back in history only if the count is odd
+  // https://ionicframework.com/docs/developing/hardware-back-button#basic-usage
+  let counter = 0;
+  document.addEventListener('ionBackButton', (ev: any) => {
+    ev.detail.register(1, () => {
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      counter++;
+      if (counter % 2 == 1) {
+        history.goBack();
+      }
+    });
+  });
 
   useEffect(() => {
     getBookClubs();
