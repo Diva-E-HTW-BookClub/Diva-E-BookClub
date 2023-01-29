@@ -78,6 +78,15 @@ async function saveUser(userId: string, username: string) {
     });
 }
 
+async function updateUser(userId: string, username: string){
+  let params = new URLSearchParams({ "userId": userId, "username": username })
+  let url = API_URL + "profile/username?" + params
+  await axios.patch(url, REQUEST_CONFIG)
+      .catch(error => {
+        console.log(error);
+      })
+}
+
 async function getUsername(userId: string) {
   let params = new URLSearchParams({ "userId": userId })
   let url = API_URL + "profile/username?" + params
@@ -117,4 +126,4 @@ async function logoutUser() {
     });
 }
 
-export { registerUser, loginUser, logoutUser, getCurrentUser, getUsername };
+export { registerUser, loginUser, logoutUser, getCurrentUser, getUsername, updateUser };

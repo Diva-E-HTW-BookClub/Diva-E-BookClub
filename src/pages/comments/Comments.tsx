@@ -6,7 +6,6 @@ import {
   IonFabButton,
   IonHeader,
   IonIcon,
-  IonItem,
   IonList,
   IonPage,
   IonTitle,
@@ -21,7 +20,6 @@ import { getDiscussionComments } from "../../firebase/firebaseComments";
 import { useParams } from "react-router";
 import { ModalHandle } from "../../components/resources/EditResourceModal";
 import { CreateCommentModal } from "../../components/comments/CreateCommentModal";
-import { getUsername } from "../../firebase/firebaseAuth";
 
 const Comments: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
@@ -52,7 +50,6 @@ const Comments: React.FC = () => {
         <IonList>
           {commentData.map((item, index) => {
             return (
-              <IonItem class="ion-no-padding" key={index}>
                 <CommentCard
                   commentId={item.commentId}
                   discussionId={discussionId}
@@ -65,7 +62,6 @@ const Comments: React.FC = () => {
                   photo={item.photo}
                   updatePage={getCommentData}
                 />
-              </IonItem>
             );
           })}
         </IonList>

@@ -3,32 +3,53 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
-  IonInput,
   IonItem,
   IonLabel,
   IonPage,
   IonTitle,
-  IonToolbar,
+  IonToolbar, useIonAlert,
 } from "@ionic/react";
-import { camera, personCircleOutline } from "ionicons/icons";
-import { useEffect, useState } from "react";
+import { personCircleOutline } from "ionicons/icons";
+import {useEffect, useRef, useState} from "react";
 import "./ProfileTab.css";
 import { logoutUser, getUsername } from "../../firebase/firebaseAuth";
 import { useSelector } from "react-redux";
+import EditProfileModal, {ModalHandle} from "../../components/profile/EditProfileModal";
 
 const ProfileTab: React.FC = () => {
-  const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
   const [user, setUser] = useState<any>({});
+  const [presentAlert] = useIonAlert();
   let userIdAndEmail = useSelector((state: any) => state.user.user);
+  const editModal = useRef<ModalHandle>(null)
 
   useEffect(() => {
+    getProfileData();
+  }, []);
+
+  async function getProfileData () {
     getUsername(userIdAndEmail.uid).then(username => {
       setUser({
+        id: userIdAndEmail.uid,
         email: userIdAndEmail.email,
-        username: username
+        username: username,
       })
     })
-  }, []);
+  }
+
+  const alert = () => presentAlert({
+    header: "Are you Sure?",
+    buttons: [{
+      text: "Cancel",
+      role: "cancel",
+    },
+      {
+        text: "Log Out",
+        role: "destructive",
+        handler: () => {
+          logoutUser()
+        }
+      }],
+  })
 
   return (
     <IonPage>
@@ -52,65 +73,34 @@ const ProfileTab: React.FC = () => {
         </IonItem>
 
         <div className="notLogged">{!user && "You are not logged in!"}</div>
-        {isReadOnly && user && (
+        {user && (
           <>
             <IonItem>
               <IonLabel position="stacked">User Name</IonLabel>
-              <h4>{user.username}</h4>
+              <div>{user.username}</div>
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">Email Address</IonLabel>
-              <h4>{user.email}</h4>
+              <div>{user.email}</div>
             </IonItem>
-            <IonItem lines="none">
-                <IonButton className="editProfileButton"
-                  size="default"
-                  onClick={() => setIsReadOnly(!isReadOnly)}
+            <div className="verticalSpacing"></div>
+            <div className="buttonSpacing">
+                <IonButton
+                    expand="block"
+                  onClick={() => editModal.current?.open()}
                 >
                   Edit Profile
                 </IonButton>
-              <IonButton className="logOutButton" size="default" onClick={logoutUser}>
-                logout
+            </div>
+            <div className="buttonSpacing">
+              <IonButton onClick={alert}
+                         expand="block">
+                Log Out
               </IonButton>
-            </IonItem>
+            </div>
           </>
         )}
-        {!isReadOnly && (
-          <>
-            <IonItem lines="none">
-              <IonIcon color="medium" icon={camera} size="large"></IonIcon>
-            </IonItem>
-            <IonItem>
-              <IonLabel position="stacked">User Name*</IonLabel>
-              <IonInput placeholder="Enter User Name"></IonInput>
-            </IonItem>
-            <IonItem>
-              <IonLabel position="stacked">Email Address*</IonLabel>
-              <IonInput placeholder="email@address.com"></IonInput>
-            </IonItem>
-            <IonItem>
-              <IonLabel position="stacked">Password*</IonLabel>
-              <IonInput placeholder="********"></IonInput>
-            </IonItem>
-            <IonItem>
-              <IonLabel position="stacked">Confirm Password*</IonLabel>
-              <IonInput placeholder="********"></IonInput>
-            </IonItem>
-            <IonItem lines="none">
-              <p>*Mandatory Fields</p>
-            </IonItem>
-            <IonItem lines="none">
-              <div className="editButton">
-                <IonButton
-                  size="default"
-                  onClick={() => setIsReadOnly(!isReadOnly)}
-                >
-                  Save
-                </IonButton>
-              </div>
-            </IonItem>
-          </>
-        )}
+        <EditProfileModal user={user} onDismiss={getProfileData} ref={editModal} />
       </IonContent>
     </IonPage>
   );

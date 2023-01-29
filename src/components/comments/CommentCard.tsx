@@ -97,100 +97,106 @@ export const CommentCard: React.FC<CommentCardProps> = ({
     });
 
   return (
-    <IonGrid fixed>
-      <IonRow>
-        <IonCol className="ion-grid-column">
-          <IonItem lines="none">
-            <IonIcon size="large" icon={personCircleOutline}></IonIcon>
-            <div className="spacing"></div>
-            <IonLabel class="ion-text-wrap">
-              <div className="username"><b>{username}</b></div>
-              <div className="ion-text-wrap"><p>commented on "{passage}"</p></div>
-            </IonLabel>
-            {user.uid === moderator && (
-              <>
-                <IonButton onClick={openPopover} slot="end" fill="clear">
-                  <IonIcon slot="icon-only" icon={ellipsisVertical}></IonIcon>
-                </IonButton>
-                <IonPopover
-                  ref={popover}
-                  isOpen={popoverOpen}
-                  dismissOnSelect={true}
-                  onDidDismiss={() => setPopoverOpen(false)}
-                >
-                  <IonList lines="full">
-                    <IonItem
-                      button
-                      detail={false}
-                      onClick={() => editModal.current?.open()}
-                    >
-                      <IonLabel class="ion-padding-start">Edit</IonLabel>
-                      <IonIcon
-                        class="ion-padding-end"
-                        slot="end"
-                        icon={pencil}
-                      ></IonIcon>
-                    </IonItem>
-                    <IonItem
-                      button
-                      detail={false}
-                      lines="none"
-                      onClick={actionSheet}
-                    >
-                      <IonLabel class="ion-padding-start" color="danger">
-                        Delete
-                      </IonLabel>
-                      <IonIcon
-                        class="ion-padding-end"
-                        color="danger"
-                        slot="end"
-                        icon={trashOutline}
-                      ></IonIcon>
-                    </IonItem>
-                  </IonList>
-                </IonPopover>
-              </>
-            )}
-          </IonItem>
-        </IonCol>
-      </IonRow>
-      <IonRow>
-        <IonCol>
-          <IonItem lines="none">
-            {photo && (
-              <>
-                <IonThumbnail slot="end" onClick={() => setIsOpen(true)}>
-                  <IonImg src={photo} />
-                </IonThumbnail>
-                <IonModal isOpen={isOpen}>
-                  <IonHeader>
-                    <IonToolbar>
-                      <IonButtons slot="end">
-                        <IonButton onClick={() => setIsOpen(false)}>
-                          Close
-                        </IonButton>
-                      </IonButtons>
-                    </IonToolbar>
-                  </IonHeader>
-                  <IonContent className="ion-padding">
+    <IonItem class="ion-no-padding">
+      <IonGrid fixed>
+        <IonRow>
+          <IonCol className="ion-grid-column">
+            <IonItem lines="none">
+              <IonIcon size="large" icon={personCircleOutline}></IonIcon>
+              <div className="spacing"></div>
+              <IonLabel class="ion-text-wrap">
+                <div className="username">
+                  <b>{username}</b>
+                </div>
+                <div className="ion-text-wrap">
+                  <p>commented on "{passage}"</p>
+                </div>
+              </IonLabel>
+              {user.uid === moderator && (
+                <>
+                  <IonButton onClick={openPopover} slot="end" fill="clear">
+                    <IonIcon slot="icon-only" icon={ellipsisVertical}></IonIcon>
+                  </IonButton>
+                  <IonPopover
+                    ref={popover}
+                    isOpen={popoverOpen}
+                    dismissOnSelect={true}
+                    onDidDismiss={() => setPopoverOpen(false)}
+                  >
+                    <IonList lines="full">
+                      <IonItem
+                        button
+                        detail={false}
+                        onClick={() => editModal.current?.open()}
+                      >
+                        <IonLabel class="ion-padding-start">Edit</IonLabel>
+                        <IonIcon
+                          class="ion-padding-end"
+                          slot="end"
+                          icon={pencil}
+                        ></IonIcon>
+                      </IonItem>
+                      <IonItem
+                        button
+                        detail={false}
+                        lines="none"
+                        onClick={actionSheet}
+                      >
+                        <IonLabel class="ion-padding-start" color="danger">
+                          Delete
+                        </IonLabel>
+                        <IonIcon
+                          class="ion-padding-end"
+                          color="danger"
+                          slot="end"
+                          icon={trashOutline}
+                        ></IonIcon>
+                      </IonItem>
+                    </IonList>
+                  </IonPopover>
+                </>
+              )}
+            </IonItem>
+          </IonCol>
+        </IonRow>
+        <IonRow>
+          <IonCol>
+            <IonItem lines="none">
+              {photo && (
+                <>
+                  <IonThumbnail slot="end" onClick={() => setIsOpen(true)}>
                     <IonImg src={photo} />
-                  </IonContent>
-                </IonModal>
-              </>
-            )}
-            <IonText>{text}</IonText>
-          </IonItem>
-        </IonCol>
-      </IonRow>
-      {updatePage && (
-        <EditCommentModal
-          bookClubId={bookClubId}
-          discussionId={discussionId}
-          commentId={commentId}
-          onDismiss={updatePage}
-          ref={editModal}
-        />
-      )}
-    </IonGrid>
+                  </IonThumbnail>
+                  <IonModal isOpen={isOpen}>
+                    <IonHeader>
+                      <IonToolbar>
+                        <IonButtons slot="end">
+                          <IonButton onClick={() => setIsOpen(false)}>
+                            Close
+                          </IonButton>
+                        </IonButtons>
+                      </IonToolbar>
+                    </IonHeader>
+                    <IonContent className="ion-padding">
+                      <IonImg src={photo} />
+                    </IonContent>
+                  </IonModal>
+                </>
+              )}
+              <IonText>{text}</IonText>
+            </IonItem>
+          </IonCol>
+        </IonRow>
+        {updatePage && (
+          <EditCommentModal
+            bookClubId={bookClubId}
+            discussionId={discussionId}
+            commentId={commentId}
+            onDismiss={updatePage}
+            ref={editModal}
+          />
+        )}
+      </IonGrid>
+    </IonItem>
   );
 };
