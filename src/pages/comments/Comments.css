@@ -1,0 +1,10 @@
+.flexVertical {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.commentImage {
+    max-width: 110px;
+    filter: drop-shadow(0rem 0.3rem 0.3rem rgba(0, 0, 0, 0.65));
+}

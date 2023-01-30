@@ -13,7 +13,6 @@ import {
   IonModal,
   IonPopover,
   IonRow,
-  IonText,
   IonThumbnail,
   IonToolbar,
   useIonActionSheet,
@@ -105,12 +104,8 @@ export const CommentCard: React.FC<CommentCardProps> = ({
               <IonIcon size="large" icon={personCircleOutline}></IonIcon>
               <div className="spacing"></div>
               <IonLabel class="ion-text-wrap">
-                <div className="username">
-                  <b>{username}</b>
-                </div>
-                <div className="ion-text-wrap">
-                  <p>commented on "{passage}"</p>
-                </div>
+                <b className="username">{username}</b>
+                <div className="ion-text-wrap">{text}</div>
               </IonLabel>
               {user.uid === moderator && (
                 <>
@@ -183,7 +178,6 @@ export const CommentCard: React.FC<CommentCardProps> = ({
                   </IonModal>
                 </>
               )}
-              <IonText>{text}</IonText>
             </IonItem>
           </IonCol>
         </IonRow>

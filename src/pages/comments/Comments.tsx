@@ -1,13 +1,13 @@
 import {
   IonBackButton,
-  IonButtons,
+  IonButtons, IonCol,
   IonContent,
   IonFab,
-  IonFabButton,
+  IonFabButton, IonGrid,
   IonHeader,
-  IonIcon,
+  IonIcon, IonImg, IonLabel,
   IonList,
-  IonPage,
+  IonPage, IonRow,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
@@ -20,16 +20,32 @@ import { getDiscussionComments } from "../../firebase/firebaseComments";
 import { useParams } from "react-router";
 import { ModalHandle } from "../../components/resources/EditResourceModal";
 import { CreateCommentModal } from "../../components/comments/CreateCommentModal";
+import {BookClub, Discussion, getBookClubDocument} from "../../firebase/firebaseBookClub";
+import {getDiscussionDocument} from "../../firebase/firebaseDiscussions";
 
 const Comments: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
   let { discussionId }: { discussionId: string } = useParams();
+  const [bookClubData, setBookClubData] = useState<BookClub>();
+  const [discussionData, setDiscussionData] = useState<Discussion>()
   const [commentData, setCommentData] = useState<any[]>([]);
   const createModal = useRef<ModalHandle>(null);
 
   useEffect(() => {
     getCommentData();
+    getBookClubData();
+    getDiscussionData();
   }, []);
+
+  async function getBookClubData() {
+    let bookClubData = await getBookClubDocument(bookClubId);
+    setBookClubData(bookClubData);
+  }
+
+  async function getDiscussionData() {
+    let discussionData = await getDiscussionDocument(bookClubId, discussionId);
+    setDiscussionData(discussionData);
+  }
 
   async function getCommentData() {
     let commentData = await getDiscussionComments(bookClubId, discussionId);
@@ -47,6 +63,23 @@ const Comments: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <IonGrid>
+          <IonRow className="ion-align-items-center">
+            <IonCol size="9" className="flexVertical">
+              <IonLabel>
+                <div>{bookClubData?.book.title}</div>
+                <p>{bookClubData?.book.authors}</p>
+              </IonLabel>
+              <IonLabel>
+                <div>{discussionData?.title}</div>
+                <p>{discussionData?.date}</p>
+              </IonLabel>
+            </IonCol>
+            <IonCol size="3">
+              <IonImg className="commentImage" src={bookClubData?.book.imageUrl}/>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
         <IonList>
           {commentData.map((item, index) => {
             return (
