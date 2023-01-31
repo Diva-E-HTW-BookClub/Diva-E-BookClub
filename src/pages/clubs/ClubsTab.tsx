@@ -5,18 +5,12 @@ import {
   IonTitle,
   IonToolbar,
   IonSearchbar,
-  IonSegment,
-  IonSegmentButton,
-  IonLabel,
   IonList,
-  IonItem,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   IonFab,
   IonFabButton,
   IonIcon,
-  IonSelect,
-  IonSelectOption,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import "./ClubsTab.css";
@@ -25,13 +19,11 @@ import { ClubCard } from "../../components/ClubCard";
 import { searchBookClubs, BookClub } from "../../firebase/firebaseBookClub";
 import { useSelector } from "react-redux";
 import { ModalHandle } from "../../components/resources/EditResourceModal";
-import CreateClubModal from "../../components/CreateClubModal";
+import CreateClubModal from "../../components/createClub/CreateClubModal";
 
 const ClubsTab: React.FC = () => {
   const [bookClubs, setBookClubs] = useState<BookClub[]>([]);
   const [inputText, setInputText] = useState<string>("");
-  const [selectedSegment, setSelectedSegment] = useState<string>("your");
-  const [selectedFilter, setSelectedFilter] = useState<string>("name");
   const user = useSelector((state: any) => state.user.user);
   const createModal = useRef<ModalHandle>(null);
 
@@ -54,22 +46,6 @@ const ClubsTab: React.FC = () => {
     let inputTextValue = event.target.value;
     setInputText(inputTextValue);
     getBookClubs(inputTextValue);
-  }
-
-  // displays book clubs when user selects the filter (name or book title)
-  // using new filter value
-  async function selectFilter(event: any) {
-    let filterValue = event.detail.value;
-    setSelectedFilter(filterValue);
-    getBookClubs(inputText);
-  }
-
-  // displays book clubs when user selects the segment (your or new)
-  // using new segment value
-  async function selectSegment(event: any) {
-    let segmentValue = event.detail.value;
-    setSelectedSegment(segmentValue);
-    getBookClubs(inputText);
   }
 
   // called when user scrolls all the way down
