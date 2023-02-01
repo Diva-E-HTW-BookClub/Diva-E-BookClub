@@ -22,6 +22,7 @@ import { ModalHandle } from "../../components/resources/EditResourceModal";
 import { CreateCommentModal } from "../../components/comments/CreateCommentModal";
 import {BookClub, Discussion, getBookClubDocument} from "../../firebase/firebaseBookClub";
 import {getDiscussionDocument} from "../../firebase/firebaseDiscussions";
+import {getTimezonedDate} from "../../helpers/datetimeFormatter";
 
 const Comments: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
@@ -62,25 +63,26 @@ const Comments: React.FC = () => {
           <IonTitle>Comments</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
-        <IonGrid>
-          <IonRow className="ion-align-items-center">
-            <IonCol size="9" className="flexVertical">
+      <IonContent className="ion-no-padding">
+        <IonGrid className="ion-padding-horizontal">
+          <IonRow className="ion-align-items-center rowHeight">
+            <IonCol sizeMd="11" size="10" className="flexVertical">
               <IonLabel>
                 <div>{bookClubData?.book.title}</div>
                 <p>{bookClubData?.book.authors}</p>
               </IonLabel>
               <IonLabel>
                 <div>{discussionData?.title}</div>
-                <p>{discussionData?.date}</p>
+                {discussionData?.date && <div>{getTimezonedDate(discussionData.date)}</div>}
               </IonLabel>
             </IonCol>
-            <IonCol size="3">
+            <IonCol sizeMd="1" size="2">
               <IonImg className="commentImage" src={bookClubData?.book.imageUrl}/>
             </IonCol>
           </IonRow>
         </IonGrid>
-        <IonList>
+        <IonList className="ion-padding-horizontal">
+
           {commentData.map((item, index) => {
             return (
                 <CommentCard

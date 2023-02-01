@@ -1,10 +1,15 @@
 .flexVertical {
+    height: 110px;
     display: flex;
-    justify-content: space-between;
     flex-direction: column;
+    justify-content: space-between;
 }
 
 .commentImage {
-    max-width: 110px;
+    max-width: 60px;
     filter: drop-shadow(0rem 0.3rem 0.3rem rgba(0, 0, 0, 0.65));
+}
+
+.rowHeight {
+    height: 150px;
 }

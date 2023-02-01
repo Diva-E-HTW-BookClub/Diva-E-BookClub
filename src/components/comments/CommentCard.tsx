@@ -18,6 +18,7 @@ import {
   useIonActionSheet,
 } from "@ionic/react";
 import {
+  chevronDownOutline, chevronUpOutline,
   ellipsisVertical,
   pencil,
   personCircleOutline,
@@ -27,6 +28,7 @@ import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { deleteCommentDocument } from "../../firebase/firebaseComments";
 import { EditCommentModal, ModalHandle } from "./EditCommentModal";
+import "./CommentCard.css"
 
 interface CommentCardProps {
   username: string;
@@ -55,6 +57,7 @@ export const CommentCard: React.FC<CommentCardProps> = ({
   const [popoverOpen, setPopoverOpen] = useState(false);
   const popover = useRef<HTMLIonPopoverElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [showFullPassage, setShowFullPassage] = useState(false);
   const [presentDelete] = useIonActionSheet();
   const editModal = useRef<ModalHandle>(null);
 
@@ -95,17 +98,57 @@ export const CommentCard: React.FC<CommentCardProps> = ({
       },
     });
 
+  const passageDiv = () => {
+    return (
+    <div className="passageDiv" onClick={() => setShowFullPassage(!showFullPassage)}>
+      {showFullPassage &&
+            <IonGrid>
+              <IonRow>
+                <IonCol size="auto" className="iconColumn">
+                  <IonIcon icon={chevronUpOutline}></IonIcon>
+                </IonCol>
+                <IonCol>
+                  <IonLabel className="ion-text-wrap">
+                    <div className="passage">{passage}</div>
+                  </IonLabel>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+      }
+      {!showFullPassage &&
+          <IonGrid>
+            <IonRow>
+              <IonCol size="auto" className="iconColumn">
+                <IonIcon icon={chevronDownOutline}></IonIcon>
+              </IonCol>
+              <IonCol>
+                <IonLabel className="hidePassage">
+                  <div className="passageHidden">{passage}</div>
+                </IonLabel>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+      }
+    </div>
+    )
+  }
+
   return (
     <IonItem class="ion-no-padding">
       <IonGrid fixed>
-        <IonRow>
+        <IonRow className="ion-align-items-start">
+          <IonCol size="auto" className="columnComment">
+            <IonIcon size="large" icon={personCircleOutline}></IonIcon>
+          </IonCol>
           <IonCol className="ion-grid-column">
             <IonItem lines="none">
-              <IonIcon size="large" icon={personCircleOutline}></IonIcon>
-              <div className="spacing"></div>
               <IonLabel class="ion-text-wrap">
-                <b className="username">{username}</b>
-                <div className="ion-text-wrap">{text}</div>
+                <div className="username">
+                  <b>{username}</b>
+                </div>
+                <div className="ion-text-wrap">
+                  <p>{text}</p>
+                </div>
               </IonLabel>
               {user.uid === moderator && (
                 <>
@@ -152,14 +195,11 @@ export const CommentCard: React.FC<CommentCardProps> = ({
                 </>
               )}
             </IonItem>
-          </IonCol>
-        </IonRow>
-        <IonRow>
-          <IonCol>
-            <IonItem lines="none">
-              {photo && (
-                <>
-                  <IonThumbnail slot="end" onClick={() => setIsOpen(true)}>
+            {passage && passageDiv()}
+            <div className="verticalSpacing"></div>
+            {photo && (
+                <IonItem lines="none">
+                  <IonThumbnail slot="start" onClick={() => setIsOpen(true)}>
                     <IonImg src={photo} />
                   </IonThumbnail>
                   <IonModal isOpen={isOpen}>
@@ -176,9 +216,8 @@ export const CommentCard: React.FC<CommentCardProps> = ({
                       <IonImg src={photo} />
                     </IonContent>
                   </IonModal>
-                </>
-              )}
-            </IonItem>
+                </IonItem>
+            )}
           </IonCol>
         </IonRow>
         {updatePage && (
