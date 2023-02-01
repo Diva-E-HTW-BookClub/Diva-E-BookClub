@@ -8,6 +8,7 @@ import {
   IonButton
 } from "@ionic/react";
 import "./StartPage.css";
+import { useHistory } from "react-router";
 
 const StartPage: React.FC = () => {
   return (
