@@ -231,7 +231,7 @@ const Agenda: React.FC = () => {
       <IonContent fullscreen>
         <form onSubmit={handleSubmit(submitData)}>
           <IonList>
-            <IonListHeader>
+            <IonListHeader className="agendaTitleDiv">
               <IonLabel>
                 <h1 className="agendaTitle">{discussionData.title }</h1>
               </IonLabel>

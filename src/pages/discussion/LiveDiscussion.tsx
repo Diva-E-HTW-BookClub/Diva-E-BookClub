@@ -131,6 +131,9 @@ const LiveDiscussion: React.FC = () => {
     joinDiscussionRoom();
     socket.emit("request_data", { emitSum, discussionId});
     console.log("ID: " + discussionId)
+    if(isModerator){
+      socket.emit("get_moderator", isModerator);
+    }
   }, []);
 
   
@@ -244,14 +247,13 @@ return () => clearInterval(interval);
    }
 
 
-
-
   async function getAgendaParts() {
     let bookClub = await getBookClubDocument(bookClubId);
     // check if the current user is moderator of the club
     setIsModerator(bookClub?.moderator.includes(user.uid));
     let agendaParts = await getDiscussionAgenda(bookClubId, discussionId);
     let agendaTitle = await getDiscussionTitle(bookClubId, discussionId);
+    console.log("title:" + agendaTitle);
     setAgendaParts(agendaParts)
     setAgendaTitle(agendaTitle)
     for(var i = 0; i < agendaParts.length; i++){
@@ -260,6 +262,7 @@ return () => clearInterval(interval);
       emitTimes[i] = 0
     }
   }
+  
   // convert agenda parts to elapsedTime and timeLimit and sum the values
   //let totalElapsedTime = agendaParts.map(e => e.elapsedTime).reduce((a, b) => a + b, 0);
   let totalTimeLimit = agendaParts.map(e => e.timeLimit).reduce((a, b) => a + b, 0);
@@ -269,7 +272,7 @@ return () => clearInterval(interval);
     var minutes = Math.floor(number/60);
     var seconds = Math.floor(number%60);
     var secondsString = (seconds < 10) ? '0' + seconds.toString() : seconds.toString()
-    var finalOutput = minutes.toString() + "." + secondsString;
+    var finalOutput = minutes.toString() + ":" + secondsString;
     return finalOutput
   }
 
@@ -284,7 +287,7 @@ return () => clearInterval(interval);
     resultSeconds = resultSeconds%60
     
     var resultSecondsString = (resultSeconds < 10) ? '0' + resultSeconds.toString() : resultSeconds.toString()
-    var finalOutput = resultMinutes.toString() + "." + resultSecondsString;
+    var finalOutput = resultMinutes.toString() + ":" + resultSecondsString;
     return finalOutput;
   }
 
@@ -308,17 +311,19 @@ return () => clearInterval(interval);
       </IonHeader>
       <IonContent fullscreen>
       <div className="divider-small"></div>
-        <IonCard className="cards">
+        <IonCard className="cards time-bar">
           <IonCardHeader>
             <IonCardTitle>Total discussion time</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
             <IonRow>
-              <IonCol size="8">
+              <IonCol size="8" className="progressbarContainer">
                 <IonProgressBar className={` ${isRed(progressSumReceived, totalTimeLimit) ? 'isRed' : isDarkOrange(progressSumReceived, totalTimeLimit) ?  'isDarkOrange' : isOrange(progressSumReceived, totalTimeLimit) ? 'isOrange' : 'blue'}`} value={progressSumReceived}></IonProgressBar>
                  </IonCol>
               <IonCol className="timeDisplay" size="4">
-                {`${addUp(progressTimesReceived, maxTimes)} / ${doubleDigits(totalTimeLimit)}`}
+                <div className="timeDisplayContainer">
+                {`${addUp(progressTimesReceived, maxTimes)} / ${doubleDigits(totalTimeLimit)} min`}
+                </div>
               </IonCol>
             </IonRow>
           </IonCardContent>
@@ -327,7 +332,7 @@ return () => clearInterval(interval);
           {agendaParts.map((agendaPart, index) => {
             return (
               <IonItem className="iten-no-padding" key={index}>
-                <IonCard>
+                <IonCard className="time-bar">
                   <IonCardHeader>
                     {isModerator &&
                     <IonButton className="playButton" fill="solid" color="favorite" onClick={() => setButtons(index)}>
@@ -345,11 +350,13 @@ return () => clearInterval(interval);
                   <IonCardContent>
                     <IonGrid>
                       <IonRow>
-                        <IonCol size="8">
+                        <IonCol size="8" className="progressbarContainer">
                         <IonProgressBar className={` ${isRed(progressTimesReceived[index], agendaPart.timeLimit) ? 'isRed' : isDarkOrange(progressTimesReceived[index], agendaPart.timeLimit) ?  'isDarkOrange' : isOrange(progressTimesReceived[index], agendaPart.timeLimit) ? 'isOrange' : 'blue'}`} value={progressTimesReceived[index]}></IonProgressBar>
                         </IonCol>
                         <IonCol className="timeDisplay" size="4">
+                        <div className="timeDisplayContainer">
                           {`${doubleDigits(progressTimesReceived[index] * agendaPart.timeLimit)} / ${doubleDigits(agendaPart.timeLimit)} min`}
+                          </div>
                            </IonCol>
                       </IonRow>
                     </IonGrid>

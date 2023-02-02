@@ -12,6 +12,7 @@ var progressSumServer = -1;
 var maxRoomSize = 0;
 var currentRoom;
 var roomSize
+var moderatorId;
 
 app.use(cors());
 
@@ -33,6 +34,11 @@ function createInMap(nameOfDiscussionId){
 
 io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id}`);
+    
+    socket.on("get_moderator", (data) => {
+        moderatorId = socket.id;
+    })
+
     socket.on("join_discussion_room", (data) => {
         if(!(discussionMap.has(data))){
             createInMap(data)
@@ -121,6 +127,9 @@ io.on("connection", (socket) => {
         console.log("Room of socket: " + currentRoom); // undefined
         var rommSizeAfterLeaving = roomSize -1;
         io.in(currentRoom).emit("changeParticipantCount", rommSizeAfterLeaving);
+        if(!(io.sockets.adapter.rooms[moderatorId])){
+            console.log("Mod ist gone")
+        }
       });
 });
 

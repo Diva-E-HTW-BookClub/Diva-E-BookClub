@@ -103,7 +103,7 @@ console.log("ID" + discussionId)
     var minutes = Math.floor(number/60);
     var seconds = Math.floor(number%60);
     var secondsString = (seconds < 10) ? '0' + seconds.toString() : seconds.toString()
-    var finalOutput = minutes.toString() + "." + secondsString;
+    var finalOutput = minutes.toString() + ":" + secondsString;
     return finalOutput
   }
 
@@ -117,7 +117,7 @@ console.log("ID" + discussionId)
       </IonHeader>
       <IonContent fullscreen>
       <div className="divider-small"></div>
-        <IonCard>
+      <IonCard className="cards time-bar">
           <IonCardHeader>
             <IonCardTitle>Total discussion time</IonCardTitle>
           </IonCardHeader>
@@ -127,7 +127,7 @@ console.log("ID" + discussionId)
                 <IonProgressBar className={` ${isRed(totalElapsedTime, totalTimeLimit) ? 'isRed' : isDarkOrange(totalElapsedTime, totalTimeLimit) ?  'isDarkOrange' : isOrange(totalElapsedTime, totalTimeLimit) ? 'isOrange' : 'blue'}`} value={totalElapsedTime/totalTimeLimit}></IonProgressBar>
               </IonCol>
               <IonCol className="timeDisplay" size="4">
-                {`${doubleDigits(totalElapsedTime)} / ${doubleDigits(totalTimeLimit)}`}
+                {`${doubleDigits(totalElapsedTime)} / ${doubleDigits(totalTimeLimit)} min`}
               </IonCol>
             </IonRow>
           </IonCardContent>
@@ -136,7 +136,7 @@ console.log("ID" + discussionId)
           {agendaParts.map((agendaPart, index) => {
             return (
               <IonItem className="iten-no-padding" key={index}>
-                <IonCard>
+                <IonCard className="time-bar">
                   <IonCardHeader>
                     
                     <IonCardTitle className="playTitle">{agendaPart.name}</IonCardTitle>
@@ -148,7 +148,7 @@ console.log("ID" + discussionId)
                         <IonProgressBar className={` ${isRed(agendaPart.elapsedTime, agendaPart.timeLimit) ? 'isRed' : isDarkOrange(agendaPart.elapsedTime, agendaPart.timeLimit) ?  'isDarkOrange' : isOrange(agendaPart.elapsedTime, agendaPart.timeLimit) ? 'isOrange' : 'blue'}`} value={agendaPart.elapsedTime/agendaPart.timeLimit}></IonProgressBar>
                         </IonCol>
                         <IonCol className="timeDisplay" size="4">
-                          {`${doubleDigits(agendaPart.elapsedTime)} / ${doubleDigits(agendaPart.timeLimit)}`}
+                          {`${doubleDigits(agendaPart.elapsedTime)} / ${doubleDigits(agendaPart.timeLimit)} min`}
                            </IonCol>
                       </IonRow>
                     </IonGrid>

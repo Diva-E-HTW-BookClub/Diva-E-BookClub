@@ -21,6 +21,12 @@
 ion-progress-bar{
   --progress-background: #e7b837;
   padding:12px;
+  border-radius:7px;
+}
+
+.time-bar{
+  box-shadow: rgb(66 66 66 / 19%) 0px 4px 23px;
+  margin-bottom: 20px;
 }
 
 .button-icon {
@@ -40,6 +46,21 @@ ion-card {
   --padding:0 !important;
 }
 
+.progressbarContainer{
+  align-self: center;
+}
+
+.timeDisplayContainer{
+  width: fit-content;
+  border-left:30px;
+  background-color: #ebebeb;
+  border-left: 7px solid #ebebeb;
+  border-right: 7px solid #ebebeb;
+  border-top: 5px solid #ebebeb;
+  border-bottom: 5px solid #ebebeb;
+  border-radius: 7px;
+}
+
 ion-item {
   --padding-end: 0px;
   --padding-start: 0px;
@@ -48,7 +69,7 @@ ion-item {
 }
 
 .button-icon {
-  color:#A5A58D;
+  color:#3b432b;
 }
 .live{
   position: absolute;
@@ -62,5 +83,5 @@ ion-item {
   font-style: italic;
 }
 .cards{
-  margin-top: 5%
+  margin-top: 30px;
 }
