@@ -22,6 +22,7 @@ ion-progress-bar{
   --progress-background: #e7b837;
   padding:12px;
   border-radius:7px;
+  height: 28px;
 }
 
 .time-bar{

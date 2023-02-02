@@ -88,6 +88,7 @@ const LiveDiscussion: React.FC = () => {
     var timeLimitArray = agendaParts.map(e => e.timeLimit)
     var elapsedTimeArrayInSeconds = elapsedTimeArray.map(function(x, index){
       return timeLimitArray[index] * x
+      
     })
    
     if(agendaParts.length !=0 ){
@@ -369,7 +370,7 @@ return () => clearInterval(interval);
         <div className="divider-small"></div>
         <IonTitle>Aktuelle Teilnehmer: {participantCount}</IonTitle>
         <div className="divider-small"></div>
-        <IonButton className="live" routerLink={"/tabs/home"} fill="outline" onClick={() => saveLiveDiscussion(true)}>
+        <IonButton className="live" routerLink={"/tabs/home"}  onClick={() => saveLiveDiscussion(true)}>
               End discussion
         </IonButton>
       </IonContent>
