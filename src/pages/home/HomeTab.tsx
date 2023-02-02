@@ -38,6 +38,9 @@ import {
   sortDiscussionsByDate,
 } from "../../helpers/discussionSort";
 import { useHistory } from "react-router";
+import { useIonRouter } from '@ionic/react';
+import { App } from '@capacitor/app';
+import { hi } from "date-fns/locale";
 
 const HomeTab: React.FC = () => {
   const [isNewUser, setIsNewUser] = useState<boolean>();
@@ -55,16 +58,24 @@ const HomeTab: React.FC = () => {
   // it counts the event when it receives it and goes one step back in history only if the count is odd
   // https://ionicframework.com/docs/developing/hardware-back-button#basic-usage
   let counter = 0;
+  const ionRouter = useIonRouter();
   document.addEventListener('ionBackButton', (ev: any) => {
     ev.detail.register(1, () => {
       ev.preventDefault();
       ev.stopImmediatePropagation();
       counter++;
       if (counter % 2 == 1) {
+        if (!ionRouter.canGoBack() || canUseNotLoggedIn(ionRouter.routeInfo.pathname)) {
+          App.exitApp();
+        }
         history.goBack();
       }
     });
   });
+
+  function canUseNotLoggedIn(pathname: string) {
+    return pathname === "/login" || pathname === "/register" || pathname === "/start"
+  }
 
   useEffect(() => {
     getBookClubs();
