@@ -238,3 +238,8 @@ ion-searchbar.custom {
 *{
   box-sizing: border-box;
 }
+
+
+.header-ios ion-toolbar:last-of-type {
+  box-shadow: none;
+}
