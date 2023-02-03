@@ -6,32 +6,27 @@
   margin-left: 30px;
 }
 
-.isOrange{
+.isOrange {
   --progress-background: #d6660b;
 }
 
-.isDarkOrange{
+.isDarkOrange {
   --progress-background: #d63a0b;
 }
 
-.isRed{
+.isRed {
   --progress-background: #e00e0e;
 }
 
-ion-progress-bar{
+ion-progress-bar {
   --progress-background: #e7b837;
-  padding:12px;
-  border-radius:7px;
+  padding: 12px;
+  border-radius: 7px;
   height: 28px;
 }
 
-.time-bar{
-  box-shadow: rgb(66 66 66 / 19%) 0px 4px 23px;
-  margin-bottom: 20px;
-}
-
 .button-icon {
-  color:#8bd557;
+  color: #8bd557;
 }
 
 ion-card {
@@ -39,21 +34,21 @@ ion-card {
   margin: 2px;
 }
 
-.iten-no-padding > *{
-  padding:0 !important;
+.iten-no-padding > * {
+  padding: 0 !important;
 }
 
-.item-native{
-  --padding:0 !important;
+.item-native {
+  --padding: 0 !important;
 }
 
-.progressbarContainer{
+.progressbarContainer {
   align-self: center;
 }
 
-.timeDisplayContainer{
+.timeDisplayContainer {
   width: fit-content;
-  border-left:30px;
+  border-left: 30px;
   background-color: #ebebeb;
   border-left: 7px solid #ebebeb;
   border-right: 7px solid #ebebeb;
@@ -70,19 +65,31 @@ ion-item {
 }
 
 .button-icon {
-  color:#3b432b;
+  color: #3b432b;
 }
-.live{
+.live {
   position: absolute;
   left: 50%;
   margin-top: 40px;
   transform: translate(-50%, 50%);
 }
-.playTitle{
+.playTitle {
   font-weight: lighter;
   font-size: large;
   font-style: italic;
 }
-.cards{
+.cards {
   margin-top: 30px;
+}
+
+.notPlaying {
+  opacity: 60%;
+  box-shadow: rgb(66 66 66 / 19%) 0px 4px 23px;
+  margin-bottom: 20px;
+}
+
+.isPlaying {
+  opacity: 100%;
+  box-shadow: rgb(66 66 66 / 19%) 0px 4px 23px;
+  margin-bottom: 20px;
 }

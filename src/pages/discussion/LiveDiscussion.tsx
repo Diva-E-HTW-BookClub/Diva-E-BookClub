@@ -15,7 +15,8 @@ import {
   IonList,
   IonCardContent,
   IonItem,
-  IonIcon
+  IonIcon,
+  useIonViewDidEnter
 } from "@ionic/react";
 import {
   doc,
@@ -52,7 +53,10 @@ var emitStates:boolean[] = []
 var maxParticipants = 0;
 
 const LiveDiscussion: React.FC = () => {
-
+  useIonViewDidEnter(() => {
+    getAgendaParts()
+  });
+  
   // Information zu der Agenda
   const user = useSelector((state: any) => state.user.user);
   const [agendaParts, setAgendaParts] = useState<any[]>([]);
@@ -135,6 +139,17 @@ const LiveDiscussion: React.FC = () => {
     if(isModerator){
       socket.emit("get_moderator", isModerator);
     }
+    if(window.localStorage){
+      if( !localStorage.getItem("firstLoad")){
+        localStorage["firstLoad"] = true;
+        console.log("ich reloade neu")
+        window.location.reload()
+        socket.emit("new_connection_from_elsewhere", {discussionId})
+      }
+      else{
+        localStorage.removeItem("firstLoad");
+      }
+    }
   }, []);
 
   
@@ -142,6 +157,33 @@ const LiveDiscussion: React.FC = () => {
 
     socket.on("receive_playButtonStart", (data) => {
      console.log(data)
+    });
+    socket.on("receive_playButton", (data) => {
+      if(typeof data.emitStates !== "undefined"){
+        setPlayingStateReceived(data.emitStates)
+      }
+      else{
+      setPlayingStateReceived(data)
+      }
+    });
+
+    socket.on("receive_time", (data) => {
+      if(typeof data.emitTimes !== "undefined"){
+        setProgressTimesReceived(data.emitTimes)
+      }
+      else{
+      setProgressTimesReceived(data)
+      }
+    });
+
+    socket.on("receive_sum_time", (data) => {
+      if(typeof data.emitSum !== "undefined"){
+        console.log(data.emitSum)
+        setProgressSumReceived(data.emitSum)
+      }
+      else{
+        setProgressSumReceived(data)
+      }
     });
 
     socket.on("receive_timeStart", (data) => {
@@ -189,7 +231,12 @@ const LiveDiscussion: React.FC = () => {
         setProgressSumReceived(data)
       }
     });
-    
+
+    socket.on("reload_page", (data) =>{
+      console.log("new Connection")
+      window.location.reload();
+    })
+
     socket.on("changeParticipantCount", (data) => {
       setparticipantCount(data)  
       console.log("Aktueller Count: " + data)
@@ -246,7 +293,6 @@ return () => clearInterval(interval);
    const isRed = (progress: number, totalTime: number) => {
      return +(progress * totalTime).toFixed(2) >= totalTime
    }
-
 
   async function getAgendaParts() {
     let bookClub = await getBookClubDocument(bookClubId);
@@ -326,7 +372,7 @@ return () => clearInterval(interval);
           {agendaParts.map((agendaPart, index) => {
             return (
               <IonItem className="iten-no-padding" key={index}>
-                <IonCard className="time-bar">
+                <IonCard className={` ${playingStateReceived[index] ? 'isPlaying' : 'notPlaying' } `}>
                   <IonCardHeader>
                     {isModerator &&
                     <IonButton className="playButton" fill="solid" color="favorite" onClick={() => setButtons(index)}>
@@ -379,3 +425,7 @@ return () => clearInterval(interval);
 };
 
 export default LiveDiscussion;
+function ionViewWillEnter() {
+  throw new Error("Function not implemented.");
+}
+
