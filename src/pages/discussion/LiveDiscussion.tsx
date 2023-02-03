@@ -292,14 +292,7 @@ return () => clearInterval(interval);
     return finalOutput;
   }
 
-  function calculateSum(numberArray:any){
-    var resultSeconds = 0;
-    for(var i = 0; i < numberArray.length; i++){
-      var seconds = Math.floor((numberArray[i] * maxTimes[i]));
-      resultSeconds += seconds;
-    }
-    return resultSeconds
-  }
+
 
 
   return (
@@ -370,9 +363,16 @@ return () => clearInterval(interval);
         <div className="divider-small"></div>
         <IonTitle>Aktuelle Teilnehmer: {participantCount}</IonTitle>
         <div className="divider-small"></div>
+        {isModerator &&
         <IonButton className="live" routerLink={"/tabs/home"}  onClick={() => saveLiveDiscussion(true)}>
               End discussion
         </IonButton>
+        }
+        {!isModerator &&
+        <IonButton className="live" routerLink={"/tabs/home/" + bookClubId + "/view"} >
+              Leave discussion
+        </IonButton>
+        }
       </IonContent>
     </IonPage>
   );
