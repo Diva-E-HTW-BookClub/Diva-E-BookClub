@@ -146,7 +146,7 @@ async function getDiscussionMaxParticipants(bookClubId: string, discussionId: st
 }
 
 async function getDiscussionTitle(bookClubId: string, discussionId: string) {
-  let discussionData: any = getDiscussionDocument(bookClubId, discussionId)
+  let discussionData: any = await getDiscussionDocument(bookClubId, discussionId)
 
   if (discussionData) {
     return discussionData.title;
