@@ -157,7 +157,7 @@
 }
 
 *{
-  font-family: 'Open Sans';
+  font-family: 'Open Sans' !important;
 }
 
 .welcome-title, .clubName{
@@ -204,6 +204,20 @@ ion-label{
 
 }
 
+ion-header ion-toolbar:first-of-type {
+  padding-top: var(--ion-safe-area-top, 0);
+  box-shadow: 0px 9px 59px #8f8f8f40;
+}
+
+.header-md::after {
+  background-image: none !important;
+
+}
+
+ion-tab-bar{
+  box-shadow: 10px 10px 30px #dedede;
+}
+
 .timeDisplay{
   padding-left:10px;
 }
@@ -214,6 +228,12 @@ ion-searchbar.custom {
   --border-radius: 15px;
   --box-shadow: 0;
 }
+
+.swiper-slide .ion-activatable{
+  box-shadow: rgb(66 66 66 / 19%) 0px 4px 23px;
+}
+
+
 
 *{
   box-sizing: border-box;

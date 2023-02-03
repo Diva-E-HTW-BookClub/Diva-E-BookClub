@@ -55,7 +55,7 @@ const RegisterPage: React.FC = () => {
     await registerUser(data.email, data.password, data.username).then((result) => {
       // if result has no errors redirect to home page
       if (result === "") {
-        history.push("/tabs/home");
+        history.replace("/tabs/home");
         window.location.reload();
       } else if (result === "auth/email-already-in-use") {
         setError("email", {

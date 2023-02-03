@@ -1,11 +1,18 @@
 .agendaTitle {
     font-size: 30px !important;
     margin-bottom: 50%;
+    margin-top:30px !important;
 
 }
+
+.agendaTitleDiv{
+    padding-left: 0px !important;
+}
+
 .agendaDate{
     flex-direction: column;
     margin-right: 20px;
+    margin-top:30px !important;
 }
 
 #date{

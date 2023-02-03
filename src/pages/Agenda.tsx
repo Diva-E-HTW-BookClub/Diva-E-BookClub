@@ -17,6 +17,7 @@ import {
   useIonPicker,
   IonSpinner,
   IonNote,
+  useIonViewWillEnter,
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
@@ -54,6 +55,17 @@ const Agenda: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
   let { discussionId }: { discussionId: string } = useParams();
 
+  useIonViewWillEnter(() => {
+    if(window.localStorage){
+      if( !localStorage.getItem("firstLoad")){
+        localStorage["firstLoad"] = true;
+        window.location.reload();
+      }
+      else{
+        localStorage.removeItem("firstLoad");
+      }
+    }
+  });
   const {
     register,
     control,
@@ -231,7 +243,7 @@ const Agenda: React.FC = () => {
       <IonContent fullscreen>
         <form onSubmit={handleSubmit(submitData)}>
           <IonList>
-            <IonListHeader>
+            <IonListHeader className="agendaTitleDiv">
               <IonLabel>
                 <h1 className="agendaTitle">{discussionData.title }</h1>
               </IonLabel>

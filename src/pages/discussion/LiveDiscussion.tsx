@@ -15,7 +15,8 @@ import {
   IonList,
   IonCardContent,
   IonItem,
-  IonIcon
+  IonIcon,
+  useIonViewDidEnter
 } from "@ionic/react";
 import {
   doc,
@@ -52,7 +53,10 @@ var emitStates:boolean[] = []
 var maxParticipants = 0;
 
 const LiveDiscussion: React.FC = () => {
-
+  useIonViewDidEnter(() => {
+    getAgendaParts()
+  });
+  
   // Information zu der Agenda
   const user = useSelector((state: any) => state.user.user);
   const [agendaParts, setAgendaParts] = useState<any[]>([]);
@@ -88,6 +92,7 @@ const LiveDiscussion: React.FC = () => {
     var timeLimitArray = agendaParts.map(e => e.timeLimit)
     var elapsedTimeArrayInSeconds = elapsedTimeArray.map(function(x, index){
       return timeLimitArray[index] * x
+      
     })
    
     if(agendaParts.length !=0 ){
@@ -131,6 +136,20 @@ const LiveDiscussion: React.FC = () => {
     joinDiscussionRoom();
     socket.emit("request_data", { emitSum, discussionId});
     console.log("ID: " + discussionId)
+    if(isModerator){
+      socket.emit("get_moderator", isModerator);
+    }
+    if(window.localStorage){
+      if( !localStorage.getItem("firstLoad")){
+        localStorage["firstLoad"] = true;
+        console.log("ich reloade neu")
+        window.location.reload()
+        socket.emit("new_connection_from_elsewhere", {discussionId})
+      }
+      else{
+        localStorage.removeItem("firstLoad");
+      }
+    }
   }, []);
 
   
@@ -138,6 +157,33 @@ const LiveDiscussion: React.FC = () => {
 
     socket.on("receive_playButtonStart", (data) => {
      console.log(data)
+    });
+    socket.on("receive_playButton", (data) => {
+      if(typeof data.emitStates !== "undefined"){
+        setPlayingStateReceived(data.emitStates)
+      }
+      else{
+      setPlayingStateReceived(data)
+      }
+    });
+
+    socket.on("receive_time", (data) => {
+      if(typeof data.emitTimes !== "undefined"){
+        setProgressTimesReceived(data.emitTimes)
+      }
+      else{
+      setProgressTimesReceived(data)
+      }
+    });
+
+    socket.on("receive_sum_time", (data) => {
+      if(typeof data.emitSum !== "undefined"){
+        console.log(data.emitSum)
+        setProgressSumReceived(data.emitSum)
+      }
+      else{
+        setProgressSumReceived(data)
+      }
     });
 
     socket.on("receive_timeStart", (data) => {
@@ -185,7 +231,12 @@ const LiveDiscussion: React.FC = () => {
         setProgressSumReceived(data)
       }
     });
-    
+
+    socket.on("reload_page", (data) =>{
+      console.log("new Connection")
+      window.location.reload();
+    })
+
     socket.on("changeParticipantCount", (data) => {
       setparticipantCount(data)  
       console.log("Aktueller Count: " + data)
@@ -243,15 +294,13 @@ return () => clearInterval(interval);
      return +(progress * totalTime).toFixed(2) >= totalTime
    }
 
-
-
-
   async function getAgendaParts() {
     let bookClub = await getBookClubDocument(bookClubId);
     // check if the current user is moderator of the club
     setIsModerator(bookClub?.moderator.includes(user.uid));
     let agendaParts = await getDiscussionAgenda(bookClubId, discussionId);
     let agendaTitle = await getDiscussionTitle(bookClubId, discussionId);
+    console.log("title:" + agendaTitle);
     setAgendaParts(agendaParts)
     setAgendaTitle(agendaTitle)
     for(var i = 0; i < agendaParts.length; i++){
@@ -260,6 +309,7 @@ return () => clearInterval(interval);
       emitTimes[i] = 0
     }
   }
+  
   // convert agenda parts to elapsedTime and timeLimit and sum the values
   //let totalElapsedTime = agendaParts.map(e => e.elapsedTime).reduce((a, b) => a + b, 0);
   let totalTimeLimit = agendaParts.map(e => e.timeLimit).reduce((a, b) => a + b, 0);
@@ -269,7 +319,7 @@ return () => clearInterval(interval);
     var minutes = Math.floor(number/60);
     var seconds = Math.floor(number%60);
     var secondsString = (seconds < 10) ? '0' + seconds.toString() : seconds.toString()
-    var finalOutput = minutes.toString() + "." + secondsString;
+    var finalOutput = minutes.toString() + ":" + secondsString;
     return finalOutput
   }
 
@@ -284,18 +334,11 @@ return () => clearInterval(interval);
     resultSeconds = resultSeconds%60
     
     var resultSecondsString = (resultSeconds < 10) ? '0' + resultSeconds.toString() : resultSeconds.toString()
-    var finalOutput = resultMinutes.toString() + "." + resultSecondsString;
+    var finalOutput = resultMinutes.toString() + ":" + resultSecondsString;
     return finalOutput;
   }
 
-  function calculateSum(numberArray:any){
-    var resultSeconds = 0;
-    for(var i = 0; i < numberArray.length; i++){
-      var seconds = Math.floor((numberArray[i] * maxTimes[i]));
-      resultSeconds += seconds;
-    }
-    return resultSeconds
-  }
+
 
 
   return (
@@ -308,17 +351,19 @@ return () => clearInterval(interval);
       </IonHeader>
       <IonContent fullscreen>
       <div className="divider-small"></div>
-        <IonCard className="cards">
+        <IonCard className="cards time-bar">
           <IonCardHeader>
             <IonCardTitle>Total discussion time</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
             <IonRow>
-              <IonCol size="8">
+              <IonCol size="8" className="progressbarContainer">
                 <IonProgressBar className={` ${isRed(progressSumReceived, totalTimeLimit) ? 'isRed' : isDarkOrange(progressSumReceived, totalTimeLimit) ?  'isDarkOrange' : isOrange(progressSumReceived, totalTimeLimit) ? 'isOrange' : 'blue'}`} value={progressSumReceived}></IonProgressBar>
                  </IonCol>
               <IonCol className="timeDisplay" size="4">
-                {`${addUp(progressTimesReceived, maxTimes)} / ${doubleDigits(totalTimeLimit)}`}
+                <div className="timeDisplayContainer">
+                {`${addUp(progressTimesReceived, maxTimes)} / ${doubleDigits(totalTimeLimit)} min`}
+                </div>
               </IonCol>
             </IonRow>
           </IonCardContent>
@@ -327,7 +372,7 @@ return () => clearInterval(interval);
           {agendaParts.map((agendaPart, index) => {
             return (
               <IonItem className="iten-no-padding" key={index}>
-                <IonCard>
+                <IonCard className={` ${playingStateReceived[index] ? 'isPlaying' : 'notPlaying' } `}>
                   <IonCardHeader>
                     {isModerator &&
                     <IonButton className="playButton" fill="solid" color="favorite" onClick={() => setButtons(index)}>
@@ -345,11 +390,13 @@ return () => clearInterval(interval);
                   <IonCardContent>
                     <IonGrid>
                       <IonRow>
-                        <IonCol size="8">
+                        <IonCol size="8" className="progressbarContainer">
                         <IonProgressBar className={` ${isRed(progressTimesReceived[index], agendaPart.timeLimit) ? 'isRed' : isDarkOrange(progressTimesReceived[index], agendaPart.timeLimit) ?  'isDarkOrange' : isOrange(progressTimesReceived[index], agendaPart.timeLimit) ? 'isOrange' : 'blue'}`} value={progressTimesReceived[index]}></IonProgressBar>
                         </IonCol>
                         <IonCol className="timeDisplay" size="4">
+                        <div className="timeDisplayContainer">
                           {`${doubleDigits(progressTimesReceived[index] * agendaPart.timeLimit)} / ${doubleDigits(agendaPart.timeLimit)} min`}
+                          </div>
                            </IonCol>
                       </IonRow>
                     </IonGrid>
@@ -362,12 +409,23 @@ return () => clearInterval(interval);
         <div className="divider-small"></div>
         <IonTitle>Aktuelle Teilnehmer: {participantCount}</IonTitle>
         <div className="divider-small"></div>
-        <IonButton className="live" routerLink={"/tabs/home"} fill="outline" onClick={() => saveLiveDiscussion(true)}>
+        {isModerator &&
+        <IonButton className="live" routerLink={"/tabs/home"}  onClick={() => saveLiveDiscussion(true)}>
               End discussion
         </IonButton>
+        }
+        {!isModerator &&
+        <IonButton className="live" routerLink={"/tabs/home/" + bookClubId + "/view"} >
+              Leave discussion
+        </IonButton>
+        }
       </IonContent>
     </IonPage>
   );
 };
 
 export default LiveDiscussion;
+function ionViewWillEnter() {
+  throw new Error("Function not implemented.");
+}
+
