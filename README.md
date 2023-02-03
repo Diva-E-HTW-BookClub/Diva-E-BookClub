@@ -68,7 +68,18 @@ See [Development for Android](https://ionicframework.com/docs/developing/android
 3. Run `ionic build`. This creates a new build of the current state of the app (changes after that require a new build to be created).
 4. Run `ionic capacitor add ios`. This creates the capacitor app files for the iOS Platform from the previously created build in a new directory called "ios" (automatically instantiated).
 5. Run `ionic capacitor open ios` to open Xcode with the capacitor app. It takes some time to index all the files.
-6. Once the Project had been opened once with the current build, you can simply select the project in Xcode to open it again. Although if you would like to change the used build the above steps have to be repeated.
+6. Once the Project had been opened once with the current build, you can simply select the project in Xcode to open it again.
+7. If you want to update the iOS build please DO NOT delete the ios directory. Simply do step 3. and then run `npx cap sync` to sync your new build to iOS and android. You can then proceed with step 5.
+8. If however you did delete the iOS directory, you would have to insert the following lines into ios/App/App/Info.plist when creating a new ios directory:
+
+   ```
+   <key>NSCameraUsageDescription</key>
+   <string></string>
+   <key>NSPhotoLibraryUsageDescription</key>
+   <string></string>
+   <key>NSPhotoLibraryAddUsageDescription</key>
+   <string></string>
+   ```
 
 #### Run in the Simulator
 
