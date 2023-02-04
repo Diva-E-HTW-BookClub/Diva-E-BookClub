@@ -361,7 +361,7 @@ return () => clearInterval(interval);
       <div className="divider-small"></div>
         <IonCard className="cards time-bar">
           <IonCardHeader>
-            <IonCardTitle>Total discussion time</IonCardTitle>
+            <IonCardTitle className="playTitle">Total discussion time</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
             <IonRow>
@@ -414,8 +414,7 @@ return () => clearInterval(interval);
             );
           })}
         </IonList>
-        <div className="divider-small"></div>
-        <IonTitle>Aktuelle Teilnehmer: {participantCount}</IonTitle>
+        <div className="h2">Aktuelle Teilnehmer: {participantCount}</div>
         <div className="divider-small"></div>
         {isModerator &&
         <IonButton className="live" routerLink={"/tabs/home"}  onClick={() => saveLiveDiscussion(true)}>

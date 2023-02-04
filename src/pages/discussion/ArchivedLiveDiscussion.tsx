@@ -158,8 +158,7 @@ console.log("ID" + discussionId)
             );
           })}
         </IonList>
-        <div className="divider-small"></div>
-        <IonTitle>Maximale Teilnehmer: {maxParticipants}</IonTitle>
+        <div className="h2">Maximale Teilnehmer: {maxParticipants}</div>
         <div className="divider-small"></div>
 
       </IonContent>
