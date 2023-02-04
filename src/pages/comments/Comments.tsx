@@ -33,10 +33,14 @@ const Comments: React.FC = () => {
   const createModal = useRef<ModalHandle>(null);
 
   useEffect(() => {
-    getCommentData();
+    getCommentData().then((commentData) => setCommentData(commentData));
     getBookClubData();
     getDiscussionData();
   }, []);
+
+  const updateComments = () => {
+    getCommentData().then((commentData) => setCommentData(commentData));
+  }
 
   async function getBookClubData() {
     let bookClubData = await getBookClubDocument(bookClubId);
@@ -50,7 +54,7 @@ const Comments: React.FC = () => {
 
   async function getCommentData() {
     let commentData = await getDiscussionComments(bookClubId, discussionId);
-    setCommentData(commentData);
+    return commentData;
   }
 
   return (
@@ -66,7 +70,7 @@ const Comments: React.FC = () => {
       <IonContent className="ion-no-padding">
         <IonGrid className="ion-padding-horizontal">
           <IonRow className="ion-align-items-center rowHeight">
-            <IonCol sizeMd="11" size="10" className="flexVertical">
+            <IonCol sizeMd="10" size="9" className="flexVertical">
               <IonLabel>
                 <div>{bookClubData?.book.title}</div>
                 <p>{bookClubData?.book.authors}</p>
@@ -76,13 +80,12 @@ const Comments: React.FC = () => {
                 {discussionData?.date && <div>{getTimezonedDate(discussionData.date)}</div>}
               </IonLabel>
             </IonCol>
-            <IonCol sizeMd="1" size="2">
+            <IonCol sizeMd="2" size="3">
               <IonImg className="commentImage" src={bookClubData?.book.imageUrl}/>
             </IonCol>
           </IonRow>
         </IonGrid>
         <IonList className="ion-padding-horizontal">
-
           {commentData.map((item, index) => {
             return (
                 <CommentCard
@@ -95,7 +98,7 @@ const Comments: React.FC = () => {
                   text={item.text}
                   moderator={item.moderator}
                   photo={item.photo}
-                  updatePage={getCommentData}
+                  updatePage={updateComments}
                 />
             );
           })}
@@ -108,7 +111,7 @@ const Comments: React.FC = () => {
         <CreateCommentModal
           bookClubId={bookClubId}
           discussionId={discussionId}
-          onDismiss={getCommentData}
+          onDismiss={updateComments}
           ref={createModal}
         />
       </IonContent>

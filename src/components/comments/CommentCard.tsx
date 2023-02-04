@@ -67,7 +67,7 @@ export const CommentCard: React.FC<CommentCardProps> = ({
   };
 
   async function deleteComment() {
-    deleteCommentDocument(bookClubId, discussionId, commentId).then(updatePage);
+    await deleteCommentDocument(bookClubId, discussionId, commentId).then(updatePage);
   }
 
   const actionSheet = () =>
@@ -104,10 +104,10 @@ export const CommentCard: React.FC<CommentCardProps> = ({
       {showFullPassage &&
             <IonGrid>
               <IonRow>
-                <IonCol size="auto" className="iconColumn">
+                <IonCol size="1" className="iconColumn">
                   <IonIcon icon={chevronUpOutline}></IonIcon>
                 </IonCol>
-                <IonCol>
+                <IonCol size="11">
                   <IonLabel className="ion-text-wrap">
                     <div className="passage">{passage}</div>
                   </IonLabel>
@@ -118,10 +118,10 @@ export const CommentCard: React.FC<CommentCardProps> = ({
       {!showFullPassage &&
           <IonGrid>
             <IonRow>
-              <IonCol size="auto" className="iconColumn">
+              <IonCol size="1" className="iconColumn">
                 <IonIcon icon={chevronDownOutline}></IonIcon>
               </IonCol>
-              <IonCol>
+              <IonCol size="11">
                 <IonLabel className="hidePassage">
                   <div className="passageHidden">{passage}</div>
                 </IonLabel>
@@ -220,7 +220,6 @@ export const CommentCard: React.FC<CommentCardProps> = ({
             )}
           </IonCol>
         </IonRow>
-        {updatePage && (
           <EditCommentModal
             bookClubId={bookClubId}
             discussionId={discussionId}
@@ -228,7 +227,6 @@ export const CommentCard: React.FC<CommentCardProps> = ({
             onDismiss={updatePage}
             ref={editModal}
           />
-        )}
       </IonGrid>
     </IonItem>
   );
