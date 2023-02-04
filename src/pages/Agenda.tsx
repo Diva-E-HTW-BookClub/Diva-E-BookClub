@@ -56,16 +56,21 @@ const Agenda: React.FC = () => {
   let { discussionId }: { discussionId: string } = useParams();
 
   useIonViewWillEnter(() => {
+    //getDiscussion();
+    /*
     if(window.localStorage){
       if( !localStorage.getItem("firstLoad")){
         localStorage["firstLoad"] = true;
-        window.location.reload();
+        
+        //window.location.reload();
       }
       else{
         localStorage.removeItem("firstLoad");
       }
     }
+    */
   });
+  
   const {
     register,
     control,

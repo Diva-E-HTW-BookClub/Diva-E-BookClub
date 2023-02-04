@@ -64,7 +64,7 @@ export const ArchiveSegment: React.FC<ArchiveSegmentProps> = ({
                       discussionLocation={discussion.location}
                       updatePage={updatePage}
                       isModerator={isModerator}
-                      isDone={true}
+                      isArchived={true}
                     />
                   </IonItem>
                 );
