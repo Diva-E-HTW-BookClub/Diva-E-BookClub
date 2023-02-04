@@ -7,16 +7,16 @@ import {
   IonHeader,
   IonIcon, IonImg, IonLabel,
   IonList,
-  IonPage, IonRow,
+  IonPage, IonRefresher, IonRefresherContent, IonRow, IonSpinner,
   IonTitle,
-  IonToolbar,
+  IonToolbar, RefresherEventDetail,
 } from "@ionic/react";
 import "./Comments.css";
 import React, { useEffect, useRef, useState } from "react";
 import { CommentCard } from "../../components/comments/CommentCard";
 
 import { add } from "ionicons/icons";
-import { getDiscussionComments } from "../../firebase/firebaseComments";
+import {getCommentDocument, getDiscussionComments} from "../../firebase/firebaseComments";
 import { useParams } from "react-router";
 import { ModalHandle } from "../../components/resources/EditResourceModal";
 import { CreateCommentModal } from "../../components/comments/CreateCommentModal";
@@ -30,6 +30,7 @@ const Comments: React.FC = () => {
   const [bookClubData, setBookClubData] = useState<BookClub>();
   const [discussionData, setDiscussionData] = useState<Discussion>()
   const [commentData, setCommentData] = useState<any[]>([]);
+  const [isLoadingComments, setIsLoadingComments] = useState<boolean>(false);
   const createModal = useRef<ModalHandle>(null);
 
   useEffect(() => {
@@ -39,7 +40,13 @@ const Comments: React.FC = () => {
   }, []);
 
   const updateComments = () => {
-    getCommentData().then((commentData) => setCommentData(commentData));
+    setIsLoadingComments(true);
+    setTimeout(() => {
+      getCommentData().then((commentData) => {
+        setCommentData(commentData);
+        setIsLoadingComments(false)
+      })
+    }, 500)
   }
 
   async function getBookClubData() {
@@ -57,6 +64,13 @@ const Comments: React.FC = () => {
     return commentData;
   }
 
+  async function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
+    await getCommentData().then((data) => {
+      setCommentData(data);
+      event.detail.complete();
+    });
+  }
+
   return (
     <IonPage>
       <IonHeader>
@@ -64,10 +78,14 @@ const Comments: React.FC = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref={"/tabs/home/" + bookClubId + "/view"} />
           </IonButtons>
+          {isLoadingComments &&<IonSpinner slot="end"></IonSpinner>}
           <IonTitle>Comments</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-no-padding">
+        <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+          <IonRefresherContent></IonRefresherContent>
+        </IonRefresher>
         <IonGrid className="ion-padding-horizontal">
           <IonRow className="ion-align-items-center rowHeight">
             <IonCol sizeMd="10" size="9" className="flexVertical">
