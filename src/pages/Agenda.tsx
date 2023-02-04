@@ -98,7 +98,7 @@ const Agenda: React.FC = () => {
 
   useEffect(() => {
     getDiscussion();
-  }, []);
+  }, [useIonViewWillEnter]);
 
   async function getDiscussion() {
     let discussionData = await getDiscussionDocument(bookClubId, discussionId);
