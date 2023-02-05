@@ -87,7 +87,10 @@ export const EditClubModal: React.FC<EditClubModalProps> = ({
   async function deleteBookClub() {
     await deleteBookClubDocument(bookClubId).then(() => {
       setIsOpen(false);
-      setTimeout(() => history.push("/tabs/home"), 200);
+      setTimeout(() => {
+        history.replace("/tabs/home");
+        window.location.reload();
+      }, 200);
     });
   }
 

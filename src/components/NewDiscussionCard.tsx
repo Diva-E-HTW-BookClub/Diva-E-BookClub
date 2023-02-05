@@ -10,6 +10,7 @@ import {
   IonList,
   IonPopover,
   IonRow,
+  IonSpinner,
   IonText,
   useIonActionSheet,
 } from "@ionic/react";
@@ -67,6 +68,7 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
   const user = useSelector((state: any) => state.user.user);
   const [discussionParticipants, setDiscussionParticipants] =
     useState<string[]>();
+  const [isJoiningLeaving, setIsJoiningLeaving] = useState<boolean>(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const popover = useRef<HTMLIonPopoverElement>(null);
   const editModal = useRef<ModalHandle>(null);
@@ -81,8 +83,10 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
   };
 
   async function getDiscussionParticipants() {
-    let data = await getDiscussionDocument(bookClubId, discussionId);
-    setDiscussionParticipants(data?.participants);
+    await getDiscussionDocument(bookClubId, discussionId).then((data) => {
+      setDiscussionParticipants(data?.participants);
+      setIsJoiningLeaving(false);
+    });
   }
 
   const handleJoinLeave = () => {
@@ -95,15 +99,25 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
 
   async function joinDiscussion() {
     if (discussionParticipants != null) {
-      await addDiscussionParticipant(bookClubId, discussionId, user.uid);
-      getDiscussionParticipants();
+      setIsJoiningLeaving(true);
+      await addDiscussionParticipant(bookClubId, discussionId, user.uid).then(
+        () => {
+          setTimeout(() => getDiscussionParticipants(), 200);
+        }
+      );
     }
   }
 
   async function leaveDiscussion() {
     if (discussionParticipants != null && isParticipant()) {
-      await removeDiscussionParticipant(bookClubId, discussionId, user.uid);
-      getDiscussionParticipants();
+      setIsJoiningLeaving(true);
+      await removeDiscussionParticipant(
+        bookClubId,
+        discussionId,
+        user.uid
+      ).then(() => {
+        setTimeout(() => getDiscussionParticipants(), 200);
+      });
     }
   }
 
@@ -228,41 +242,29 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
             <IonLabel className="ion-text-wrap">
               <div className="locationBox">{discussionLocation}</div>
             </IonLabel>
-            
+
             <IonButton
               fill="clear"
-              routerLink={
-                "discussions/" +
-                discussionId +
-                "/comments"
-              }
+              routerLink={"discussions/" + discussionId + "/comments"}
             >
               <IonIcon slot="icon-only" icon={chatbox}></IonIcon>
             </IonButton>
-            {isArchived &&
-            <IonButton
-              fill="clear"
-              routerLink={
-                "discussions/" +
-                discussionId +
-                "/archived"
-              }
-            >
-              <IonIcon slot="icon-only" icon={clipboard}></IonIcon>
-            </IonButton>
-            }
-             {!isArchived &&
-            <IonButton
-              fill="clear"
-              routerLink={
-                "discussions/" +
-                discussionId +
-                "/agenda"
-              }
-            >
-              <IonIcon slot="icon-only" icon={clipboard}></IonIcon>
-            </IonButton>
-            }
+            {isArchived && (
+              <IonButton
+                fill="clear"
+                routerLink={"discussions/" + discussionId + "/archived"}
+              >
+                <IonIcon slot="icon-only" icon={clipboard}></IonIcon>
+              </IonButton>
+            )}
+            {!isArchived && (
+              <IonButton
+                fill="clear"
+                routerLink={"discussions/" + discussionId + "/agenda"}
+              >
+                <IonIcon slot="icon-only" icon={clipboard}></IonIcon>
+              </IonButton>
+            )}
             <IonChip
               disabled={isArchived || !isMember}
               onClick={() => handleJoinLeave()}
@@ -272,9 +274,15 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
                 color={isParticipant() ? "white" : ""}
                 icon={people}
               ></IonIcon>
-              <p className="discussionMembersSpacing">
-                {discussionParticipants ? discussionParticipants.length : "0"}
-              </p>
+              {isJoiningLeaving ? (
+                <div className="discussionMembersSpacing">
+                  <IonSpinner className="chipSpinner"></IonSpinner>
+                </div>
+              ) : (
+                <p className="discussionMembersSpacing">
+                  {discussionParticipants ? discussionParticipants.length : "0"}
+                </p>
+              )}
             </IonChip>
           </IonItem>
         </IonCol>
