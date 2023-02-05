@@ -12,7 +12,10 @@ import {
   IonSpinner,
   IonRefresher,
   IonRefresherContent,
-  RefresherEventDetail, IonSelect, IonSelectOption,
+  RefresherEventDetail,
+  IonSelect,
+  IonSelectOption,
+  useIonViewDidEnter,
 } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import "./HomeTab.css";
@@ -38,11 +41,14 @@ import {
   sortDiscussionsByDate,
 } from "../../helpers/discussionSort";
 import { useHistory } from "react-router";
-import { useIonRouter } from '@ionic/react';
-import { App } from '@capacitor/app';
-import { hi } from "date-fns/locale";
+import { useIonRouter } from "@ionic/react";
+import { App } from "@capacitor/app";
 
-const HomeTab: React.FC = () => {
+interface HomeTabProps {
+  isSelected: boolean;
+}
+
+const HomeTab: React.FC<HomeTabProps> = ({ isSelected }: HomeTabProps) => {
   const [isNewUser, setIsNewUser] = useState<boolean>();
   const user = useSelector((state: any) => state.user.user);
   const [ownClubs, setOwnClubs] = useState<BookClub[]>();
@@ -57,15 +63,20 @@ const HomeTab: React.FC = () => {
   // the method below listens to hardware back button events and prevents any other default listener from receiving it
   // it counts the event when it receives it and goes one step back in history only if the count is odd
   // https://ionicframework.com/docs/developing/hardware-back-button#basic-usage
+
   let counter = 0;
   const ionRouter = useIonRouter();
-  document.addEventListener('ionBackButton', (ev: any) => {
+
+  document.addEventListener("ionBackButton", (ev: any) => {
     ev.detail.register(1, () => {
       ev.preventDefault();
       ev.stopImmediatePropagation();
       counter++;
-      if (counter % 2 == 1) {
-        if (!ionRouter.canGoBack() || canUseNotLoggedIn(ionRouter.routeInfo.pathname)) {
+      if (counter % 2 === 1) {
+        if (
+          !ionRouter.canGoBack() ||
+          canUseNotLoggedIn(ionRouter.routeInfo.pathname)
+        ) {
           App.exitApp();
         }
         history.goBack();
@@ -74,16 +85,18 @@ const HomeTab: React.FC = () => {
   });
 
   function canUseNotLoggedIn(pathname: string) {
-    return pathname === "/login" || pathname === "/register" || pathname === "/start"
+    return (
+      pathname === "/login" || pathname === "/register" || pathname === "/start"
+    );
   }
 
   useEffect(() => {
     getBookClubs();
-  }, []);
+  }, [isSelected, useIonViewDidEnter]);
 
   useEffect(() => {
     getNextDiscussions(weeksOfDiscussions);
-  }, [weeksOfDiscussions])
+  }, [weeksOfDiscussions]);
 
   useEffect(() => {
     if (
@@ -112,15 +125,15 @@ const HomeTab: React.FC = () => {
     getNextDiscussions(weeksOfDiscussions);
   }
 
-  async function getNextDiscussions(weeks: number){
+  async function getNextDiscussions(weeks: number) {
     setIsLoadingDiscussions(true);
     await getAllDiscussionsOfBookClubsByUser(user.uid, weeks).then(
-        (nextDiscussionsArray) => {
-          if (nextDiscussionsArray) {
-            setNextDiscussions(sortDiscussionsByDate(nextDiscussionsArray));
-          }
-          setIsLoadingDiscussions(false);
+      (nextDiscussionsArray) => {
+        if (nextDiscussionsArray) {
+          setNextDiscussions(sortDiscussionsByDate(nextDiscussionsArray));
         }
+        setIsLoadingDiscussions(false);
+      }
     );
   }
 
@@ -131,7 +144,10 @@ const HomeTab: React.FC = () => {
   }
 
   function userHasClubs() {
-    return !!((ownClubs && ownClubs.length !== 0) || (joinedClubs && joinedClubs.length));
+    return !!(
+      (ownClubs && ownClubs.length !== 0) ||
+      (joinedClubs && joinedClubs.length)
+    );
   }
 
   function getNumberOfVisibleSlides() {
@@ -146,7 +162,12 @@ const HomeTab: React.FC = () => {
     if (isLoadingClubs === false) {
       return (
         <div className="ion-padding-horizontal">
-          <IonButton className="startButton" size="default" routerLink="/tabs/clubs" expand="block">
+          <IonButton
+            className="startButton"
+            size="default"
+            routerLink="/tabs/clubs"
+            expand="block"
+          >
             Join or Create a Club
           </IonButton>
         </div>
@@ -223,14 +244,19 @@ const HomeTab: React.FC = () => {
   };
 
   const getSelectedOptionByWeeks = () => {
-    switch(weeksOfDiscussions) {
-      case 1: return "1 Week";
-      case 2: return "2 Weeks";
-      case 3: return "3 Weeks";
-      case 4: return "1 Month";
-      case 8: return "2 Months";
+    switch (weeksOfDiscussions) {
+      case 1:
+        return "1 Week";
+      case 2:
+        return "2 Weeks";
+      case 3:
+        return "3 Weeks";
+      case 4:
+        return "1 Month";
+      case 8:
+        return "2 Months";
     }
-  }
+  };
 
   const showNextDiscussions = () => {
     if (nextDiscussions !== undefined && nextDiscussions.length > 0) {
@@ -271,20 +297,21 @@ const HomeTab: React.FC = () => {
           })}
         </>
       );
-    } else if(!userHasClubs()){
+    } else if (!userHasClubs()) {
       return (
-          <div className="ion-margin">
-            <IonLabel>
-              <p>There is nothing here yet...</p>
-            </IonLabel>
-          </div>
-      )
+        <div className="ion-margin">
+          <IonLabel>
+            <p>There is nothing here yet...</p>
+          </IonLabel>
+        </div>
+      );
     } else {
       return (
         <div className="ion-margin">
           <IonLabel>
-            <p>There are no next Discussions planned
-              <br/>
+            <p>
+              There are no next Discussions planned
+              <br />
               for the next {getSelectedOptionByWeeks()}
             </p>
           </IonLabel>
@@ -312,24 +339,34 @@ const HomeTab: React.FC = () => {
         {!isNewUser && showOwnClubs()}
         {!isNewUser && showJoinedClubs()}
         {!isNewUser && (ownClubs || joinedClubs) && (
-            <>
-              <div className="ion-padding-horizontal">
-                <div className="flexBetween">
-                  <div className="nextDiscussionsTitle flexbox">Next Discussions</div>
-                  {isLoadingDiscussions && <IonSpinner className="flexbox"></IonSpinner>}
+          <>
+            <div className="ion-padding-horizontal">
+              <div className="flexBetween">
+                <div className="nextDiscussionsTitle flexbox">
+                  Next Discussions
                 </div>
-                <div className="flexBetween">
-                  <div className="flexbox">Filter by:</div>
-                  <IonSelect className="flexbox" onIonChange={(event) => setWeeksOfDiscussions(event.detail.value)} value={weeksOfDiscussions}>
-                    <IonSelectOption value={1}>1 Week</IonSelectOption>
-                    <IonSelectOption value={2}>2 Weeks</IonSelectOption>
-                    <IonSelectOption value={3}>3 Weeks</IonSelectOption>
-                    <IonSelectOption value={4}>1 Month</IonSelectOption>
-                    <IonSelectOption value={8}>2 Months</IonSelectOption>
-                  </IonSelect>
-                </div>
+                {isLoadingDiscussions && (
+                  <IonSpinner className="flexbox"></IonSpinner>
+                )}
               </div>
-            </>
+              <div className="flexBetween">
+                <div className="flexbox">Filter by:</div>
+                <IonSelect
+                  className="flexbox"
+                  onIonChange={(event) =>
+                    setWeeksOfDiscussions(event.detail.value)
+                  }
+                  value={weeksOfDiscussions}
+                >
+                  <IonSelectOption value={1}>1 Week</IonSelectOption>
+                  <IonSelectOption value={2}>2 Weeks</IonSelectOption>
+                  <IonSelectOption value={3}>3 Weeks</IonSelectOption>
+                  <IonSelectOption value={4}>1 Month</IonSelectOption>
+                  <IonSelectOption value={8}>2 Months</IonSelectOption>
+                </IonSelect>
+              </div>
+            </div>
+          </>
         )}
         {showNextDiscussions()}
         {isNewUser && newUserContent()}

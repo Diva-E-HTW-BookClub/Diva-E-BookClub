@@ -67,3 +67,8 @@ ion-col {
   text-align: center;
   min-width: 18px;
 }
+
+.chipSpinner {
+  width: 18px;
+  height: 18px;
+}

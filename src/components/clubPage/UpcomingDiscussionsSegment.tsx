@@ -37,7 +37,6 @@ export const UpcomingDiscussionsSegment: React.FC<
   }
 
   let discussions = bookClubData?.discussions;
-  console.log(discussions)
   let upcomingDiscussions = getUpcomingDiscussions(discussions);
   let discussionYears = getYearArrayOfDiscussions(upcomingDiscussions);
 

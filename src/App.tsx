@@ -76,20 +76,25 @@ return <IonApp>
 
 export const TabRouting: React.FC = () => {
   const isLoggedIn = useSelector((state:any) => state.user.user)
+  const [selectedTab, setSelectedTab] = useState();
 
   const authRouteCheck = (component: JSX.Element) => {
     return isLoggedIn ? component : <Redirect to="/login"/>;
   }
 
+  const isSelected = (tab: string) => {
+    return tab === selectedTab;
+  }
+
   return (
   <IonContent>
-    <IonTabs>
+    <IonTabs onIonTabsWillChange={(e: any) => setSelectedTab(e.detail.tab)}>
       <IonRouterOutlet>
         <Route exact path="/tabs">
           <Redirect to="/tabs/home"/>
         </Route>
         <Route path="/tabs/clubs" render={() => authRouteCheck(<ClubsTab/>)} exact/>
-        <Route path="/tabs/home" render={() => authRouteCheck(<HomeTab/>)} exact/>
+        <Route path="/tabs/home" render={() => authRouteCheck(<HomeTab isSelected={isSelected("home")}/>)} exact/>
         <Route path="/tabs/home/:bookClubId/view" render={() => authRouteCheck(<ClubPage/>)} exact/>
         <Route path="/tabs/home/:bookClubId/discussions/:discussionId/comments" render={() => authRouteCheck(<Comments/>)} exact/>
         <Route path="/tabs/home/:bookClubId/discussions/:discussionId/agenda" render={() => authRouteCheck(<Agenda/>)} exact/>

@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { IonChip, IonIcon, IonItem, IonLabel, IonText } from "@ionic/react";
+import {
+  IonChip,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonSpinner,
+  IonText,
+} from "@ionic/react";
 import {
   getDayValue,
   getMonthName,
@@ -47,6 +54,7 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
   const history = useHistory();
   const [discussionParticipants, setDiscussionParticipants] =
     useState<string[]>();
+  const [isJoiningLeaving, setIsJoiningLeaving] = useState<boolean>(false);
 
   useEffect(() => {
     getDiscussionParticipants();
@@ -57,8 +65,10 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
   };
 
   async function getDiscussionParticipants() {
-    let data = await getDiscussionDocument(bookClubId, discussionId);
-    setDiscussionParticipants(data?.participants);
+    await getDiscussionDocument(bookClubId, discussionId).then((data) => {
+      setDiscussionParticipants(data?.participants);
+      setIsJoiningLeaving(false);
+    });
   }
 
   const handleJoinLeave = () => {
@@ -71,15 +81,25 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
 
   async function joinDiscussion() {
     if (discussionParticipants != null) {
-      await addDiscussionParticipant(bookClubId, discussionId, user.uid);
-      getDiscussionParticipants();
+      setIsJoiningLeaving(true);
+      await addDiscussionParticipant(bookClubId, discussionId, user.uid).then(
+        () => {
+          setTimeout(() => getDiscussionParticipants(), 200);
+        }
+      );
     }
   }
 
   async function leaveDiscussion() {
     if (discussionParticipants != null && isParticipant()) {
-      await removeDiscussionParticipant(bookClubId, discussionId, user.uid);
-      getDiscussionParticipants();
+      setIsJoiningLeaving(true);
+      await removeDiscussionParticipant(
+        bookClubId,
+        discussionId,
+        user.uid
+      ).then(() => {
+        setTimeout(() => getDiscussionParticipants(), 200);
+      });
     }
   }
 
@@ -101,7 +121,9 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
     <IonItem button detail={false}>
       <div className="ion-padding-start">{calendarDate(date)}</div>
       <div className="spacing"></div>
-      <IonLabel onClick={() => history.push("/tabs/home/" + bookClubId + "/view")}>
+      <IonLabel
+        onClick={() => history.push("/tabs/home/" + bookClubId + "/view")}
+      >
         <div className="title">{bookClubName}</div>
         <div className="time">{getTimeSlotString(startTime, endTime)}</div>
       </IonLabel>
@@ -116,9 +138,15 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
             color={isParticipant() ? "white" : ""}
             icon={people}
           ></IonIcon>
-          <p className="discussionMembersSpacing">
-            {discussionParticipants ? discussionParticipants.length : "0"}
-          </p>
+          {isJoiningLeaving ? (
+            <div className="discussionMembersSpacing">
+              <IonSpinner className="chipSpinner"></IonSpinner>
+            </div>
+          ) : (
+            <p className="discussionMembersSpacing">
+              {discussionParticipants ? discussionParticipants.length : "0"}
+            </p>
+          )}
         </IonChip>
       </div>
     </IonItem>
