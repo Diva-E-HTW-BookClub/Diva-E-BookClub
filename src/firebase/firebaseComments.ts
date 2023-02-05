@@ -55,6 +55,7 @@ async function getCommentDocument(bookClubId:string, discussionId:string, commen
       moderator: res.moderator,
       text: res.text,
       photo: res.photo,
+        username: res.username,
     }
   }
 }

@@ -1,0 +1,29 @@
+.columnComment {
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.iconColumn {
+    padding-right: 5px;
+}
+
+.passageDiv {
+    background-color: #d7d7d7;
+    padding: 4px 5px 1px 5px;
+    border-radius: 6px;
+}
+
+.hidePassage {
+    width: 200px;
+}
+
+.passage {
+    font-size: 14px;
+}
+
+.passageHidden {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

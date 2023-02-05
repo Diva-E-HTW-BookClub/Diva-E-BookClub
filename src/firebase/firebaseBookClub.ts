@@ -28,6 +28,7 @@ type Comment = {
   passage: string;
   photo: string;
   moderator: string;
+  username: string;
 };
 type Book = {
   title: string;
