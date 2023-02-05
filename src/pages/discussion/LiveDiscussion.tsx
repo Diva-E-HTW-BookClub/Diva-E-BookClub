@@ -16,7 +16,8 @@ import {
   IonCardContent,
   IonItem,
   IonIcon,
-  useIonViewDidEnter
+  useIonViewWillEnter,
+  IonSpinner
 } from "@ionic/react";
 import {
   doc,
@@ -53,8 +54,8 @@ var emitStates:boolean[] = []
 var maxParticipants = 0;
 
 const LiveDiscussion: React.FC = () => {
-  useIonViewDidEnter(() => {
-    getAgendaParts()
+  useIonViewWillEnter(() => {
+
   });
   
   // Information zu der Agenda
@@ -140,6 +141,7 @@ const LiveDiscussion: React.FC = () => {
       socket.emit("get_moderator", isModerator);
     }
     if(window.localStorage){
+      /*
       if( !localStorage.getItem("firstLoad")){
         localStorage["firstLoad"] = true;
         console.log("ich reloade neu")
@@ -149,8 +151,9 @@ const LiveDiscussion: React.FC = () => {
       else{
         localStorage.removeItem("firstLoad");
       }
+      */
     }
-  }, []);
+  }, [useIonViewWillEnter]);
 
   
   useEffect(() => {
@@ -309,6 +312,10 @@ return () => clearInterval(interval);
       emitTimes[i] = 0
     }
   }
+
+  if(!agendaParts){
+    return <IonSpinner></IonSpinner>
+  }
   
   // convert agenda parts to elapsedTime and timeLimit and sum the values
   //let totalElapsedTime = agendaParts.map(e => e.elapsedTime).reduce((a, b) => a + b, 0);
@@ -341,6 +348,7 @@ return () => clearInterval(interval);
 
 
 
+
   return (
     <IonPage>
       <IonHeader>
@@ -353,7 +361,7 @@ return () => clearInterval(interval);
       <div className="divider-small"></div>
         <IonCard className="cards time-bar">
           <IonCardHeader>
-            <IonCardTitle>Total discussion time</IonCardTitle>
+            <IonCardTitle className="playTitle">Total discussion time</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
             <IonRow>
@@ -406,8 +414,7 @@ return () => clearInterval(interval);
             );
           })}
         </IonList>
-        <div className="divider-small"></div>
-        <IonTitle>Aktuelle Teilnehmer: {participantCount}</IonTitle>
+        <div className="h2">Aktuelle Teilnehmer: {participantCount}</div>
         <div className="divider-small"></div>
         {isModerator &&
         <IonButton className="live" routerLink={"/tabs/home"}  onClick={() => saveLiveDiscussion(true)}>

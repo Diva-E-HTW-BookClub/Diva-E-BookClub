@@ -48,7 +48,7 @@ interface NewDiscussionCardProps {
   isModerator: boolean;
   updatePage?: () => void;
   isMember?: boolean;
-  isDone?: boolean;
+  isArchived?: boolean;
 }
 
 export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
@@ -62,7 +62,7 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
   isModerator,
   updatePage,
   isMember,
-  isDone,
+  isArchived,
 }: NewDiscussionCardProps) => {
   const user = useSelector((state: any) => state.user.user);
   const [discussionParticipants, setDiscussionParticipants] =
@@ -239,7 +239,7 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
             >
               <IonIcon slot="icon-only" icon={chatbox}></IonIcon>
             </IonButton>
-            {isDone &&
+            {isArchived &&
             <IonButton
               fill="clear"
               routerLink={
@@ -251,7 +251,7 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
               <IonIcon slot="icon-only" icon={clipboard}></IonIcon>
             </IonButton>
             }
-             {!isDone &&
+             {!isArchived &&
             <IonButton
               fill="clear"
               routerLink={
@@ -264,7 +264,7 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
             </IonButton>
             }
             <IonChip
-              disabled={isDone || !isMember}
+              disabled={isArchived || !isMember}
               onClick={() => handleJoinLeave()}
               className={isParticipant() ? "chipIsParticipant" : ""}
             >

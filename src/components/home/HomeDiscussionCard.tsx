@@ -26,7 +26,7 @@ interface HomeDiscussionCardProps {
   isModerator: boolean;
   updatePage?: () => void;
   isMember?: boolean;
-  isDone?: boolean;
+  isArchived?: boolean;
 }
 
 export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
@@ -41,7 +41,7 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
   isModerator,
   updatePage,
   isMember,
-  isDone,
+  isArchived,
 }: HomeDiscussionCardProps) => {
   const user = useSelector((state: any) => state.user.user);
   const history = useHistory();
@@ -108,7 +108,7 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
       <div className="ion-padding-end">
         <IonChip
           slot="end"
-          disabled={isDone === true || !isMember}
+          disabled={isArchived === true || !isMember}
           onClick={() => handleJoinLeave()}
           className={isParticipant() ? "chipIsParticipant" : ""}
         >
