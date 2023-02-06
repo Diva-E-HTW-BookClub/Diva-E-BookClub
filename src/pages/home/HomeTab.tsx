@@ -22,6 +22,7 @@ import "./HomeTab.css";
 import { isPlatform } from "@ionic/react/";
 
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useLocation } from "react-router-dom";
 
 // Import Swiper styles
 import "swiper/css/bundle";
@@ -58,6 +59,7 @@ const HomeTab: React.FC<HomeTabProps> = ({ isSelected }: HomeTabProps) => {
   const [isLoadingClubs, setIsLoadingClubs] = useState<boolean>();
   const [isLoadingDiscussions, setIsLoadingDiscussions] = useState<boolean>();
   const history = useHistory();
+  const location = useLocation();
 
   // for some reason ionBackButton event is published twice when we click on the hardware back button once
   // the method below listens to hardware back button events and prevents any other default listener from receiving it
@@ -79,7 +81,9 @@ const HomeTab: React.FC<HomeTabProps> = ({ isSelected }: HomeTabProps) => {
         ) {
           App.exitApp();
         }
-        history.goBack();
+        if(!location.pathname.includes("live")){
+          history.goBack();
+        }
       }
     });
   });
