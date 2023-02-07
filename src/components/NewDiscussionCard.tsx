@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  IonButton,
   IonChip,
   IonCol,
   IonGrid,
@@ -13,6 +12,7 @@ import {
   IonSpinner,
   IonText,
   useIonActionSheet,
+  useIonToast,
 } from "@ionic/react";
 import {
   getDayValue,
@@ -20,13 +20,15 @@ import {
   getTimeSlotString,
 } from "../helpers/datetimeFormatter";
 import {
-  chatbox,
-  clipboard,
   ellipsisVertical,
   people,
   locationOutline,
   pencil,
   trashOutline,
+  chatbubbleOutline,
+  addOutline,
+  removeOutline,
+  alertCircleOutline,
 } from "ionicons/icons";
 import "./NewDiscussionCard.css";
 import { useSelector } from "react-redux";
@@ -37,6 +39,7 @@ import {
   removeDiscussionParticipant,
 } from "../firebase/firebaseDiscussions";
 import EditDiscussionModal, { ModalHandle } from "./EditDiscussionModal";
+import { useHistory, useLocation } from "react-router-dom";
 
 interface NewDiscussionCardProps {
   bookClubId: string;
@@ -69,10 +72,15 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
   const [discussionParticipants, setDiscussionParticipants] =
     useState<string[]>();
   const [isJoiningLeaving, setIsJoiningLeaving] = useState<boolean>(false);
-  const [popoverOpen, setPopoverOpen] = useState(false);
-  const popover = useRef<HTMLIonPopoverElement>(null);
+  const [moderatorPopoverOpen, setModeratorPopoverOpen] = useState(false);
+  const popoverModeratorRef = useRef<HTMLIonPopoverElement>(null);
+  const [locationPopoverOpen, setLocationPopoverOpen] = useState(false);
+  const popoverLocationRef = useRef<HTMLIonPopoverElement>(null);
   const editModal = useRef<ModalHandle>(null);
-  const [present] = useIonActionSheet();
+  const [presentActionSheet] = useIonActionSheet();
+  const [presentToast] = useIonToast();
+  const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     getDiscussionParticipants();
@@ -125,13 +133,8 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
     await deleteDiscussionDocument(bookClubId, discussionId).then(updatePage);
   }
 
-  const openPopover = (e: any) => {
-    popover.current!.event = e;
-    setPopoverOpen(true);
-  };
-
   const actionSheet = () =>
-    present({
+    presentActionSheet({
       header: "Delete Discussion",
       subHeader: title,
       backdropDismiss: false,
@@ -158,24 +161,71 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
       },
     });
 
+  const openModeratorPopover = (e: any) => {
+    popoverModeratorRef.current!.event = e;
+    setModeratorPopoverOpen(true);
+  };
+
+  const openLocationPopover = (e: any) => {
+    popoverLocationRef.current!.event = e;
+    setLocationPopoverOpen(true);
+  };
+
+  const presentJoinToast = () => {
+    presentToast({
+      message: "Please join to access this Book Club and its Discussions",
+      duration: 2500,
+      icon: alertCircleOutline,
+      color: "danger",
+    });
+  };
+
+  const locationPopover = () => {
+    return (
+      <IonPopover
+        ref={popoverLocationRef}
+        isOpen={locationPopoverOpen}
+        dismissOnSelect={true}
+        onDidDismiss={() => setLocationPopoverOpen(false)}
+      >
+        <div className="ion-padding-horizontal">
+          <IonItem lines="none">
+            <IonLabel className="ion-text-wrap">{discussionLocation}</IonLabel>
+          </IonItem>
+        </div>
+      </IonPopover>
+    );
+  };
+
   const moderatorPopover = () => {
     return (
       <IonPopover
-        ref={popover}
-        isOpen={popoverOpen}
+        ref={popoverModeratorRef}
+        isOpen={moderatorPopoverOpen}
         dismissOnSelect={true}
-        onDidDismiss={() => setPopoverOpen(false)}
+        onDidDismiss={() => setModeratorPopoverOpen(false)}
       >
         <IonList lines="full">
           <IonItem
             button
             detail={false}
-            onClick={() => editModal.current?.open()}
+            onClick={(e) => {
+              e.stopPropagation();
+              editModal.current?.open();
+            }}
           >
             <IonLabel class="ion-padding-start">Edit</IonLabel>
             <IonIcon class="ion-padding-end" slot="end" icon={pencil}></IonIcon>
           </IonItem>
-          <IonItem button detail={false} onClick={actionSheet} lines="none">
+          <IonItem
+            button
+            detail={false}
+            onClick={(e) => {
+              e.stopPropagation();
+              actionSheet();
+            }}
+            lines="none"
+          >
             <IonLabel class="ion-padding-start" color="danger">
               Delete
             </IonLabel>
@@ -193,8 +243,8 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
 
   const calendarDate = (date: string) => {
     return (
-      <div className="calendarDate">
-        <IonLabel>
+      <div className={isMember ? "calendarDate" : "calendarDateDisabled"}>
+        <IonLabel color={!isMember ? "medium" : ""}>
           <p>{getMonthName(date)}</p>
           <IonText className="date">{getDayValue(date)}</IonText>
         </IonLabel>
@@ -202,91 +252,178 @@ export const NewDiscussionCard: React.FC<NewDiscussionCardProps> = ({
     );
   };
 
-  return (
-    <IonGrid fixed className="ion-padding-horizontal">
-      <IonRow>
-        <IonCol className="ion-grid-column">
-          <IonItem lines="none">
-            {calendarDate(date)}
-            <div className="spacing"></div>
-            <IonLabel>
-              <div className="title">{title}</div>
-              <div className="time">
-                {getTimeSlotString(startTime, endTime)}
-              </div>
-            </IonLabel>
-            {isModerator && (
-              <>
-                <IonButton onClick={openPopover} slot="end" fill="clear">
-                  <IonIcon slot="icon-only" icon={ellipsisVertical}></IonIcon>
-                </IonButton>
-                {moderatorPopover()}
-                {updatePage && (
-                  <EditDiscussionModal
-                    bookClubId={bookClubId}
-                    discussionId={discussionId}
-                    onDismiss={updatePage}
-                    ref={editModal}
-                  />
-                )}
-              </>
-            )}
-          </IonItem>
-        </IonCol>
-      </IonRow>
-      <IonRow>
-        <IonCol>
-          <IonItem lines="none">
-            <IonIcon size="small" icon={locationOutline}></IonIcon>
-            <div className="spacing"></div>
-            <IonLabel className="ion-text-wrap">
-              <div className="locationBox">{discussionLocation}</div>
-            </IonLabel>
+  const getCurrentTab = () => {
+    if (location.pathname.includes("/tabs/home")) {
+      return "home";
+    }
+    if (location.pathname.includes("/tabs/clubs")) {
+      return "clubs";
+    }
+  };
 
-            <IonButton
-              fill="clear"
-              routerLink={"discussions/" + discussionId + "/comments"}
-            >
-              <IonIcon slot="icon-only" icon={chatbox}></IonIcon>
-            </IonButton>
-            {isArchived && (
-              <IonButton
-                fill="clear"
-                routerLink={"discussions/" + discussionId + "/archived"}
-              >
-                <IonIcon slot="icon-only" icon={clipboard}></IonIcon>
-              </IonButton>
+  const privateRoutingTo = (destination: string, event?: any) => {
+    if (isMember) {
+      switch (destination) {
+        case "agenda": {
+          if (isArchived) {
+            history.push(
+              "/tabs/" +
+                getCurrentTab() +
+                "/" +
+                bookClubId +
+                "/discussions/" +
+                discussionId +
+                "/archived"
+            );
+          } else {
+            history.push(
+              "/tabs/" +
+                getCurrentTab() +
+                "/" +
+                bookClubId +
+                "/discussions/" +
+                discussionId +
+                "/agenda"
+            );
+          }
+          return;
+        }
+        case "comments": {
+          history.push(
+            "/tabs/" +
+              getCurrentTab() +
+              "/" +
+              bookClubId +
+              "/discussions/" +
+              discussionId +
+              "/comments"
+          );
+          return;
+        }
+        case "location": {
+          if (event) {
+            openLocationPopover(event);
+          }
+          return;
+        }
+      }
+    } else {
+      presentJoinToast();
+    }
+  };
+
+  const joinLeaveChip = () => {
+    return (
+      <IonChip
+        slot="end"
+        disabled={isArchived === true || !isMember}
+        onClick={(e) => {
+          handleJoinLeave();
+          e.stopPropagation();
+        }}
+        className={
+          isParticipant() ? "chipIsParticipant" : "chipIsNotParticipant"
+        }
+      >
+        {isJoiningLeaving ? (
+          <div className="discussionMembersSpacing">
+            <IonSpinner name="dots" className="chipSpinner"></IonSpinner>
+          </div>
+        ) : (
+          <>
+            {!isParticipant() ? (
+              <IonIcon icon={addOutline}></IonIcon>
+            ) : (
+              <IonIcon color="white" icon={removeOutline}></IonIcon>
             )}
-            {!isArchived && (
-              <IonButton
-                fill="clear"
-                routerLink={"discussions/" + discussionId + "/agenda"}
-              >
-                <IonIcon slot="icon-only" icon={clipboard}></IonIcon>
-              </IonButton>
-            )}
-            <IonChip
-              disabled={isArchived || !isMember}
-              onClick={() => handleJoinLeave()}
-              className={isParticipant() ? "chipIsParticipant" : ""}
-            >
-              <IonIcon
-                color={isParticipant() ? "white" : ""}
-                icon={people}
-              ></IonIcon>
-              {isJoiningLeaving ? (
-                <div className="discussionMembersSpacing">
-                  <IonSpinner className="chipSpinner"></IonSpinner>
-                </div>
-              ) : (
-                <p className="discussionMembersSpacing">
-                  {discussionParticipants ? discussionParticipants.length : "0"}
-                </p>
-              )}
-            </IonChip>
-          </IonItem>
-        </IonCol>
-      </IonRow>
-    </IonGrid>
+            <IonIcon
+              color={isParticipant() ? "white" : ""}
+              icon={people}
+            ></IonIcon>
+            <div className="discussionMembersSpacing">
+              <IonText>
+                {discussionParticipants ? discussionParticipants.length : "0"}
+              </IonText>
+            </div>
+          </>
+        )}
+      </IonChip>
+    );
+  };
+
+  return (
+    <>
+      <IonItem
+        button
+        detail={false}
+        onClick={() =>
+          !isMember ? presentJoinToast() : privateRoutingTo("agenda")
+        }
+      >
+        <IonGrid fixed className="ion-padding-horizontal">
+          <IonRow>
+            <IonCol className="ion-grid-column">
+              <IonItem color="none" lines="none">
+                {calendarDate(date)}
+                <div className="spacing"></div>
+                <IonLabel color={!isMember ? "medium" : ""}>
+                  <div className="title">{title}</div>
+                  <div className={isMember ? "time" : "timeDisabled"}>
+                    {getTimeSlotString(startTime, endTime)}
+                  </div>
+                </IonLabel>
+                {isModerator && (
+                  <>
+                    <IonIcon
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openModeratorPopover(e);
+                      }}
+                      slot="end"
+                      icon={ellipsisVertical}
+                    ></IonIcon>
+                    {moderatorPopover()}
+                  </>
+                )}
+              </IonItem>
+            </IonCol>
+          </IonRow>
+          <IonRow>
+            <IonCol className="ion-grid-column">
+              <IonItem color="none" lines="none">
+                <IonIcon
+                  color={!isMember ? "medium" : ""}
+                  slot="start"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    privateRoutingTo("location", e);
+                  }}
+                  icon={locationOutline}
+                ></IonIcon>
+                {locationPopover()}
+                <IonIcon
+                  color={!isMember ? "medium" : ""}
+                  slot="start"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    privateRoutingTo("comments");
+                  }}
+                  icon={chatbubbleOutline}
+                ></IonIcon>
+                {joinLeaveChip()}
+              </IonItem>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+      </IonItem>
+      {updatePage && (
+        <EditDiscussionModal
+          bookClubId={bookClubId}
+          discussionId={discussionId}
+          onDismiss={updatePage}
+          ref={editModal}
+        />
+      )}
+    </>
   );
 };

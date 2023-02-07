@@ -25,6 +25,16 @@
   min-width: 51px;
 }
 
+.linkIconDisabled {
+  text-align: center;
+  align-self: center;
+  border: 1px solid #8d8d8d;
+  border-radius: 15px;
+  padding-top: 7px;
+  padding-bottom: 4px;
+  min-width: 51px;
+}
+
 .title {
   font-size: 18px;
   white-space: nowrap;
@@ -39,6 +49,15 @@
 .link {
   font-size: 14px;
   color: grey;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.linkDisabled {
+  font-size: 14px;
+  color: rgb(215, 215, 215);
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;

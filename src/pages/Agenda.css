@@ -1,36 +1,29 @@
-.agendaTitle {
-    font-size: 30px !important;
-    margin-bottom: 50%;
-    margin-top:30px !important;
-
+.agendaTitleDiv {
+  padding-left: 0;
 }
 
-.agendaTitleDiv{
-    padding-left: 0px !important;
+.agendaDate {
+  text-align: right;
+  flex-direction: column;
+  margin-top: 30px !important;
 }
 
-.agendaDate{
-    flex-direction: column;
-    margin-right: 20px;
-    margin-top:30px !important;
+#date {
+  font-weight: bold;
 }
 
-#date{
-    font-weight: bold;
+.liveButton {
+  position: absolute;
+  right: 30px;
+  margin-top: 40px;
 }
-
-.liveButton{
-    position: absolute;
-    right: 30px;
-    margin-top: 40px;
+.edit {
+  position: absolute;
+  margin-top: 40px;
 }
-.edit{
-    position: absolute;
-    margin-top: 40px;
+.parent {
+  position: relative;
 }
-.parent{
-    position: relative;
-}
-.inputFields{
-    margin-top: 10px;
+.inputFields {
+  margin-top: 10px;
 }

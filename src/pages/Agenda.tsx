@@ -21,7 +21,11 @@ import {
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
-import { addOutline, removeOutline } from "ionicons/icons";
+import {
+  addOutline,
+  locationOutline,
+  removeOutline,
+} from "ionicons/icons";
 import {
   addDiscussionAgenda,
   getDiscussionDocument,
@@ -35,7 +39,7 @@ import {
 } from "../helpers/datetimeFormatter";
 
 import "./Agenda.css";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 
 type FormValues = {
   agenda: {
@@ -55,22 +59,6 @@ const Agenda: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
   let { discussionId }: { discussionId: string } = useParams();
 
-  useIonViewWillEnter(() => {
-    //getDiscussion();
-    /*
-    if(window.localStorage){
-      if( !localStorage.getItem("firstLoad")){
-        localStorage["firstLoad"] = true;
-        
-        //window.location.reload();
-      }
-      else{
-        localStorage.removeItem("firstLoad");
-      }
-    }
-    */
-  });
-  
   const {
     register,
     control,
@@ -103,7 +91,7 @@ const Agenda: React.FC = () => {
   async function getDiscussion() {
     let discussionData = await getDiscussionDocument(bookClubId, discussionId);
     setDiscussionData(discussionData);
-    setIsModerator(discussionData?.moderator.includes(user.uid))
+    setIsModerator(discussionData?.moderator.includes(user.uid));
     insertAgendaIntoFields(discussionData);
     calcTotalTime();
   }
@@ -116,14 +104,17 @@ const Agenda: React.FC = () => {
       append({
         name: agendaArray[i].name,
         timeLimit: agendaArray[i].timeLimit,
-        elapsedTime: agendaArray[i].elapsedTime
+        elapsedTime: agendaArray[i].elapsedTime,
       });
     }
   }
 
   function calcTotalTime() {
     // convert agenda parts to timeLimit and sum the values
-    let time = getValues().agenda.map(e => e.timeLimit).reduce((a, b) => a + b, 0) / 60;
+    let time =
+      getValues()
+        .agenda.map((e) => e.timeLimit)
+        .reduce((a, b) => a + b, 0) / 60;
     setTotalTime(time);
   }
 
@@ -199,10 +190,12 @@ const Agenda: React.FC = () => {
                   <>
                     {!isReadOnly && (
                       <IonButton {...field} onClick={() => openPicker(index)}>
-                        {(field.value / 60) + " min"}
+                        {field.value / 60 + " min"}
                       </IonButton>
                     )}
-                    {isReadOnly && <IonText>{(field.value / 60) + " min"}</IonText>}
+                    {isReadOnly && (
+                      <IonText>{field.value / 60 + " min"}</IonText>
+                    )}
                   </>
                 )}
                 rules={{ required: true, min: 1 }}
@@ -233,8 +226,6 @@ const Agenda: React.FC = () => {
     return <IonSpinner></IonSpinner>;
   }
 
- 
-
   return (
     <IonPage className="parent">
       <IonHeader>
@@ -245,26 +236,29 @@ const Agenda: React.FC = () => {
           <IonTitle>Agenda</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent className="ion-padding-top">
         <form onSubmit={handleSubmit(submitData)}>
+          {discussionData.location && (
+            <IonItem lines="none">
+              <IonIcon icon={locationOutline} size="default" />
+              <div className="spacing"></div>
+              <IonLabel className="ion-text-wrap">
+                <div>{discussionData.location}</div>
+              </IonLabel>
+              <IonLabel slot="end">
+                <h2 id="date">{getTimezonedDate(discussionData.date)}</h2>
+                <p>
+                  {getTimeSlotString(
+                    discussionData.startTime,
+                    discussionData.endTime
+                  )}
+                </p>
+              </IonLabel>
+            </IonItem>
+          )}
           <IonList>
             <IonListHeader className="agendaTitleDiv">
-              <IonLabel>
-                <h1 className="agendaTitle">{discussionData.title }</h1>
-              </IonLabel>
-              <div className="agendaDate">
-                <IonLabel>
-                  <h2 id="date">{getTimezonedDate(discussionData.date)}</h2>
-                </IonLabel>
-                <IonLabel>
-                  <p>
-                    {getTimeSlotString(
-                        discussionData.startTime,
-                        discussionData.endTime
-                    )}
-                  </p>
-                </IonLabel>
-              </div>
+              <IonLabel>{discussionData.title}</IonLabel>
             </IonListHeader>
             {inputFields()}
           </IonList>
@@ -276,7 +270,7 @@ const Agenda: React.FC = () => {
                   append({
                     name: "",
                     timeLimit: 5 * 60,
-                    elapsedTime: 0
+                    elapsedTime: 0,
                   });
                   calcTotalTime();
                 }}
@@ -308,21 +302,28 @@ const Agenda: React.FC = () => {
             </IonText>
           </IonItem>
           {isModerator && isReadOnly && (
-                <IonButton className="edit" onClick={() => setIsReadOnly(!isReadOnly)}>
-                  Edit
-                </IonButton>
+            <IonButton
+              className="edit"
+              onClick={() => setIsReadOnly(!isReadOnly)}
+            >
+              Edit
+            </IonButton>
           )}
           {!isReadOnly && (
             <>
-                <IonButton className="edit" fill="outline" onClick={cancelEdit}>
-                  Cancel
-                </IonButton>
-                <IonButton className="liveButton" type="submit">Save</IonButton>
+              <IonButton className="edit" fill="outline" onClick={cancelEdit}>
+                Cancel
+              </IonButton>
+              <IonButton className="liveButton" type="submit">
+                Save
+              </IonButton>
             </>
           )}
         </form>
         {isReadOnly && (
-          <IonButton className="liveButton" type="submit"
+          <IonButton
+            className="liveButton"
+            type="submit"
             routerLink={
               "/live/" + bookClubId + "/discussions/" + discussionId + "/view"
             }
@@ -336,4 +337,3 @@ const Agenda: React.FC = () => {
 };
 
 export default Agenda;
-

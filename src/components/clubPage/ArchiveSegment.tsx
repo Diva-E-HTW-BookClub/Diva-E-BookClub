@@ -18,6 +18,7 @@ interface ArchiveSegmentProps {
   bookClubId: string;
   bookClubData?: BookClub;
   isModerator: boolean;
+  isMember?: boolean;
   updatePage: () => void;
 }
 
@@ -25,6 +26,7 @@ export const ArchiveSegment: React.FC<ArchiveSegmentProps> = ({
   bookClubId,
   bookClubData,
   isModerator,
+  isMember,
   updatePage,
 }: ArchiveSegmentProps) => {
   if (!bookClubData) {
@@ -53,20 +55,20 @@ export const ArchiveSegment: React.FC<ArchiveSegmentProps> = ({
             {getDiscussionsByYear(year, pastDiscussions).map(
               (discussion, index) => {
                 return (
-                  <IonItem class="ion-no-padding" key={index}>
-                    <NewDiscussionCard
-                      bookClubId={bookClubId}
-                      discussionId={discussion.id}
-                      title={discussion.title}
-                      date={discussion.date}
-                      startTime={discussion.startTime}
-                      endTime={discussion.endTime}
-                      discussionLocation={discussion.location}
-                      updatePage={updatePage}
-                      isModerator={isModerator}
-                      isArchived={true}
-                    />
-                  </IonItem>
+                  <NewDiscussionCard
+                    key={index}
+                    bookClubId={bookClubId}
+                    discussionId={discussion.id}
+                    title={discussion.title}
+                    date={discussion.date}
+                    startTime={discussion.startTime}
+                    endTime={discussion.endTime}
+                    discussionLocation={discussion.location}
+                    updatePage={updatePage}
+                    isMember={isMember}
+                    isModerator={isModerator}
+                    isArchived={true}
+                  />
                 );
               }
             )}

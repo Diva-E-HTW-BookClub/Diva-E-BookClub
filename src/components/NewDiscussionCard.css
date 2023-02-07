@@ -5,6 +5,13 @@
   width: 51px;
 }
 
+.calendarDateDisabled {
+  text-align: center;
+  border: 1px solid #8d8d8d;
+  border-radius: 15px;
+  width: 51px;
+}
+
 .date {
   font-size: 25px;
   line-height: 26px;
@@ -53,22 +60,33 @@ ion-col {
 }
 
 .time {
-  font-size: 14px;
   color: grey;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.timeDisabled {
+  color: lightgray;
+  font-size: 14px;
   font-weight: bold;
 }
 
 .chipIsParticipant {
+  width: 90px;
   --background: var(--ion-color-primary);
   --color: #ffffff;
 }
 
+.chipIsNotParticipant {
+  width: 90px;
+}
+
 .discussionMembersSpacing {
   text-align: center;
-  min-width: 18px;
+  padding-left: 12px;
 }
 
 .chipSpinner {
-  width: 18px;
-  height: 18px;
+  width: 45px;
+  height: 40px;
 }

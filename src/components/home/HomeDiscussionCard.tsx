@@ -12,7 +12,7 @@ import {
   getMonthName,
   getTimeSlotString,
 } from "../../helpers/datetimeFormatter";
-import { people } from "ionicons/icons";
+import { addOutline, people, removeOutline } from "ionicons/icons";
 import { useSelector } from "react-redux";
 import {
   addDiscussionParticipant,
@@ -111,38 +111,61 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
     );
   };
 
+  const joinLeaveChip = () => {
+    return (
+      <IonChip
+        slot="end"
+        disabled={isArchived === true || !isMember}
+        onClick={() => handleJoinLeave()}
+        className={
+          isParticipant() ? "chipIsParticipant" : "chipIsNotParticipant"
+        }
+      >
+        {isJoiningLeaving ? (
+          <div className="discussionMembersSpacing">
+            <IonSpinner name="dots" className="chipSpinner"></IonSpinner>
+          </div>
+        ) : (
+          <>
+            {!isParticipant() ? (
+              <IonIcon icon={addOutline}></IonIcon>
+            ) : (
+              <IonIcon color="white" icon={removeOutline}></IonIcon>
+            )}
+            <IonIcon
+              color={isParticipant() ? "white" : ""}
+              icon={people}
+            ></IonIcon>
+            <div className="discussionMembersSpacing">
+              <IonText>
+                {discussionParticipants ? discussionParticipants.length : "0"}
+              </IonText>
+            </div>
+          </>
+        )}
+      </IonChip>
+    );
+  };
+
   return (
     <IonItem button detail={false}>
       <div className="ion-padding-start">{calendarDate(date)}</div>
       <div className="spacing"></div>
       <IonLabel
-        onClick={() => history.push("/tabs/home/" + bookClubId + "/view")}
+        onClick={() =>
+          history.push(
+            "/tabs/home/" +
+              bookClubId +
+              "/discussions/" +
+              discussionId +
+              "/agenda"
+          )
+        }
       >
         <div className="title">{bookClubName}</div>
         <div className="time">{getTimeSlotString(startTime, endTime)}</div>
       </IonLabel>
-      <div className="ion-padding-end">
-        <IonChip
-          slot="end"
-          disabled={isArchived === true || !isMember}
-          onClick={() => handleJoinLeave()}
-          className={isParticipant() ? "chipIsParticipant" : ""}
-        >
-          <IonIcon
-            color={isParticipant() ? "white" : ""}
-            icon={people}
-          ></IonIcon>
-          {isJoiningLeaving ? (
-            <div className="discussionMembersSpacing">
-              <IonSpinner className="chipSpinner"></IonSpinner>
-            </div>
-          ) : (
-            <p className="discussionMembersSpacing">
-              {discussionParticipants ? discussionParticipants.length : "0"}
-            </p>
-          )}
-        </IonChip>
-      </div>
+      <div className="ion-padding-end">{joinLeaveChip()}</div>
     </IonItem>
   );
 };

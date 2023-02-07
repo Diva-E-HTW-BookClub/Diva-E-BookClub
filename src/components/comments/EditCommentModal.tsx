@@ -18,10 +18,20 @@ import {
   IonNote,
   IonTextarea,
   IonTitle,
-  IonToolbar, useIonToast,
+  IonToolbar,
+  useIonToast,
 } from "@ionic/react";
-import {alertCircleOutline, camera, informationCircleOutline, trashOutline} from "ionicons/icons";
-import {base64FromPath, getFileSizeFromBase64, usePhotoGallery} from "../../hooks/usePhotoGallery";
+import {
+  alertCircleOutline,
+  camera,
+  informationCircleOutline,
+  trashOutline,
+} from "ionicons/icons";
+import {
+  base64FromPath,
+  getFileSizeFromBase64,
+  usePhotoGallery,
+} from "../../hooks/usePhotoGallery";
 import {
   getCommentDocument,
   updateCommentDocument,
@@ -90,11 +100,11 @@ export const EditCommentModal = forwardRef<ModalHandle, EditCommentModalProps>(
 
     async function makePhoto() {
       let newPhoto = await takePhoto();
-      if(newPhoto){
+      if (newPhoto) {
         let base64String = await base64FromPath(newPhoto);
-        if(getFileSizeFromBase64(base64String) > 1048487){
+        if (getFileSizeFromBase64(base64String) > 1048487) {
           presentToast();
-        }else{
+        } else {
           setPhoto(newPhoto);
         }
       }
@@ -102,12 +112,12 @@ export const EditCommentModal = forwardRef<ModalHandle, EditCommentModalProps>(
 
     const presentToast = () => {
       present({
-        message: 'Photo is larger than 1Mb. Please select a smaller image',
+        message: "Photo is larger than 1Mb. Please select a smaller image",
         duration: 2500,
         icon: alertCircleOutline,
-        color: "danger"
+        color: "danger",
       });
-    }
+    };
 
     async function deletePhoto() {
       setPhoto(undefined);
@@ -143,7 +153,14 @@ export const EditCommentModal = forwardRef<ModalHandle, EditCommentModalProps>(
         <IonHeader>
           <IonToolbar>
             <IonButtons slot="start">
-              <IonButton onClick={cancelModal}>Cancel</IonButton>
+              <IonButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  cancelModal();
+                }}
+              >
+                Cancel
+              </IonButton>
             </IonButtons>
             <IonTitle>Edit Comment</IonTitle>
             <IonButtons slot="end">
@@ -154,7 +171,13 @@ export const EditCommentModal = forwardRef<ModalHandle, EditCommentModalProps>(
           </IonToolbar>
         </IonHeader>
         <IonContent fullscreen>
-          <form id="createComment" onSubmit={handleSubmit(submitData)}>
+          <form
+            id="createComment"
+            onSubmit={(e) => {
+              e.stopPropagation();
+              handleSubmit(submitData);
+            }}
+          >
             <IonItem>
               {!photo && (
                 <div className="ion-padding-vertical">
