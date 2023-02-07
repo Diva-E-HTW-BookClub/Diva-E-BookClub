@@ -106,9 +106,11 @@ const LiveDiscussion: React.FC = () => {
     for (var i = 0; i < length; i++) {
       timeTable[i] = false;
     }
+    if(index != -1){
     if (!playingState[index]) {
       timeTable[index] = true;
     }
+  }
     return timeTable;
   }
 
@@ -129,6 +131,11 @@ const LiveDiscussion: React.FC = () => {
     socket.emit("send_all_Current_Data", {emitStates, emitTimes, emitSum, discussionId});
     }
     saveLiveDiscussion(false)
+  }
+
+  function endDiscussion(){
+    setButtons(-1);
+    saveLiveDiscussion(true)
   }
 
   
@@ -417,7 +424,7 @@ return () => clearInterval(interval);
         <div className="h2">Aktuelle Teilnehmer: {participantCount}</div>
         <div className="divider-small"></div>
         {isModerator &&
-        <IonButton className="live" routerLink={"/tabs/home"}  onClick={() => saveLiveDiscussion(true)}>
+        <IonButton className="live" routerLink={"/tabs/home"}  onClick={() => endDiscussion()}>
               End discussion
         </IonButton>
         }
