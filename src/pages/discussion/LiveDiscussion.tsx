@@ -106,9 +106,11 @@ const LiveDiscussion: React.FC = () => {
     for (var i = 0; i < length; i++) {
       timeTable[i] = false;
     }
+    if(index != -1){
     if (!playingState[index]) {
       timeTable[index] = true;
     }
+  }
     return timeTable;
   }
 
@@ -131,7 +133,12 @@ const LiveDiscussion: React.FC = () => {
     saveLiveDiscussion(false)
   }
 
-  
+  function endDiscussion(){
+    setButtons(-1);
+    saveLiveDiscussion(true)
+  }
+
+
   useEffect(() => {
     getAgendaParts()
     joinDiscussionRoom();
@@ -417,7 +424,7 @@ return () => clearInterval(interval);
         <div className="h2">Aktuelle Teilnehmer: {participantCount}</div>
         <div className="divider-small"></div>
         {isModerator &&
-        <IonButton className="live" routerDirection="back" routerLink={"/tabs/home"}  onClick={() => saveLiveDiscussion(true)}>
+        <IonButton className="live" routerDirection="back" routerLink={"/tabs/home"}  onClick={() => endDiscussion()}>
               End discussion
         </IonButton>
         }
