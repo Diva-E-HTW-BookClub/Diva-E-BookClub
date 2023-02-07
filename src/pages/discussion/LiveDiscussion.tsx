@@ -138,7 +138,7 @@ const LiveDiscussion: React.FC = () => {
     saveLiveDiscussion(true)
   }
 
-  
+
   useEffect(() => {
     getAgendaParts()
     joinDiscussionRoom();
@@ -424,12 +424,12 @@ return () => clearInterval(interval);
         <div className="h2">Aktuelle Teilnehmer: {participantCount}</div>
         <div className="divider-small"></div>
         {isModerator &&
-        <IonButton className="live" routerLink={"/tabs/home"}  onClick={() => endDiscussion()}>
+        <IonButton className="live" routerDirection="back" routerLink={"/tabs/home"}  onClick={() => endDiscussion()}>
               End discussion
         </IonButton>
         }
         {!isModerator &&
-        <IonButton className="live" routerLink={"/tabs/home/" + bookClubId + "/view"} >
+        <IonButton className="live" routerDirection="back" routerLink={"/tabs/home"} >
               Leave discussion
         </IonButton>
         }

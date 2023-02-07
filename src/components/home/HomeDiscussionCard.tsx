@@ -25,13 +25,10 @@ interface HomeDiscussionCardProps {
   bookClubId: string;
   bookClubName: string;
   discussionId: string;
-  title: string;
   date: string;
   startTime: string;
   endTime: string;
-  discussionLocation: string;
-  isModerator: boolean;
-  updatePage?: () => void;
+  participants: string[];
   isMember?: boolean;
   isArchived?: boolean;
 }
@@ -40,13 +37,10 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
   bookClubId,
   bookClubName,
   discussionId,
-  title,
   startTime,
   endTime,
-  discussionLocation,
+  participants,
   date,
-  isModerator,
-  updatePage,
   isMember,
   isArchived,
 }: HomeDiscussionCardProps) => {
@@ -58,7 +52,7 @@ export const HomeDiscussionCard: React.FC<HomeDiscussionCardProps> = ({
 
   useEffect(() => {
     getDiscussionParticipants();
-  }, []);
+  }, [participants]);
 
   const isParticipant = () => {
     return discussionParticipants?.includes(user.uid);
