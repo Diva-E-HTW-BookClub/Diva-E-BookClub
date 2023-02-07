@@ -123,7 +123,7 @@ export const TabRouting: React.FC = () => {
 
 const App: React.FC = () => {
   const [busy, setBusy] = useState(true)
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getCurrentUser().then((currentUser) => {
@@ -133,7 +133,7 @@ const App: React.FC = () => {
       } else {
         //console.log("not logged in :(")
       }
-        setBusy(false)
+      setBusy(false);
     })
   }, [])
   //Spinner that is displayed while content is loading
