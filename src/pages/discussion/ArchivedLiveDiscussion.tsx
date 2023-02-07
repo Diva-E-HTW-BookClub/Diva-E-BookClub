@@ -48,7 +48,7 @@ const LiveDiscussion: React.FC = () => {
   const [agendaTitle, setAgendaTitle] = useState<any[]>([]);
   let { bookClubId }: { bookClubId: string } = useParams();
   let { discussionId }: { discussionId: string } = useParams();
-  const [maxParticipants, setMaxParticipants] = useState<number[]>([]);
+  const [maxParticipants, setMaxParticipants] = useState<number>(0);
 
 
   // Liva-Ansicht-Variablen
@@ -57,10 +57,6 @@ const LiveDiscussion: React.FC = () => {
 
   const changedPlayingState = doc(firebaseDB, "testCollection", "8hh5w2KA9koJTbyMiDuk");
 
-
-
-  
-console.log("ID" + discussionId)
   
   useEffect(() => {
     getAgendaParts()
@@ -69,7 +65,6 @@ console.log("ID" + discussionId)
 
   // Colors for Progress
    const isOrange = (progress: number, totalTime: number) => {
-    console.log((progress * totalTime).toFixed(2) )
      return +(progress).toFixed(2) >= totalTime * 0.5
    }
 
@@ -78,17 +73,19 @@ console.log("ID" + discussionId)
    }
 
    const isRed = (progress: number, totalTime: number) => {
-    console.log((progress * totalTime).toFixed(2) )
      return +(progress).toFixed(2) >= totalTime
    }
 
-  async function getAgendaParts() {
-    let maxParticipants = await getDiscussionMaxParticipants(bookClubId, discussionId);
-    setMaxParticipants(maxParticipants);
+  async function getAgendaParts() {   
+    
     let agendaParts = await getDiscussionAgenda(bookClubId, discussionId);
     let agendaTitle = await getDiscussionTitle(bookClubId, discussionId);
+    let maxParticipants = await getDiscussionMaxParticipants(bookClubId, discussionId);
+    console.log(agendaTitle)
     setAgendaParts(agendaParts)
     setAgendaTitle(agendaTitle)
+    setMaxParticipants(maxParticipants);
+    console.log(maxParticipants)
     for(var i = 0; i < agendaParts.length; i++){
       progressTimesReceived[i] = 0;
       emitTimes[i] = 0

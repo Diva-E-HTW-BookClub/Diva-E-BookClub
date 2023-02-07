@@ -69,7 +69,8 @@ async function getDiscussionDocument(bookClubId: string, discussionId: string) {
       participants: res.participants,
       agenda: res.agenda,
       moderator: res.moderator,
-      isArchived: res.isArchived
+      isArchived: res.isArchived,
+      maxParticipants: res.maxParticipants
     };
   }
 }
@@ -140,6 +141,7 @@ async function getDiscussionAgenda(bookClubId: string, discussionId: string) {
 
 async function getDiscussionMaxParticipants(bookClubId: string, discussionId: string) {
   let discussionData: any = await getDiscussionDocument(bookClubId, discussionId)
+  console.log(discussionData)
   if (discussionData) {
     return discussionData.maxParticipants;
   } 
