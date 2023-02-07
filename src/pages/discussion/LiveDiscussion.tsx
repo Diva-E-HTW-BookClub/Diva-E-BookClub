@@ -417,12 +417,12 @@ return () => clearInterval(interval);
         <div className="h2">Aktuelle Teilnehmer: {participantCount}</div>
         <div className="divider-small"></div>
         {isModerator &&
-        <IonButton className="live" routerLink={"/tabs/home"}  onClick={() => saveLiveDiscussion(true)}>
+        <IonButton className="live" routerDirection="back" routerLink={"/tabs/home"}  onClick={() => saveLiveDiscussion(true)}>
               End discussion
         </IonButton>
         }
         {!isModerator &&
-        <IonButton className="live" routerLink={"/tabs/home/" + bookClubId + "/view"} >
+        <IonButton className="live" routerDirection="back" routerLink={"/tabs/home"} >
               Leave discussion
         </IonButton>
         }

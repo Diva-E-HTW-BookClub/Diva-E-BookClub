@@ -15,7 +15,6 @@ import {
   RefresherEventDetail,
   IonSelect,
   IonSelectOption,
-  useIonViewDidEnter,
 } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import "./HomeTab.css";
@@ -45,11 +44,7 @@ import { useHistory } from "react-router";
 import { useIonRouter } from "@ionic/react";
 import { App } from "@capacitor/app";
 
-interface HomeTabProps {
-  isSelected: boolean;
-}
-
-const HomeTab: React.FC<HomeTabProps> = ({ isSelected }: HomeTabProps) => {
+const HomeTab: React.FC = () => {
   const [isNewUser, setIsNewUser] = useState<boolean>();
   const user = useSelector((state: any) => state.user.user);
   const [ownClubs, setOwnClubs] = useState<BookClub[]>();
@@ -60,6 +55,7 @@ const HomeTab: React.FC<HomeTabProps> = ({ isSelected }: HomeTabProps) => {
   const [isLoadingDiscussions, setIsLoadingDiscussions] = useState<boolean>();
   const history = useHistory();
   const location = useLocation();
+  const isFocused = location.pathname === "/tabs/home";
 
   // for some reason ionBackButton event is published twice when we click on the hardware back button once
   // the method below listens to hardware back button events and prevents any other default listener from receiving it
@@ -81,7 +77,7 @@ const HomeTab: React.FC<HomeTabProps> = ({ isSelected }: HomeTabProps) => {
         ) {
           App.exitApp();
         }
-        if(!location.pathname.includes("live")){
+        if (!location.pathname.includes("live")) {
           history.goBack();
         }
       }
@@ -96,7 +92,7 @@ const HomeTab: React.FC<HomeTabProps> = ({ isSelected }: HomeTabProps) => {
 
   useEffect(() => {
     getBookClubs();
-  }, [isSelected, useIonViewDidEnter]);
+  }, [isFocused]);
 
   useEffect(() => {
     getNextDiscussions(weeksOfDiscussions);
@@ -115,6 +111,7 @@ const HomeTab: React.FC<HomeTabProps> = ({ isSelected }: HomeTabProps) => {
 
   async function getBookClubs() {
     setIsLoadingClubs(true);
+    setIsLoadingDiscussions(true);
     await getBookClubsByModerator(user.uid).then((ownBookClubs) => {
       if (ownBookClubs) {
         setOwnClubs(ownBookClubs);
@@ -126,7 +123,14 @@ const HomeTab: React.FC<HomeTabProps> = ({ isSelected }: HomeTabProps) => {
       }
       setIsLoadingClubs(false);
     });
-    getNextDiscussions(weeksOfDiscussions);
+    await getAllDiscussionsOfBookClubsByUser(user.uid, weeksOfDiscussions).then(
+      (nextDiscussionsArray) => {
+        if (nextDiscussionsArray) {
+          setNextDiscussions(sortDiscussionsByDate(nextDiscussionsArray));
+        }
+        setIsLoadingDiscussions(false);
+      }
+    );
   }
 
   async function getNextDiscussions(weeks: number) {
@@ -284,12 +288,10 @@ const HomeTab: React.FC<HomeTabProps> = ({ isSelected }: HomeTabProps) => {
                           bookClubId={nextDiscussion.bookClubId}
                           bookClubName={nextDiscussion.bookClubName}
                           discussionId={nextDiscussion.id}
-                          title={nextDiscussion.title}
                           date={nextDiscussion.date}
                           startTime={nextDiscussion.startTime}
                           endTime={nextDiscussion.endTime}
-                          discussionLocation={nextDiscussion.location}
-                          isModerator={true}
+                          participants={nextDiscussion.participants}
                           isMember={true}
                         />
                       );
