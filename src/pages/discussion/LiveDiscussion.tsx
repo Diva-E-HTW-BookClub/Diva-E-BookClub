@@ -334,20 +334,28 @@ const LiveDiscussion: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Live Ansicht: {agendaTitle}</IonTitle>
+          <IonTitle>Live Discussion</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-        <div className="divider-small"></div>
+      <div className="divider-small"></div>
+      <div className="h2">{agendaTitle}</div>
         <IonCard className="cards time-bar">
-          <IonCardHeader>
+        <IonCardHeader className="titleHeader">
             <IonCardTitle className="playTitle">
               Total discussion time
             </IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
             <IonRow>
-              <IonCol size="8" className="progressbarContainer">
+            <IonCol className="timeDisplay" size="12">
+                <div className="timeDisplayContainer">
+                  {`${addUp(progressTimesReceived, maxTimes)} / ${doubleDigits(
+                    totalTimeLimit
+                  )} min`}
+                </div>
+              </IonCol>
+              <IonCol size="12" className="progressbarContainer">
                 <IonProgressBar
                   className={` ${
                     isRed(progressSumReceived, totalTimeLimit)
@@ -361,13 +369,7 @@ const LiveDiscussion: React.FC = () => {
                   value={progressSumReceived}
                 ></IonProgressBar>
               </IonCol>
-              <IonCol className="timeDisplay" size="4">
-                <div className="timeDisplayContainer">
-                  {`${addUp(progressTimesReceived, maxTimes)} / ${doubleDigits(
-                    totalTimeLimit
-                  )} min`}
-                </div>
-              </IonCol>
+              
             </IonRow>
           </IonCardContent>
         </IonCard>
@@ -380,7 +382,17 @@ const LiveDiscussion: React.FC = () => {
                     playingStateReceived[index] ? "isPlaying" : "notPlaying"
                   } `}
                 >
-                  <IonCardHeader>
+                  
+                  <IonCardHeader className="titleHeader">
+                    <IonCardTitle className="playTitle">
+                      {agendaPart.name}
+                    </IonCardTitle>
+                  </IonCardHeader>
+                  <IonCardContent>
+                    <IonGrid>
+                      <IonRow>
+                        <IonCol size="6">
+                        
                     {isModerator && (
                       <IonButton
                         className="playButton"
@@ -402,14 +414,20 @@ const LiveDiscussion: React.FC = () => {
                         )}
                       </IonButton>
                     )}
-                    <IonCardTitle className="playTitle">
-                      {agendaPart.name}
-                    </IonCardTitle>
-                  </IonCardHeader>
-                  <IonCardContent>
-                    <IonGrid>
+                    
+                        </IonCol>
+                        <IonCol className="timeDisplay" size="6">
+                          <div className="timeDisplayContainer">
+                            {`${doubleDigits(
+                              progressTimesReceived[index] *
+                                agendaPart.timeLimit
+                            )} / ${doubleDigits(agendaPart.timeLimit)} min`}
+                          </div>
+                        </IonCol>
+                      </IonRow>
+                     
                       <IonRow>
-                        <IonCol size="8" className="progressbarContainer">
+                        <IonCol size="12" className="progressbarContainer">
                           <IonProgressBar
                             className={` ${
                               isRed(
@@ -432,14 +450,7 @@ const LiveDiscussion: React.FC = () => {
                             value={progressTimesReceived[index]}
                           ></IonProgressBar>
                         </IonCol>
-                        <IonCol className="timeDisplay" size="4">
-                          <div className="timeDisplayContainer">
-                            {`${doubleDigits(
-                              progressTimesReceived[index] *
-                                agendaPart.timeLimit
-                            )} / ${doubleDigits(agendaPart.timeLimit)} min`}
-                          </div>
-                        </IonCol>
+                        
                       </IonRow>
                     </IonGrid>
                   </IonCardContent>
@@ -448,7 +459,7 @@ const LiveDiscussion: React.FC = () => {
             );
           })}
         </IonList>
-        <div className="h2">Aktuelle Teilnehmer: {participantCount}</div>
+        <div className="h2">Current participants: {participantCount}</div>
         <div className="divider-small"></div>
         {isModerator && (
           <IonButton

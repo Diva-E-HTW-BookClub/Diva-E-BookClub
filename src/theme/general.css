@@ -212,10 +212,9 @@ ion-label{
 }
 
 .playTitle{
-  margin-left:10px;
   display: inline;
   line-height: 34px;
-
+  font-size: 19px;
 }
 
 ion-header ion-toolbar:first-of-type {
@@ -234,6 +233,7 @@ ion-tab-bar{
 
 .timeDisplay{
   padding-left:10px;
+  margin-bottom:10px;
 }
 
 ion-searchbar.custom {

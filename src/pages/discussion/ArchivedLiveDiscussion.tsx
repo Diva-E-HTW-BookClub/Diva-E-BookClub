@@ -8,6 +8,8 @@ import {
   IonCard,
   IonRow,
   IonCol,
+  IonButtons,
+  IonBackButton,
   IonButton,
   IonProgressBar,
   IonCardHeader,
@@ -26,6 +28,7 @@ import { useSelector } from "react-redux";
 import { getDiscussionAgenda,getDiscussionTitle, getDiscussionMaxParticipants,  } from "../../firebase/firebaseDiscussions";
 import { useParams } from "react-router";
 import { API_URL, SOCKET_IO_URL } from "../../constants";
+import { useLocation } from "react-router-dom";
 
 interface AgendaPartProps {
   id: number,
@@ -33,10 +36,7 @@ interface AgendaPartProps {
   elapsedTime: number,
   timeLimit: number
 }
-var isModerator = false;
 var emitTimes:number[] = []
-var emitSum = 0;
-var emitStates:boolean[] = []
 
 const LiveDiscussion: React.FC = () => {
 
@@ -47,11 +47,11 @@ const LiveDiscussion: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
   let { discussionId }: { discussionId: string } = useParams();
   const [maxParticipants, setMaxParticipants] = useState<number>(0);
+  const location = useLocation();
 
 
   // Liva-Ansicht-Variablen
   const [progressTimesReceived, setProgressTimesReceived] = useState<number[]>([]);
-  const [participantCount, setparticipantCount] = useState(0);
 
   const changedPlayingState = doc(firebaseDB, "testCollection", "8hh5w2KA9koJTbyMiDuk");
 
@@ -89,6 +89,16 @@ const LiveDiscussion: React.FC = () => {
       emitTimes[i] = 0
     }
   }
+
+  const getCurrentTab = () => {
+    if (location.pathname.includes("/tabs/home")) {
+      return "home";
+    }
+    if (location.pathname.includes("/tabs/clubs")) {
+      return "clubs";
+    }
+  };
+
   // convert agenda parts to elapsedTime and timeLimit and sum the values
   let totalElapsedTime = agendaParts.map(e => e.elapsedTime).reduce((a, b) => a + b, 0);
   let totalTimeLimit = agendaParts.map(e => e.timeLimit).reduce((a, b) => a + b, 0);
@@ -106,58 +116,70 @@ const LiveDiscussion: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Archivierte Ansicht: {agendaTitle}</IonTitle>
+        <IonButtons slot="start">
+        <IonBackButton defaultHref={"/tabs/" + getCurrentTab() + "/" + bookClubId + "/view"}></IonBackButton>
+        </IonButtons>
+        <IonTitle>Archived Discussion </IonTitle>
           
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
       <div className="divider-small"></div>
+      <div className="h2">{agendaTitle}</div>
       <IonCard className="cards time-bar">
-          <IonCardHeader>
-            <IonCardTitle>Total discussion time</IonCardTitle>
+          <IonCardHeader className="titleHeader">
+          <IonCardTitle className="playTitle">Total discussion time</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
+            <IonGrid>
+              <IonRow>
+                <IonCol className="timeDisplay" size="12">
+                  <div className="timeDisplayContainer">
+                    {`${doubleDigits(totalElapsedTime)} / ${doubleDigits(totalTimeLimit)} min`}
+                  </div>
+                </IonCol>
+              </IonRow>   
             <IonRow>
-              <IonCol size="8" className="progressbarContainer">
+              <IonCol size="12" className="progressbarContainer">
                 <IonProgressBar className={` ${isRed(totalElapsedTime, totalTimeLimit) ? 'isRed' : isDarkOrange(totalElapsedTime, totalTimeLimit) ?  'isDarkOrange' : isOrange(totalElapsedTime, totalTimeLimit) ? 'isOrange' : 'blue'}`} value={totalElapsedTime/totalTimeLimit}></IonProgressBar>
               </IonCol>
-              <IonCol className="timeDisplay" size="4">
-              <div className="timeDisplayContainer">
-                {`${doubleDigits(totalElapsedTime)} / ${doubleDigits(totalTimeLimit)} min`}
-                </div>
-              </IonCol>
+      
             </IonRow>
-          </IonCardContent>
-        </IonCard>
+            </IonGrid>
+            </IonCardContent>
+            </IonCard>
         <IonList lines="none">
           {agendaParts.map((agendaPart, index) => {
             return (
               <IonItem className="iten-no-padding" key={index}>
                 <IonCard className="time-bar">
-                  <IonCardHeader>
+                  <IonCardHeader className="titleHeader">
                     
                     <IonCardTitle className="playTitle">{agendaPart.name}</IonCardTitle>
                   </IonCardHeader>
                   <IonCardContent>
                     <IonGrid>
                       <IonRow>
-                        <IonCol size="8" className="progressbarContainer">
-                        <IonProgressBar className={` ${isRed(agendaPart.elapsedTime, agendaPart.timeLimit) ? 'isRed' : isDarkOrange(agendaPart.elapsedTime, agendaPart.timeLimit) ?  'isDarkOrange' : isOrange(agendaPart.elapsedTime, agendaPart.timeLimit) ? 'isOrange' : 'blue'}`} value={agendaPart.elapsedTime/agendaPart.timeLimit}></IonProgressBar>
-                        </IonCol>
-                        <IonCol className="timeDisplay" size="4">
+                      <IonCol className="timeDisplay" size="12">
                         <div className="timeDisplayContainer">
                           {`${doubleDigits(agendaPart.elapsedTime)} / ${doubleDigits(agendaPart.timeLimit)} min`}
                           </div>
                            </IonCol>
                       </IonRow>
+                      <IonRow>
+                        <IonCol size="12" className="progressbarContainer">
+                        <IonProgressBar className={` ${isRed(agendaPart.elapsedTime, agendaPart.timeLimit) ? 'isRed' : isDarkOrange(agendaPart.elapsedTime, agendaPart.timeLimit) ?  'isDarkOrange' : isOrange(agendaPart.elapsedTime, agendaPart.timeLimit) ? 'isOrange' : 'blue'}`} value={agendaPart.elapsedTime/agendaPart.timeLimit}></IonProgressBar>
+                        </IonCol>
+                        
+                      </IonRow>
                     </IonGrid>
                   </IonCardContent>
-                </IonCard>
+                  </IonCard>
               </IonItem>
             );
           })}
         </IonList>
-        <div className="h2">Maximale Teilnehmer: {maxParticipants}</div>
+        <div className="h2">Max participants: {maxParticipants}</div>
         <div className="divider-small"></div>
         <IonButton className="live" routerDirection="back" routerLink={"/tabs/home"} >
               Leave discussion

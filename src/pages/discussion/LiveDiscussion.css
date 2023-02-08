@@ -55,6 +55,13 @@ ion-card {
   border-top: 5px solid #ebebeb;
   border-bottom: 5px solid #ebebeb;
   border-radius: 7px;
+  float: right;
+  font-size: 15px;
+}
+
+.titleHeader{
+  padding-left: 25px;
+  padding-bottom:5px;
 }
 
 ion-item {
@@ -97,4 +104,20 @@ ion-item {
 .time-bar{
   box-shadow: rgb(66 66 66 / 19%) 0px 4px 23px;
   margin-bottom: 20px;
+  padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+.cards-top{
+  /*box-shadow:none;*/
+  margin-top:0px;
+}
+
+.headerDiscussion{
+  background-color: #ffffff;
+}
+
+.topHeader{ 
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
 }
