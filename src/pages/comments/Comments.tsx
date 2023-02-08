@@ -16,13 +16,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { CommentCard } from "../../components/comments/CommentCard";
 
 import { add } from "ionicons/icons";
-import {getCommentDocument, getDiscussionComments} from "../../firebase/firebaseComments";
+import { getDiscussionComments} from "../../firebase/firebaseComments";
 import { useParams } from "react-router";
 import { ModalHandle } from "../../components/resources/EditResourceModal";
 import { CreateCommentModal } from "../../components/comments/CreateCommentModal";
 import {BookClub, Discussion, getBookClubDocument} from "../../firebase/firebaseBookClub";
 import {getDiscussionDocument} from "../../firebase/firebaseDiscussions";
 import {getTimezonedDate} from "../../helpers/datetimeFormatter";
+import {getAuthorsArrayToString} from "../../helpers/openLibraryHelpers";
 
 const Comments: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
@@ -91,7 +92,7 @@ const Comments: React.FC = () => {
             <IonCol sizeMd="10" size="9" className="flexVertical">
               <IonLabel>
                 <div>{bookClubData?.book.title}</div>
-                <p>{bookClubData?.book.authors}</p>
+                {bookClubData?.book.authors && <p>{getAuthorsArrayToString(bookClubData.book.authors)}</p>}
               </IonLabel>
               <IonLabel>
                 <div>{discussionData?.title}</div>

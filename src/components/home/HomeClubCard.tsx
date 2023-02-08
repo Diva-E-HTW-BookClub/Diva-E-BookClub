@@ -9,6 +9,7 @@ import {
 } from "@ionic/react";
 import "./HomeClubCard.css";
 import { book, people } from "ionicons/icons";
+import {getAuthorsArrayToString} from "../../helpers/openLibraryHelpers";
 
 interface HomeClubCardProps {
   name: string;
@@ -29,26 +30,6 @@ export const HomeClubCard: React.FC<HomeClubCardProps> = ({
   authors,
   id,
 }: HomeClubCardProps) => {
-  const authorsString = () => {
-    let indexLimit = 2;
-    let authorsSet = new Set(authors);
-    let authorsArray = Array.from(authorsSet);
-    let string = "";
-    authorsArray.forEach((author, index) => {
-      if (indexLimit + 1 < index) {
-        string += "";
-      } else if (indexLimit + 1 === index) {
-        string += ", ...";
-      } else if (indexLimit === index) {
-        string += author;
-      } else if (authorsArray.length > 1 && indexLimit !== index) {
-        string += author + ", ";
-      } else {
-        string += author;
-      }
-    });
-    return string;
-  };
 
   return (
     <IonCard routerLink={`/tabs/home/${id}/view`} className="card">
@@ -66,7 +47,7 @@ export const HomeClubCard: React.FC<HomeClubCardProps> = ({
               />
               <IonLabel className="flexbox ion-text-wrap">
                 <h2 className="bookTitleHome">{bookTitle}</h2>
-                <p>{authorsString()}</p>
+                <p>{getAuthorsArrayToString(authors, 3)}</p>
               </IonLabel>
             </div>
             <div className="verticalSpacing"></div>

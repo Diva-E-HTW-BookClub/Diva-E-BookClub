@@ -147,7 +147,7 @@ const SelectBookModal = forwardRef<ModalHandle, SelectBookModalProps>(
                   <BookItem
                     image={book.image}
                     title={book.title}
-                    author={book.author}
+                    authors={book.author_name}
                     selected={selectedBookIndex === index}
                   />
                 </div>

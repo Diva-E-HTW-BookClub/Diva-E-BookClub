@@ -45,6 +45,8 @@ import { ModalHandle, ShareModal } from "../../components/clubPage/ShareModal";
 import { CreateDiscussionModal } from "../../components/clubPage/CreateDiscussionModal";
 import { CreateResourceModal } from "../../components/resources/CreateResourceModal";
 import { Share } from "@capacitor/share";
+import {useLocation} from "react-router-dom";
+import {getAuthorsArrayToString} from "../../helpers/openLibraryHelpers";
 
 const ClubPage: React.FC = () => {
   let { bookClubId }: { bookClubId: string } = useParams();
@@ -53,6 +55,7 @@ const ClubPage: React.FC = () => {
   const [isJoiningLeaving, setIsJoiningLeaving] = useState<boolean>(false);
   const [selectedSegment, setSelectedSegment] = useState<string>("calendar");
   const shareModal = useRef<ModalHandle>(null);
+  const location = useLocation();
 
   useEffect(() => {
     getBookClub();
@@ -140,6 +143,24 @@ const ClubPage: React.FC = () => {
     );
   };
 
+  const getCurrentTab = () => {
+    if (location.pathname.includes("/tabs/home")) {
+      return "home";
+    } else if (location.pathname.includes("/tabs/clubs")) {
+      return "clubs";
+    } else {
+      return "";
+    }
+  };
+
+  const getBackButtonName = (name: string) => {
+    if(name && name !== "") {
+      return name.charAt(0).toUpperCase() + name.slice(1);
+    }else{
+      return "Back";
+    }
+  }
+
   let clubName = bookClubData?.name;
   let bookTitle = bookClubData?.book.title;
   let bookAuthor = bookClubData?.book.authors;
@@ -153,7 +174,7 @@ const ClubPage: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/tabs/home"></IonBackButton>
+            <IonBackButton defaultHref="/tabs/home" text={getBackButtonName(getCurrentTab())}></IonBackButton>
           </IonButtons>
           <IonTitle>{clubName}</IonTitle>
           {isModerator && (
@@ -174,7 +195,7 @@ const ClubPage: React.FC = () => {
               <IonCol sizeMd="10" size="9" className="column">
                 <IonLabel>
                   <IonCardTitle className="BookTitleOnClub">{bookTitle}</IonCardTitle>
-                  <IonCardSubtitle>{bookAuthor}</IonCardSubtitle>
+                  {bookAuthor && <IonCardSubtitle>{getAuthorsArrayToString(bookAuthor)}</IonCardSubtitle>}
                 </IonLabel>
                 <IonItem lines="none">
                   {membersChip()}

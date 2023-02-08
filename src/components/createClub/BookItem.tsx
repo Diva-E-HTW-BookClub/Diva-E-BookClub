@@ -8,18 +8,19 @@ import {
 } from "@ionic/react";
 
 import "./BookItem.css";
+import {getAuthorsArrayToString} from "../../helpers/openLibraryHelpers";
 
 interface BookItemProps {
   image: string;
   title: string;
-  author: string;
+  authors?: string[];
   selected?: boolean;
 }
 
 export const BookItem: React.FC<BookItemProps> = ({
   image,
   title,
-  author,
+  authors,
   selected,
 }: BookItemProps) => {
   return (
@@ -29,7 +30,7 @@ export const BookItem: React.FC<BookItemProps> = ({
           <IonCol size="9" sizeMd="10">
             <IonLabel className="ion-text-wrap">
               <h2>{title}</h2>
-              <p>{author}</p>
+              {authors && <p>{getAuthorsArrayToString(authors, 3)}</p>}
             </IonLabel>
           </IonCol>
           <IonCol size="3" sizeMd="2">
