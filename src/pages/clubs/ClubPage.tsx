@@ -225,7 +225,7 @@ const ClubPage: React.FC = () => {
               </IonCol>
             </IonRow>
           </IonGrid>
-          <IonSegment value={selectedSegment}>
+          <IonSegment swipeGesture={false} value={selectedSegment}>
             <IonSegmentButton
               value="calendar"
               onClick={() => setSelectedSegment("calendar")}
