@@ -173,7 +173,7 @@ const CreateClubModal = forwardRef<ModalHandle>((props, ref) => {
               <BookCard
                 image={book.image}
                 title={book.title}
-                author={book.author}
+                authors={book.authors}
               />
             </div>
           )}

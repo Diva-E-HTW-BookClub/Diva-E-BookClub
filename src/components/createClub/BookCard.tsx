@@ -8,17 +8,18 @@ import {
 } from "@ionic/react";
 
 import "./BookCard.css";
+import {getAuthorsArrayToString} from "../../helpers/openLibraryHelpers";
 
 interface BookCardProps {
   image: string;
   title: string;
-  author: string;
+  authors?: string[];
 }
 
 export const BookCard: React.FC<BookCardProps> = ({
   image,
   title,
-  author,
+  authors,
 }: BookCardProps) => {
   return (
     <IonCard className="bookCard">
@@ -27,7 +28,7 @@ export const BookCard: React.FC<BookCardProps> = ({
           <IonCol size="9" sizeMd="10">
             <IonLabel>
               <h2>{title}</h2>
-              <p>{author}</p>
+              {authors && <p>{getAuthorsArrayToString(authors, 3)}</p>}
             </IonLabel>
           </IonCol>
           <IonCol size="3" sizeMd="2">
