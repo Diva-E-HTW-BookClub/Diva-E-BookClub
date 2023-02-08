@@ -1,4 +1,40 @@
-ion-content {
-    --padding-start: 20px;
-    --padding-end: 20px;
+.loginContent {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.loginForm {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 380px;
+}
+
+.welcome-title {
+    font-size: 35px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logoLogin {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.hideLogoLogin {
+    height: 0;
+}
+
+.loginLogoSkeleton {
+    margin: auto auto 20px;
+    width: 220px;
+    height: 105px;
+    border-radius: 38px;
+}
+
+.registerLoginLink {
+    text-align: center;
 }

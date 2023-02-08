@@ -78,17 +78,17 @@ export const CreateResourceModal: React.FC<CreateResourceModalProps> = ({
         <IonHeader>
           <IonToolbar>
             <IonButtons slot="start">
-              <IonButton onClick={cancelModal}>Cancel</IonButton>
+              <IonButton color="secondary" onClick={cancelModal}>Cancel</IonButton>
             </IonButtons>
             <IonTitle>Add Resource</IonTitle>
             <IonButtons slot="end">
-              <IonButton type="submit" form="createDiscussion">
+              <IonButton color="secondary" type="submit" form="createDiscussion">
                 Create
               </IonButton>
             </IonButtons>
           </IonToolbar>
         </IonHeader>
-        <IonContent fullscreen>
+        <IonContent fullscreen className="ion-padding">
           <form id="createDiscussion" onSubmit={handleSubmit(submitData)}>
             <IonItem className={errors.title ? "ion-invalid" : "ion-valid"}>
               <IonLabel position="stacked">Title</IonLabel>

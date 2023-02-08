@@ -7,13 +7,23 @@
 }
 
 .chipIsMember {
+  width: 98px;
   --background: var(--ion-color-primary);
   --color: #ffffff;
+}
+
+.chipIsNotMember {
+  width: 98px;
 }
 
 .clubMembersSpacing {
   text-align: center;
   min-width: 38px;
+}
+
+.chipSpinnerClubs {
+  width: 49px;
+  height: 40px;
 }
 
 .column {
@@ -32,5 +42,13 @@
 
 .bookCover {
   max-width: 110px;
-  filter: drop-shadow(0.0rem 0.3rem 0.3rem rgba(0, 0, 0, 0.65));
+  filter: drop-shadow(0rem 0.3rem 0.3rem rgba(0, 0, 0, 0.65));
 }
+
+.BookTitleOnClub{
+  font-family: 'Merriweather' !important;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+

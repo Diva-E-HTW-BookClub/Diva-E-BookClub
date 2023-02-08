@@ -79,14 +79,14 @@ const LiveDiscussion: React.FC = () => {
     }
   }
 
-  type FormValues = {
-    agenda: {
-      name: string;
-      timeLimit: number;
-      elapsedTime: number;
-    }[];
-  }; 
+  const leaveDiscussionRoom = () => {
+    if (discussionId !== "") {
+      socket.emit("leaveRoom", {discussionId})
+      console.log("I left")
+    }
+  }
 
+ // live discussion will be stored in the database
   async function saveLiveDiscussion(toBeArchived: boolean){
     var elapsedTimeArray = progressTimesReceived;
     let nameArray = agendaParts.map(e => e.name)
@@ -101,6 +101,7 @@ const LiveDiscussion: React.FC = () => {
     }
   }
   
+
   function createPlayingStatesForButton(length: number, index: number) {
     var timeTable = []
     for (var i = 0; i < length; i++) {
@@ -122,20 +123,17 @@ const LiveDiscussion: React.FC = () => {
     
     setPlayingState(createPlayingStatesForButton(agendaParts.length,buttonNumber))
 
-    // Send data to server
-    //socket.emit("send_playButton", { emitStates, discussionId });
-    //socket.emit("send_time", { emitTimes, discussionId });
-    //socket.emit("send_sum_time", { emitSum, discussionId });
-
-    // TEST
+    // send the data to everyone in the room
     socket.emit("send_all_Current_Data", {emitStates, emitTimes, emitSum, discussionId});
     }
     saveLiveDiscussion(false)
   }
 
+
   function endDiscussion(){
     setButtons(-1);
     saveLiveDiscussion(true)
+    leaveDiscussionRoom()
   }
 
 
@@ -146,19 +144,6 @@ const LiveDiscussion: React.FC = () => {
     console.log("ID: " + discussionId)
     if(isModerator){
       socket.emit("get_moderator", isModerator);
-    }
-    if(window.localStorage){
-      /*
-      if( !localStorage.getItem("firstLoad")){
-        localStorage["firstLoad"] = true;
-        console.log("ich reloade neu")
-        window.location.reload()
-        socket.emit("new_connection_from_elsewhere", {discussionId})
-      }
-      else{
-        localStorage.removeItem("firstLoad");
-      }
-      */
     }
   }, [useIonViewWillEnter]);
 
@@ -220,7 +205,6 @@ const LiveDiscussion: React.FC = () => {
 
     
 
-    // TEST
     socket.on("receive_all_Data", (data) => {
       if(typeof data.emitStates !== "undefined"){
         setPlayingStateReceived(data.emitStates)
@@ -253,7 +237,6 @@ const LiveDiscussion: React.FC = () => {
       if(maxParticipants <= data){
         maxParticipants = data;
       }
-      console.log("Testlänge: "+ agendaParts.length)
       saveLiveDiscussion(false);
     });  
   }, [socket]);
@@ -429,7 +412,7 @@ return () => clearInterval(interval);
         </IonButton>
         }
         {!isModerator &&
-        <IonButton className="live" routerDirection="back" routerLink={"/tabs/home"} >
+        <IonButton className="live" routerDirection="back" routerLink={"/tabs/home"} onClick={() => leaveDiscussionRoom()}>
               Leave discussion
         </IonButton>
         }

@@ -123,10 +123,10 @@ const SelectBookModal = forwardRef<ModalHandle, SelectBookModalProps>(
         <IonHeader>
           <IonToolbar>
             <IonButtons slot="start">
-              <IonButton onClick={() => setIsOpen(false)}>Cancel</IonButton>
+              <IonButton color="secondary" onClick={() => setIsOpen(false)}>Cancel</IonButton>
             </IonButtons>
             <IonButtons slot="end">
-              <IonButton onClick={confirmModal}>Confirm</IonButton>
+              <IonButton color="secondary" onClick={confirmModal}>Confirm</IonButton>
             </IonButtons>
           </IonToolbar>
           <IonToolbar>

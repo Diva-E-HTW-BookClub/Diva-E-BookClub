@@ -12,13 +12,14 @@ import {
   IonItem,
   IonRouterLink,
   IonNote,
-  IonSpinner,
+  IonSpinner, IonImg, IonSkeletonText,
 } from "@ionic/react";
 import "./LoginPage.css";
 import { useHistory } from "react-router-dom";
 import { loginUser } from "../../firebase/firebaseAuth";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import React, { useState } from "react";
+import BlubbleLogo from "../../resources/blubble-logo.png"
 
 type FormValues = {
   email: string;
@@ -27,6 +28,7 @@ type FormValues = {
 
 const LoginPage: React.FC = () => {
   const history = useHistory();
+  const [isLoadingLogo, setIsLoadingLogo] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const {
@@ -63,14 +65,21 @@ const LoginPage: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/start" />
+            <IonBackButton defaultHref="/start" text="Start" />
           </IonButtons>
           <IonTitle>Log in</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
-        <h1>Welcome Back</h1>
-        <form onSubmit={handleSubmit(submitData)}>
+      <IonContent className="ion-padding">
+        <div className="loginContent">
+          <div>
+            {isLoadingLogo && <IonSkeletonText animated className="loginLogoSkeleton"></IonSkeletonText>}
+          <IonImg onIonImgDidLoad={() => setTimeout(() => setIsLoadingLogo(false), 200)} className={isLoadingLogo ? "hideLogoLogin" : "logoLogin"} src={BlubbleLogo}/>
+          <IonLabel>
+            <div className="welcome-title"> Welcome Back</div>
+          </IonLabel>
+          </div>
+        <form id="login" onSubmit={handleSubmit(submitData)} className="loginForm">
           <IonItem className={errors.email ? "ion-invalid" : "ion-valid"}>
             <IonLabel position="stacked">Email Address</IonLabel>
             <IonInput
@@ -102,19 +111,23 @@ const LoginPage: React.FC = () => {
               </IonNote>
             )}
           </IonItem>
-          <IonButton expand="block" type="submit" className="ion-margin-top">
+        </form>
+          <div>
+          <IonButton form="login" expand="block" type="submit" className="ion-margin-top buttonWidth">
             {isSubmitting ? <IonSpinner></IonSpinner> : "LOG IN"}
           </IonButton>
-          <IonItem lines="none">
-            <p>
+          <div className="verticalSpacing"></div>
+          <IonLabel className="registerLoginLink">
+            <div>
               Don't have an Account?
-              <IonRouterLink routerDirection="forward" routerLink="/register">
+              <IonRouterLink routerDirection="back" routerLink="/register">
                 {" "}
                 Register
               </IonRouterLink>
-            </p>
-          </IonItem>
-        </form>
+            </div>
+          </IonLabel>
+          </div>
+        </div>
       </IonContent>
     </IonPage>
   );

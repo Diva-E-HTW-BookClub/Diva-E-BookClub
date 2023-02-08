@@ -12,12 +12,16 @@ import { ResourceCard } from "../resources/ResourceCard";
 interface ResourcesSegmentProps {
   bookClubId: string;
   bookClubData?: BookClub;
+  isMember?: boolean;
+  isModerator?: boolean;
   updatePage: () => void;
 }
 
 export const ResourcesSegment: React.FC<ResourcesSegmentProps> = ({
   bookClubId,
   bookClubData,
+  isMember,
+  isModerator,
   updatePage,
 }: ResourcesSegmentProps) => {
   if (!bookClubData) {
@@ -49,6 +53,8 @@ export const ResourcesSegment: React.FC<ResourcesSegmentProps> = ({
                   title={resource.title}
                   content={resource.content}
                   moderator={resource.moderator}
+                  isBookClubModerator={isModerator}
+                  isMember={isMember}
                   bookClubId={bookClubId}
                   updatePage={updatePage}
                 />

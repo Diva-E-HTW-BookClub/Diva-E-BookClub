@@ -8,23 +8,21 @@ import {
   IonCard,
   IonRow,
   IonCol,
+  IonButton,
   IonProgressBar,
   IonCardHeader,
   IonCardTitle,
   IonList,
   IonCardContent,
   IonItem,
-  IonIcon
 } from "@ionic/react";
 import {
   doc,
-  setDoc,
 } from "firebase/firestore";
 import { firebaseDB } from "../../firebase/firebaseConfig";
 import "./LiveDiscussion.css";
 import React, { useRef, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { pause, play } from "ionicons/icons";
 import { getDiscussionAgenda,getDiscussionTitle, getDiscussionMaxParticipants,  } from "../../firebase/firebaseDiscussions";
 import { useParams } from "react-router";
 import { API_URL, SOCKET_IO_URL } from "../../constants";
@@ -157,6 +155,9 @@ const LiveDiscussion: React.FC = () => {
         </IonList>
         <div className="h2">Maximale Teilnehmer: {maxParticipants}</div>
         <div className="divider-small"></div>
+        <IonButton className="live" routerDirection="back" routerLink={"/tabs/home"} >
+              Leave discussion
+        </IonButton>
 
       </IonContent>
     </IonPage>

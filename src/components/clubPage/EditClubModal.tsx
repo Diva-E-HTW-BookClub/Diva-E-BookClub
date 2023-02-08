@@ -167,7 +167,7 @@ export const EditClubModal: React.FC<EditClubModalProps> = ({
 
   return (
     <>
-      <IonButton onClick={() => setIsOpen(true)}>Edit</IonButton>
+      <IonButton color="secondary" onClick={() => setIsOpen(true)}>Edit</IonButton>
       <IonModal onDidDismiss={() => setIsOpen(false)} isOpen={isOpen}>
         <IonHeader>
           <IonToolbar>
