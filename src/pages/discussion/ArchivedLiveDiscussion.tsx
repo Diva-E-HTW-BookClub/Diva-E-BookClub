@@ -118,11 +118,13 @@ const LiveDiscussion: React.FC = () => {
           </IonCardHeader>
           <IonCardContent>
             <IonRow>
-              <IonCol size="8">
+              <IonCol size="8" className="progressbarContainer">
                 <IonProgressBar className={` ${isRed(totalElapsedTime, totalTimeLimit) ? 'isRed' : isDarkOrange(totalElapsedTime, totalTimeLimit) ?  'isDarkOrange' : isOrange(totalElapsedTime, totalTimeLimit) ? 'isOrange' : 'blue'}`} value={totalElapsedTime/totalTimeLimit}></IonProgressBar>
               </IonCol>
               <IonCol className="timeDisplay" size="4">
+              <div className="timeDisplayContainer">
                 {`${doubleDigits(totalElapsedTime)} / ${doubleDigits(totalTimeLimit)} min`}
+                </div>
               </IonCol>
             </IonRow>
           </IonCardContent>
@@ -139,11 +141,13 @@ const LiveDiscussion: React.FC = () => {
                   <IonCardContent>
                     <IonGrid>
                       <IonRow>
-                        <IonCol size="8">
+                        <IonCol size="8" className="progressbarContainer">
                         <IonProgressBar className={` ${isRed(agendaPart.elapsedTime, agendaPart.timeLimit) ? 'isRed' : isDarkOrange(agendaPart.elapsedTime, agendaPart.timeLimit) ?  'isDarkOrange' : isOrange(agendaPart.elapsedTime, agendaPart.timeLimit) ? 'isOrange' : 'blue'}`} value={agendaPart.elapsedTime/agendaPart.timeLimit}></IonProgressBar>
                         </IonCol>
                         <IonCol className="timeDisplay" size="4">
+                        <div className="timeDisplayContainer">
                           {`${doubleDigits(agendaPart.elapsedTime)} / ${doubleDigits(agendaPart.timeLimit)} min`}
+                          </div>
                            </IonCol>
                       </IonRow>
                     </IonGrid>

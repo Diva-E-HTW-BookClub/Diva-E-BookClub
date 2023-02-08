@@ -18,7 +18,7 @@
   --progress-background: #e00e0e;
 }
 
-ion-progress-bar {
+.progressbarContainer ion-progress-bar {
   --progress-background: #e7b837;
   padding: 12px;
   border-radius: 7px;
