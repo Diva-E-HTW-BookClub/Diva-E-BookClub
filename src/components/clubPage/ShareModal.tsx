@@ -56,7 +56,7 @@ export const ShareModal = forwardRef<ModalHandle, ShareModalProps>(
         initialBreakpoint={0.25}
         breakpoints={[0, 0.25, 0.5]}
       >
-        <IonContent>
+        <IonContent className="ion-padding-horizontal">
           <div className="modalText">Share your Club</div>
           <div className="verticalSpacing"></div>
           <IonGrid>

@@ -152,11 +152,11 @@ const CreateClubModal = forwardRef<ModalHandle>((props, ref) => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton onClick={cancelModal}>Cancel</IonButton>
+            <IonButton color="secondary" onClick={cancelModal}>Cancel</IonButton>
           </IonButtons>
           <IonTitle>Create Club</IonTitle>
           <IonButtons slot="end">
-            <IonButton type="submit" form="createClub">
+            <IonButton color="secondary" type="submit" form="createClub">
               Create
             </IonButton>
           </IonButtons>

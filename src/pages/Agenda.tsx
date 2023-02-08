@@ -236,7 +236,7 @@ const Agenda: React.FC = () => {
           <IonTitle>Agenda</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding-top">
+      <IonContent fullscreen className="ion-padding">
         <form onSubmit={handleSubmit(submitData)}>
           {discussionData.location && (
             <IonItem lines="none">

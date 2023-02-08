@@ -154,6 +154,7 @@ export const EditCommentModal = forwardRef<ModalHandle, EditCommentModalProps>(
           <IonToolbar>
             <IonButtons slot="start">
               <IonButton
+                  color="secondary"
                 onClick={(e) => {
                   e.stopPropagation();
                   cancelModal();
@@ -164,13 +165,13 @@ export const EditCommentModal = forwardRef<ModalHandle, EditCommentModalProps>(
             </IonButtons>
             <IonTitle>Edit Comment</IonTitle>
             <IonButtons slot="end">
-              <IonButton type="submit" form="createComment">
+              <IonButton color="secondary" type="submit" form="createComment">
                 Save
               </IonButton>
             </IonButtons>
           </IonToolbar>
         </IonHeader>
-        <IonContent fullscreen>
+        <IonContent fullscreen className="ion-padding">
           <form
             id="createComment"
             onSubmit={(e) => {

@@ -1,8 +1,17 @@
-.registerDiv {
-  margin: auto;
-  padding-left: 7%;
-  text-align: center;
+.registerContent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
+
+.registerForm {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 380px;
+}
+
 #logInRouter {
   color: var(--ion-color-favorite);
 }

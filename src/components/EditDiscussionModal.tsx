@@ -151,17 +151,17 @@ const EditDiscussionModal = forwardRef<ModalHandle, EditDiscussionModalProps>(
         <IonHeader>
           <IonToolbar>
             <IonButtons slot="start">
-              <IonButton onClick={cancelModal}>Cancel</IonButton>
+              <IonButton color="secondary" onClick={cancelModal}>Cancel</IonButton>
             </IonButtons>
             <IonTitle>Edit Discussion</IonTitle>
             <IonButtons slot="end">
-              <IonButton type="submit" form="createDiscussion">
+              <IonButton color="secondary" type="submit" form="createDiscussion">
                 Save
               </IonButton>
             </IonButtons>
           </IonToolbar>
         </IonHeader>
-        <IonContent fullscreen>
+        <IonContent fullscreen className="ion-padding">
           <form id="createDiscussion" onSubmit={handleSubmit(submitData)}>
             <IonItem className={errors.title ? "ion-invalid" : "ion-valid"}>
               <IonLabel position="stacked">Title</IonLabel>

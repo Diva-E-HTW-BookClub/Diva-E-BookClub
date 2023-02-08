@@ -99,17 +99,17 @@ const EditResourceModal = forwardRef<ModalHandle, EditResourceModalProps>(
         <IonHeader>
           <IonToolbar>
             <IonButtons slot="start">
-              <IonButton onClick={cancelModal}>Cancel</IonButton>
+              <IonButton color="secondary" onClick={cancelModal}>Cancel</IonButton>
             </IonButtons>
             <IonTitle>Edit Resource</IonTitle>
             <IonButtons slot="end">
-              <IonButton type="submit" form="editResource">
+              <IonButton color="secondary" type="submit" form="editResource">
                 Save
               </IonButton>
             </IonButtons>
           </IonToolbar>
         </IonHeader>
-        <IonContent fullscreen>
+        <IonContent fullscreen className="ion-padding">
           <form id="editResource" onSubmit={handleSubmit(submitData)}>
             <IonItem className={errors.title ? "ion-invalid" : "ion-valid"}>
               <IonLabel position="stacked">Title</IonLabel>
