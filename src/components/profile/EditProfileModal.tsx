@@ -69,17 +69,17 @@ const EditProfileModal = forwardRef<ModalHandle, EditProfileModalProps>(
                 <IonHeader>
                     <IonToolbar>
                         <IonButtons slot="start">
-                            <IonButton onClick={cancelModal}>Cancel</IonButton>
+                            <IonButton color="secondary" onClick={cancelModal}>Cancel</IonButton>
                         </IonButtons>
                         <IonTitle>Edit Profile</IonTitle>
                         <IonButtons slot="end">
-                            <IonButton type="submit" form="editProfile">
+                            <IonButton color="secondary" type="submit" form="editProfile">
                                 Save
                             </IonButton>
                         </IonButtons>
                     </IonToolbar>
                 </IonHeader>
-                <IonContent fullscreen>
+                <IonContent fullscreen className="ion-padding">
                     <form id="editProfile" onSubmit={handleSubmit(submitData)}>
                         <IonItem className={errors.username ? "ion-invalid" : "ion-valid"}>
                             <IonLabel position="stacked">Username</IonLabel>

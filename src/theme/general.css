@@ -137,7 +137,16 @@
 }
 
 :root {
-  --ion-color-favorite: #D9D9D9;
+    --ion-color-secondary: #3A5607;
+    --ion-color-secondary-rgb: 58, 86, 7;
+    --ion-color-secondary-contrast: #DBD7D4;
+    --ion-color-secondary-contrast-rgb: 255, 255, 190;
+    --ion-color-secondary-shade: #324b07;
+    --ion-color-secondary-tint: #2a3b10;
+}
+
+:root {
+  --ion-color-favorite: #DBD7D4;
   --ion-color-favorite-rgb: 255, 255, 190;
   --ion-color-favorite-contrast: #5d6944;
   --ion-color-favorite-contrast-rgb: 255, 255, 255;
@@ -162,6 +171,10 @@
 
 .welcome-title, .clubName{
   font-family: 'Merriweather'
+}
+
+ion-back-button{
+    color: #3A5607;
 }
 
 ion-label{

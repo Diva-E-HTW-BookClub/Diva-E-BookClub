@@ -1,0 +1,30 @@
+.welcome-title {
+    font-size: 35px;
+    text-align: center;
+}
+
+.blubble-title {
+    font-size: 35px;
+    line-height: 25px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.logo {
+    margin-top: 50px;
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.startContent {
+    width: 100%;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.buttonWidth {
+    margin: auto;
+    max-width: 300px;
+}

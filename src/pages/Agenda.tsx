@@ -245,7 +245,7 @@ const Agenda: React.FC = () => {
           <IonTitle>Agenda</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent fullscreen className="ion-padding">
         <form onSubmit={handleSubmit(submitData)}>
           <IonList>
             <IonListHeader className="agendaTitleDiv">

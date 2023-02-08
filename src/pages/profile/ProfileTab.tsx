@@ -58,7 +58,7 @@ const ProfileTab: React.FC = () => {
           <IonTitle>Profile</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent fullscreen className="ion-padding-horizontal">
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle size="large">Profile</IonTitle>

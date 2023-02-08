@@ -13,12 +13,15 @@ import {
   IonCheckbox,
   IonRouterLink,
   IonNote,
-  IonSpinner,
+  IonSpinner, IonImg,
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import { registerUser } from "../../firebase/firebaseAuth";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import "./RegisterPage.css"
+import BlubbleLogo from "../../resources/blubble-logo.png"
+
 
 type FormValues = {
   username: string;
@@ -72,14 +75,15 @@ const RegisterPage: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/start" />
+            <IonBackButton defaultHref="/start" text="Start"/>
           </IonButtons>
           <IonTitle>Register</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
-        <h1 className="welcome-title">Welcome to Book Club App</h1>
-        <form onSubmit={handleSubmit(submitData)}>
+      <IonContent className="ion-padding">
+        <div className="registerContent">
+          <IonImg src={BlubbleLogo}/>
+        <form id="register" className="registerForm" onSubmit={handleSubmit(submitData)}>
           <IonItem>
             <IonLabel position="stacked">Username</IonLabel>
             <IonInput
@@ -162,20 +166,24 @@ const RegisterPage: React.FC = () => {
             </IonCheckbox>
             {errors.termsAccepted && <IonNote slot="helper" color="danger">{errors.termsAccepted.message}</IonNote>}
           </IonItem>
-          <br />
-          <IonButton expand="block" type="submit">
+        </form>
+          <div>
+            <div className="verticalSpacing"></div>
+          <IonButton form="register" expand="block" className="buttonWidth" type="submit">
             {isSubmitting ? <IonSpinner></IonSpinner> : "REGISTER"}
           </IonButton>
-          <IonItem lines="none">
-            <p className="font-center">
+            <div className="verticalSpacing"></div>
+          <IonLabel>
+            <div className="font-center">
               Already have an account?
-              <IonRouterLink routerDirection="forward" routerLink="/login">
+              <IonRouterLink routerDirection="back" routerLink="/login">
                 {" "}
                 Log in
               </IonRouterLink>
-            </p>
-          </IonItem>
-        </form>
+            </div>
+          </IonLabel>
+          </div>
+        </div>
       </IonContent>
     </IonPage>
   );
