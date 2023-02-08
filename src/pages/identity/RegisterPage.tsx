@@ -13,12 +13,12 @@ import {
   IonCheckbox,
   IonRouterLink,
   IonNote,
-  IonSpinner, IonImg,
+  IonSpinner, IonImg, IonSkeletonText,
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import { registerUser } from "../../firebase/firebaseAuth";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import React, { useState } from "react";
 import "./RegisterPage.css"
 import BlubbleLogo from "../../resources/blubble-logo.png"
 
@@ -33,6 +33,7 @@ type FormValues = {
 
 const RegisterPage: React.FC = () => {
   const history = useHistory();
+  const [isLoadingLogo, setIsLoadingLogo] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const {
@@ -82,7 +83,8 @@ const RegisterPage: React.FC = () => {
       </IonHeader>
       <IonContent className="ion-padding">
         <div className="registerContent">
-          <IonImg src={BlubbleLogo}/>
+          {isLoadingLogo && <IonSkeletonText animated className="registerLogoSkeleton"></IonSkeletonText>}
+          <IonImg onIonImgDidLoad={() => setTimeout(() => setIsLoadingLogo(false), 200)} className={isLoadingLogo ? "hideRegisterLogo" : "registerLogo"} src={BlubbleLogo}/>
         <form id="register" className="registerForm" onSubmit={handleSubmit(submitData)}>
           <IonItem>
             <IonLabel position="stacked">Username</IonLabel>

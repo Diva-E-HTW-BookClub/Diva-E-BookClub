@@ -12,13 +12,13 @@ import {
   IonItem,
   IonRouterLink,
   IonNote,
-  IonSpinner, IonImg,
+  IonSpinner, IonImg, IonSkeletonText,
 } from "@ionic/react";
 import "./LoginPage.css";
 import { useHistory } from "react-router-dom";
 import { loginUser } from "../../firebase/firebaseAuth";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import React, { useState } from "react";
 import BlubbleLogo from "../../resources/blubble-logo.png"
 
 type FormValues = {
@@ -28,6 +28,7 @@ type FormValues = {
 
 const LoginPage: React.FC = () => {
   const history = useHistory();
+  const [isLoadingLogo, setIsLoadingLogo] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const {
@@ -72,7 +73,8 @@ const LoginPage: React.FC = () => {
       <IonContent className="ion-padding">
         <div className="loginContent">
           <div>
-          <IonImg className="logoLogin" src={BlubbleLogo}/>
+            {isLoadingLogo && <IonSkeletonText animated className="loginLogoSkeleton"></IonSkeletonText>}
+          <IonImg onIonImgDidLoad={() => setTimeout(() => setIsLoadingLogo(false), 200)} className={isLoadingLogo ? "hideLogoLogin" : "logoLogin"} src={BlubbleLogo}/>
           <IonLabel>
             <div className="welcome-title"> Welcome Back</div>
           </IonLabel>

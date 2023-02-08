@@ -1,13 +1,15 @@
-import React from "react";
+import React, {useState} from "react";
 import {
   IonContent,
   IonPage,
-  IonButton, IonLabel, IonImg
+  IonButton, IonLabel, IonImg, IonSkeletonText
 } from "@ionic/react";
 import "./StartPage.css";
 import BlubbleLogo from "../../resources/blubble-logo.png"
 
 const StartPage: React.FC = () => {
+  const [isLoadingLogo, setIsLoadingLogo] = useState<boolean>(true);
+
   return (
     <IonPage>
       <IonContent color="favorite">
@@ -16,7 +18,8 @@ const StartPage: React.FC = () => {
           <div className="welcome-title">WELCOME TO</div>
           <div className="blubble-title">BLUBBLE</div>
         </IonLabel>
-        <IonImg className="logo" src={BlubbleLogo}/>
+          {isLoadingLogo && <IonSkeletonText animated className="logoSkeleton"></IonSkeletonText>}
+        <IonImg onIonImgDidLoad={() => setTimeout(() => setIsLoadingLogo(false), 200)} className={isLoadingLogo ? "hideLogo" : "logo"} src={BlubbleLogo}/>
         <p className="font-center">Create an account</p>
         <IonButton expand="block" size="default" class="ion-margin-bottom buttonWidth" routerLink="/register">
           REGISTER

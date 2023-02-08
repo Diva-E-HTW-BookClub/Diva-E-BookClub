@@ -12,6 +12,22 @@
   max-width: 380px;
 }
 
+.registerLogo {
+  width: 100%;
+}
+
+.hideRegisterLogo {
+  height: 0;
+}
+
+.registerLogoSkeleton {
+  margin-top: 20px;
+  align-self: center;
+  width: 220px;
+  height: 105px;
+  border-radius: 38px;
+}
+
 #logInRouter {
   color: var(--ion-color-favorite);
 }

@@ -24,6 +24,17 @@
     margin-bottom: 20px;
 }
 
+.hideLogoLogin {
+    height: 0;
+}
+
+.loginLogoSkeleton {
+    margin: auto auto 20px;
+    width: 220px;
+    height: 105px;
+    border-radius: 38px;
+}
+
 .registerLoginLink {
     text-align: center;
 }
