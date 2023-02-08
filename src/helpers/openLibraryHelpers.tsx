@@ -40,7 +40,11 @@ function toUpperCaseFirstLettersOfAllWords(string: string) {
             .toLowerCase()
             .split(' ')
             .map(function (word) {
-                return word[0].toUpperCase() + word.slice(1);
+                if(word[0] != undefined) {
+                    return word[0].toUpperCase() + word.slice(1);
+                } else {
+                    return word;
+                }
             })
             .join(' ');
     }
