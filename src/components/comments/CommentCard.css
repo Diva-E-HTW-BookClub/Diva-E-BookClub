@@ -27,3 +27,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.commentPhotoDisplay ion-img::part(image) {
+    max-height: 100%;
+}

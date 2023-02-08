@@ -28,6 +28,7 @@ import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { deleteCommentDocument } from "../../firebase/firebaseComments";
 import { EditCommentModal, ModalHandle } from "./EditCommentModal";
+//import styles from "./CommentCard.module.css";
 import "./CommentCard.css"
 
 interface CommentCardProps {
@@ -212,7 +213,7 @@ export const CommentCard: React.FC<CommentCardProps> = ({
                         </IonButtons>
                       </IonToolbar>
                     </IonHeader>
-                    <IonContent className="ion-padding">
+                    <IonContent className="ion-padding commentPhotoDisplay">
                       <IonImg src={photo} />
                     </IonContent>
                   </IonModal>
