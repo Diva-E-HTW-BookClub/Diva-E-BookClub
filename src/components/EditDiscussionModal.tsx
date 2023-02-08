@@ -241,7 +241,6 @@ const EditDiscussionModal = forwardRef<ModalHandle, EditDiscussionModalProps>(
                                   getValues("endTime")
                                 )
                               ) {
-                                console.log("Times Mismatch");
                                 setValue("endTime", e.detail.value);
                               }
                             }

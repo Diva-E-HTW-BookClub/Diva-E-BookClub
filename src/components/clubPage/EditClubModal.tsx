@@ -124,7 +124,6 @@ export const EditClubModal: React.FC<EditClubModalProps> = ({
               bookClubData &&
               value.maxMember.value < bookClubData.members.length
             ) {
-              console.log("Members > Max Error");
             } else {
               setValue("maxMemberNumber", value.maxMember.value);
               setMaxMember(value.maxMember.value);

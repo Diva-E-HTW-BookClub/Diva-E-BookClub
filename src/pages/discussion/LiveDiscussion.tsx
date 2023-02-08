@@ -70,7 +70,6 @@ const LiveDiscussion: React.FC = () => {
   const leaveDiscussionRoom = () => {
     if (discussionId !== "") {
       socket.emit("leaveRoom", { discussionId });
-      console.log("I left");
     }
   };
 
@@ -215,7 +214,6 @@ const LiveDiscussion: React.FC = () => {
 
     socket.on("changeParticipantCount", (data) => {
       setparticipantCount(data);
-      console.log("Aktueller Count: " + data);
       if (maxParticipants <= data) {
         maxParticipants = data;
       }
@@ -282,7 +280,6 @@ const LiveDiscussion: React.FC = () => {
     setIsModerator(bookClub?.moderator.includes(user.uid));
     let agendaParts = await getDiscussionAgenda(bookClubId, discussionId);
     let agendaTitle = await getDiscussionTitle(bookClubId, discussionId);
-    console.log("title:" + agendaTitle);
     setAgendaParts(agendaParts);
     setAgendaTitle(agendaTitle);
     for (var i = 0; i < agendaParts.length; i++) {

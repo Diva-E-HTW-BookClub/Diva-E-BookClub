@@ -58,7 +58,6 @@ const LiveDiscussion: React.FC = () => {
   
   useEffect(() => {
     getAgendaParts()
-    console.log("ID: " + discussionId)
   }, []);
 
   // Colors for Progress
@@ -79,11 +78,9 @@ const LiveDiscussion: React.FC = () => {
     let agendaParts = await getDiscussionAgenda(bookClubId, discussionId);
     let agendaTitle = await getDiscussionTitle(bookClubId, discussionId);
     let maxParticipants = await getDiscussionMaxParticipants(bookClubId, discussionId);
-    console.log(agendaTitle)
     setAgendaParts(agendaParts)
     setAgendaTitle(agendaTitle)
     setMaxParticipants(maxParticipants);
-    console.log(maxParticipants)
     for(var i = 0; i < agendaParts.length; i++){
       progressTimesReceived[i] = 0;
       emitTimes[i] = 0
