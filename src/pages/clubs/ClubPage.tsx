@@ -173,7 +173,7 @@ const ClubPage: React.FC = () => {
             <IonRow class="ion-align-items-center ion-padding-bottom">
               <IonCol sizeMd="10" size="9" className="column">
                 <IonLabel>
-                  <IonCardTitle>{bookTitle}</IonCardTitle>
+                  <IonCardTitle className="BookTitleOnClub">{bookTitle}</IonCardTitle>
                   <IonCardSubtitle>{bookAuthor}</IonCardSubtitle>
                 </IonLabel>
                 <IonItem lines="none">
