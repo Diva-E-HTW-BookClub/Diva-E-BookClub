@@ -9,12 +9,11 @@ import {
   IonItemGroup,
   IonItemDivider,
   IonList,
-  IonSpinner,
   IonRefresher,
   IonRefresherContent,
   RefresherEventDetail,
   IonSelect,
-  IonSelectOption,
+  IonSelectOption, IonProgressBar,
 } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import "./HomeTab.css";
@@ -347,13 +346,10 @@ const HomeTab: React.FC = () => {
         {!isNewUser && (ownClubs || joinedClubs) && (
           <>
             <div className="ion-padding-horizontal">
-              <div className="flexBetween">
-                <div className="nextDiscussionsTitle flexbox">
+              <div>
+                <div className="nextDiscussionsTitle">
                   Next Discussions
                 </div>
-                {isLoadingDiscussions && (
-                  <IonSpinner className="flexbox"></IonSpinner>
-                )}
               </div>
               <div className="flexBetween">
                 <div className="flexbox">Filter by:</div>
@@ -372,6 +368,9 @@ const HomeTab: React.FC = () => {
                 </IonSelect>
               </div>
             </div>
+            {isLoadingDiscussions && (
+                <IonProgressBar type="indeterminate"></IonProgressBar>
+            )}
           </>
         )}
         {showNextDiscussions()}

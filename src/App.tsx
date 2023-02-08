@@ -2,9 +2,8 @@ import { Redirect, Route } from "react-router-dom";
 import {
   IonApp, IonContent,
   IonIcon,
-  IonLabel,
+  IonLabel, IonProgressBar,
   IonRouterOutlet,
-  IonSpinner,
   IonTabBar,
   IonTabButton,
   IonTabs,
@@ -137,7 +136,7 @@ const App: React.FC = () => {
     })
   }, [])
   //Spinner that is displayed while content is loading
-  return <IonApp>{busy ? <IonSpinner /> : <RoutingSystem />}</IonApp>
+  return <IonApp>{busy ? <IonProgressBar type="indeterminate"></IonProgressBar> : <RoutingSystem />}</IonApp>
 }
 
 export default App;

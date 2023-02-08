@@ -3,11 +3,11 @@ import {
   IonItemDivider,
   IonItemGroup,
   IonLabel,
-  IonList,
-  IonSpinner,
+  IonList, IonProgressBar,
 } from "@ionic/react";
 import { BookClub } from "../../firebase/firebaseBookClub";
 import { ResourceCard } from "../resources/ResourceCard";
+import React from "react";
 
 interface ResourcesSegmentProps {
   bookClubId: string;
@@ -25,7 +25,7 @@ export const ResourcesSegment: React.FC<ResourcesSegmentProps> = ({
   updatePage,
 }: ResourcesSegmentProps) => {
   if (!bookClubData) {
-    return <IonSpinner></IonSpinner>;
+    return <IonProgressBar type="indeterminate"></IonProgressBar>;
   }
 
   let resources = bookClubData?.resources;
