@@ -170,7 +170,8 @@
 }
 
 .welcome-title, .clubName{
-  font-family: 'Merriweather'
+  font-family: 'Merriweather' !important
+  
 }
 
 ion-back-button{
