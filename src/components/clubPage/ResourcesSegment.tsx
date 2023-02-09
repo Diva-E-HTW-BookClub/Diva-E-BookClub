@@ -3,7 +3,7 @@ import {
   IonItemDivider,
   IonItemGroup,
   IonLabel,
-  IonList, IonProgressBar,
+  IonList,
 } from "@ionic/react";
 import { BookClub } from "../../firebase/firebaseBookClub";
 import { ResourceCard } from "../resources/ResourceCard";
@@ -25,7 +25,15 @@ export const ResourcesSegment: React.FC<ResourcesSegmentProps> = ({
   updatePage,
 }: ResourcesSegmentProps) => {
   if (!bookClubData) {
-    return <IonProgressBar type="indeterminate"></IonProgressBar>;
+    return (
+        <div className="ion-padding-horizontal">
+          <IonItem lines="none">
+            <IonLabel>
+              <p>Is loading...</p>
+            </IonLabel>
+          </IonItem>
+        </div>
+    )
   }
 
   let resources = bookClubData?.resources;

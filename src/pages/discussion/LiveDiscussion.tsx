@@ -329,7 +329,7 @@ const LiveDiscussion: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
+      <IonHeader translucent>
         <IonToolbar>
           <IonTitle>Live Discussion</IonTitle>
         </IonToolbar>

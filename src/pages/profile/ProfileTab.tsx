@@ -53,7 +53,7 @@ const ProfileTab: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
+      <IonHeader translucent>
         <IonToolbar>
           <IonTitle>Profile</IonTitle>
         </IonToolbar>

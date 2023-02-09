@@ -18,7 +18,7 @@ import {
   IonLabel,
   IonItem,
   IonChip,
-  IonSpinner,
+  IonSpinner, IonProgressBar,
 } from "@ionic/react";
 import "./ClubPage.css";
 import {
@@ -171,7 +171,7 @@ const ClubPage: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
+      <IonHeader translucent>
         <IonToolbar>
           <IonButtons slot="start">
             <IonBackButton defaultHref="/tabs/home" text={getBackButtonName(getCurrentTab())}></IonBackButton>
@@ -186,9 +186,10 @@ const ClubPage: React.FC = () => {
               />
             </IonButtons>
           )}
+          {!bookClubData && <IonProgressBar type="indeterminate"></IonProgressBar>}
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen class="ion-no-padding ion-padding-vertical">
+      <IonContent fullscreen class="ion-padding-top">
         <div className="ion-padding-horizontal">
           <IonGrid>
             <IonRow class="ion-align-items-center ion-padding-bottom">

@@ -9,7 +9,7 @@ import {
   IonItem,
   IonItemDivider,
   IonItemGroup,
-  IonLabel, IonProgressBar,
+  IonLabel,
 } from "@ionic/react";
 import { NewDiscussionCard } from "../NewDiscussionCard";
 
@@ -31,10 +31,18 @@ export const UpcomingDiscussionsSegment: React.FC<
   updatePage,
 }: UpcomingDiscussionsSegmentProps) => {
   if (!bookClubData) {
-    return <IonProgressBar type="indeterminate"></IonProgressBar>;
+    return (
+        <div className="ion-padding-horizontal">
+          <IonItem lines="none">
+            <IonLabel>
+              <p>Is loading...</p>
+            </IonLabel>
+          </IonItem>
+        </div>
+    )
   }
 
-  let discussions = bookClubData?.discussions;
+  let discussions = bookClubData.discussions;
   let upcomingDiscussions = getUpcomingDiscussions(discussions);
   let discussionYears = getYearArrayOfDiscussions(upcomingDiscussions);
 

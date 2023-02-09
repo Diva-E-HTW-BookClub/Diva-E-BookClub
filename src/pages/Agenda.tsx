@@ -15,11 +15,10 @@ import {
   IonTitle,
   IonToolbar,
   useIonPicker,
-  IonSpinner,
   IonNote,
-  useIonViewWillEnter,
+  useIonViewWillEnter, IonProgressBar,
 } from "@ionic/react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
 import {
   addOutline,
@@ -222,23 +221,20 @@ const Agenda: React.FC = () => {
     setIsReadOnly(true);
   };
 
-  if (!discussionData) {
-    return <IonSpinner></IonSpinner>;
-  }
-
   return (
     <IonPage className="parent">
-      <IonHeader>
+      <IonHeader translucent>
         <IonToolbar>
           <IonButtons slot="start">
             <IonBackButton defaultHref={"/tabs/home/" + bookClubId + "/view"} />
           </IonButtons>
           <IonTitle>Agenda</IonTitle>
+          {!discussionData && <IonProgressBar type="indeterminate"></IonProgressBar>}
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
         <form onSubmit={handleSubmit(submitData)}>
-          {discussionData.location && (
+          {discussionData?.location && (
             <IonItem lines="none">
               <IonIcon icon={locationOutline} size="default" />
               <div className="spacing"></div>
@@ -258,7 +254,7 @@ const Agenda: React.FC = () => {
           )}
           <IonList>
             <IonListHeader className="agendaTitleDiv">
-              <IonLabel>{discussionData.title}</IonLabel>
+              <IonLabel>{discussionData?.title}</IonLabel>
             </IonListHeader>
             {inputFields()}
           </IonList>
@@ -282,7 +278,7 @@ const Agenda: React.FC = () => {
           <IonItem>
             <IonInput readonly>Total</IonInput>
             <IonText>{totalTime + " min"}</IonText>
-            {totalTime >
+            {discussionData && totalTime >
               getDistanceInMinutes(
                 discussionData.startTime,
                 discussionData.endTime
@@ -295,7 +291,7 @@ const Agenda: React.FC = () => {
           <IonItem lines="none">
             <IonInput readonly>Planned</IonInput>
             <IonText>
-              {getDistanceInMinutes(
+              {discussionData && getDistanceInMinutes(
                 discussionData.startTime,
                 discussionData.endTime
               ) + " min"}

@@ -7,7 +7,7 @@ import {
   IonHeader,
   IonIcon, IonImg, IonLabel,
   IonList,
-  IonPage, IonRefresher, IonRefresherContent, IonRow, IonSpinner,
+  IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow,
   IonTitle,
   IonToolbar, RefresherEventDetail,
 } from "@ionic/react";
@@ -35,7 +35,8 @@ const Comments: React.FC = () => {
   const createModal = useRef<ModalHandle>(null);
 
   useEffect(() => {
-    getCommentData().then((commentData) => setCommentData(commentData));
+    setIsLoadingComments(true);
+    getCommentData().then((commentData) => {setCommentData(commentData); setIsLoadingComments(false)});
     getBookClubData();
     getDiscussionData();
   }, []);
@@ -74,16 +75,16 @@ const Comments: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
+      <IonHeader translucent>
         <IonToolbar>
           <IonButtons slot="start">
             <IonBackButton defaultHref={"/tabs/home/" + bookClubId + "/view"} />
           </IonButtons>
-          {isLoadingComments &&<IonSpinner slot="end"></IonSpinner>}
+          {isLoadingComments && <IonProgressBar type="indeterminate"></IonProgressBar>}
           <IonTitle>Comments</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-no-padding">
+      <IonContent fullscreen>
         <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
           <IonRefresherContent></IonRefresherContent>
         </IonRefresher>

@@ -23,11 +23,10 @@ import {
 } from "firebase/firestore";
 import { firebaseDB } from "../../firebase/firebaseConfig";
 import "./LiveDiscussion.css";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { getDiscussionAgenda,getDiscussionTitle, getDiscussionMaxParticipants,  } from "../../firebase/firebaseDiscussions";
 import { useParams } from "react-router";
-import { API_URL, SOCKET_IO_URL } from "../../constants";
 import { useLocation } from "react-router-dom";
 
 interface AgendaPartProps {
@@ -111,13 +110,12 @@ const LiveDiscussion: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
+      <IonHeader translucent>
         <IonToolbar>
         <IonButtons slot="start">
         <IonBackButton defaultHref={"/tabs/" + getCurrentTab() + "/" + bookClubId + "/view"}></IonBackButton>
         </IonButtons>
-        <IonTitle>Archived Discussion </IonTitle>
-          
+        <IonTitle>Archived Discussion</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>

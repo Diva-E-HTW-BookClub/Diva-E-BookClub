@@ -7,7 +7,7 @@ import {
   IonItem,
   IonItemDivider,
   IonItemGroup,
-  IonLabel, IonProgressBar,
+  IonLabel,
 } from "@ionic/react";
 import { NewDiscussionCard } from "../NewDiscussionCard";
 import React from "react";
@@ -29,7 +29,15 @@ export const ArchiveSegment: React.FC<ArchiveSegmentProps> = ({
   updatePage,
 }: ArchiveSegmentProps) => {
   if (!bookClubData) {
-    return <IonProgressBar type="indeterminate"></IonProgressBar>;
+    return (
+        <div className="ion-padding-horizontal">
+          <IonItem lines="none">
+            <IonLabel>
+              <p>Is loading...</p>
+            </IonLabel>
+          </IonItem>
+        </div>
+    )
   }
 
   let discussions = bookClubData.discussions;

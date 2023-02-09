@@ -76,12 +76,12 @@ const ClubsTab: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
+      <IonHeader translucent>
         <IonToolbar>
           <IonTitle>Clubs</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-no-padding">
+      <IonContent fullscreen>
         <IonHeader className="ion-padding-horizontal" collapse="condense">
           <IonToolbar>
             <IonTitle size="large">Clubs</IonTitle>
