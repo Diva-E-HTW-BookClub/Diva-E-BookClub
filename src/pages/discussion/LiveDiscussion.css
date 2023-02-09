@@ -7,15 +7,15 @@
 }
 
 .isOrange {
-  --progress-background: #d6660b;
+  --progress-background: #d6660b !important;
 }
 
 .isDarkOrange {
-  --progress-background: #d63a0b;
+  --progress-background: #d63a0b !important;
 }
 
 .isRed {
-  --progress-background: #e00e0e;
+  --progress-background: #e00e0e !important;
 }
 
 .progressbarContainer ion-progress-bar {
