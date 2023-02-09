@@ -106,7 +106,6 @@ const ClubPage: React.FC = () => {
           };
           try {
             await navigator.share(shareData);
-            console.log("successfully shared");
           } catch (error) {
             console.log("Error: " + error);
           }

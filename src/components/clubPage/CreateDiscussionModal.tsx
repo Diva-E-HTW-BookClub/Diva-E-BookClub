@@ -225,7 +225,6 @@ export const CreateDiscussionModal: React.FC<CreateDiscussionModalProps> = ({
                                   getValues("endTime")
                                 )
                               ) {
-                                console.log("Times Mismatch");
                                 setValue("endTime", e.detail.value);
                               }
                             }

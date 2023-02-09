@@ -18,29 +18,17 @@ import {
   IonCardContent,
   IonItem,
 } from "@ionic/react";
-import {
-  doc,
-} from "firebase/firestore";
-import { firebaseDB } from "../../firebase/firebaseConfig";
 import "./LiveDiscussion.css";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { getDiscussionAgenda,getDiscussionTitle, getDiscussionMaxParticipants,  } from "../../firebase/firebaseDiscussions";
 import { useParams } from "react-router";
 import { useLocation } from "react-router-dom";
 
-interface AgendaPartProps {
-  id: number,
-  name: string
-  elapsedTime: number,
-  timeLimit: number
-}
 var emitTimes:number[] = []
 
 const LiveDiscussion: React.FC = () => {
 
   // Information zu der Agenda
-  const user = useSelector((state: any) => state.user.user);
   const [agendaParts, setAgendaParts] = useState<any[]>([]);
   const [agendaTitle, setAgendaTitle] = useState<any[]>([]);
   let { bookClubId }: { bookClubId: string } = useParams();
@@ -52,9 +40,6 @@ const LiveDiscussion: React.FC = () => {
   // Liva-Ansicht-Variablen
   const [progressTimesReceived, setProgressTimesReceived] = useState<number[]>([]);
 
-  const changedPlayingState = doc(firebaseDB, "testCollection", "8hh5w2KA9koJTbyMiDuk");
-
-  
   useEffect(() => {
     getAgendaParts()
   }, []);
@@ -80,7 +65,7 @@ const LiveDiscussion: React.FC = () => {
     setAgendaParts(agendaParts)
     setAgendaTitle(agendaTitle)
     setMaxParticipants(maxParticipants);
-    for(var i = 0; i < agendaParts.length; i++){
+    for(let i = 0; i < agendaParts.length; i++){
       progressTimesReceived[i] = 0;
       emitTimes[i] = 0
     }

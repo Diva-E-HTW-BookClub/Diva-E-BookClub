@@ -128,9 +128,6 @@ const App: React.FC = () => {
     getCurrentUser().then((currentUser) => {
       if (currentUser) {
         dispatch(setUserState(currentUser))
-        //console.log("logged in :)")
-      } else {
-        //console.log("not logged in :(")
       }
       setBusy(false);
     })

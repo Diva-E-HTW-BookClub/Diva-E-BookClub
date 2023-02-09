@@ -104,7 +104,6 @@ export const CreateCommentModal = forwardRef<
     let userId = user.uid;
     if (photo != null) {
       data.photo = await base64FromPath(photo);
-      console.log(data.photo);
     }
     await createCommentDocument(
       bookClubId,

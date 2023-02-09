@@ -23,7 +23,7 @@ import io from "socket.io-client";
 import "./LiveDiscussion.css";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { book, pause, play } from "ionicons/icons";
+import { pause, play } from "ionicons/icons";
 import {
   getDiscussionAgenda,
   getDiscussionTitle,
@@ -82,7 +82,7 @@ const LiveDiscussion: React.FC = () => {
       return timeLimitArray[index] * x;
     });
 
-    if (agendaParts.length != 0) {
+    if (agendaParts.length !== 0) {
       await updateDiscussionAgenda(
         bookClubId,
         discussionId,
@@ -98,7 +98,7 @@ const LiveDiscussion: React.FC = () => {
 
   function createPlayingStatesForButton(length: number, index: number) {
     var timeTable = [];
-    for (var i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
       timeTable[i] = false;
     }
     if (index !== -1) {
@@ -244,7 +244,7 @@ const LiveDiscussion: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      for (var i = 0; i < agendaParts.length; i++) {
+      for (let i = 0; i < agendaParts.length; i++) {
         if (playingStateReceived[i]) {
           if (isModerator) {
             socket.emit("send_all_Data", {
@@ -282,7 +282,7 @@ const LiveDiscussion: React.FC = () => {
     let agendaTitle = await getDiscussionTitle(bookClubId, discussionId);
     setAgendaParts(agendaParts);
     setAgendaTitle(agendaTitle);
-    for (var i = 0; i < agendaParts.length; i++) {
+    for (let i = 0; i < agendaParts.length; i++) {
       progressTimesReceived[i] = 0;
       playingStateReceived[i] = false;
       emitTimes[i] = 0;
